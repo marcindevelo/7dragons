@@ -22,6 +22,7 @@ type GameStore = {
   playerNames: string[];
   pendingActionCardId: string | null;
   bonusNotification: BonusNotification | null;
+  playerLeftNotification: { name: string; gameEnded: boolean } | null;
   isMultiplayer: boolean;
 
   startGame: (names: string[]) => void;
@@ -119,8 +120,11 @@ export const useGameStore = create<GameStore>((set, get) => {
       set({ state: null, isMultiplayer: false, playerNames: [] });
     },
     () => {
-      // Server reset the game (e.g. Play again) — clear state but stay in multiplayer
       set({ state: null, selectedCardId: null, pendingActionCardId: null });
+    },
+    (name, gameEnded) => {
+      set({ playerLeftNotification: { name, gameEnded } });
+      setTimeout(() => set({ playerLeftNotification: null }), 4000);
     }
   );
 
@@ -131,6 +135,7 @@ export const useGameStore = create<GameStore>((set, get) => {
     playerNames: [],
     pendingActionCardId: null,
     bonusNotification: null,
+    playerLeftNotification: null,
     isMultiplayer: false,
 
     startGame(names) {

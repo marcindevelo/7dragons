@@ -25,6 +25,7 @@ export default function Sidebar() {
   const goToLobby = useGameStore(s => s.goToLobby);
   const drawInsteadOfPlay = useGameStore(s => s.drawInsteadOfPlay);
   const myPlayerIndex = useMultiplayerStore(s => s.myPlayerIndex);
+  const sendQuit = useMultiplayerStore(s => s.sendQuit);
 
   if (!state) return null;
 
@@ -150,7 +151,7 @@ export default function Sidebar() {
       {/* Leave Game */}
       <div className="px-4 pb-4 pt-3">
         <button
-          onClick={goToLobby}
+          onClick={isMultiplayer ? sendQuit : goToLobby}
           className="w-full py-2 rounded-lg border border-red-800 bg-red-950/40 text-red-400 text-xs font-semibold hover:bg-red-900/40 hover:border-red-600 transition-colors"
         >
           ← Leave Game

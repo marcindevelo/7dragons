@@ -43,21 +43,25 @@ type MultiplayerStore = {
   sendResolveAction: (payload: Parameters<typeof gameClient.resolveAction>[0]) => void;
   sendDrawInstead: () => void;
   sendRestartGame: () => void;
+  sendQuit: () => void;
 };
 
 // Callback set by gameStore to receive server state updates
 let onServerState: ((state: GameState) => void) | null = null;
 let onDisconnect: (() => void) | null = null;
 let onGameReset: (() => void) | null = null;
+let onPlayerLeft: ((name: string, gameEnded: boolean) => void) | null = null;
 
 export function setMultiplayerCallbacks(
   onState: (state: GameState) => void,
   onDisc: () => void,
-  onReset: () => void
+  onReset: () => void,
+  onLeft?: (name: string, gameEnded: boolean) => void
 ) {
   onServerState = onState;
   onDisconnect = onDisc;
   onGameReset = onReset;
+  onPlayerLeft = onLeft ?? null;
 }
 
 let gameWasActive = false;
@@ -98,6 +102,8 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, _get) => ({
         gameWasActive = true;
         set({ myPlayerIndex: msg.myPlayerIndex });
         onServerState?.(hydrateMaskedState(msg.state));
+      } else if (msg.type === 'player-left') {
+        onPlayerLeft?.(msg.playerName, msg.gameEnded);
       } else if (msg.type === 'error') {
         set({ error: msg.message, isConnecting: false });
       }
@@ -188,4 +194,13 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, _get) => ({
   sendResolveAction(payload) { gameClient.resolveAction(payload); },
   sendDrawInstead() { gameClient.drawInstead(); },
   sendRestartGame() { gameClient.send({ type: 'restart-game' }); },
+  sendQuit() {
+    gameClient.quit();
+    sessionStorage.removeItem('7dragons_room');
+    sessionStorage.removeItem('7dragons_name');
+    gameWasActive = false;
+    gameClient.disconnect();
+    onDisconnect?.();
+    set({ roomId: null, myPlayerId: null, myPlayerIndex: null, lobbyPlayers: [], isConnecting: false, error: null });
+  },
 }));

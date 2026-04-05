@@ -73,6 +73,11 @@ export default class GameRoom implements Party.Server {
       return;
     }
 
+    if (msg.type === 'quit') {
+      this.handleQuit(sender, meta);
+      return;
+    }
+
     if (!this.gameState) {
       sender.send(JSON.stringify({ type: 'error', message: 'Game not started' } satisfies ServerMessage));
       return;
@@ -184,6 +189,53 @@ export default class GameRoom implements Party.Server {
     } satisfies ServerMessage));
 
     this.room.broadcast(JSON.stringify(this.buildLobbyMsg()));
+  }
+
+  private handleQuit(conn: Party.Connection, meta: ConnectionMeta) {
+    const playerName = meta.name;
+
+    // Remove from reconnect pool — this player is gone for good
+    this.disconnected.delete(meta.clientId);
+    this.connections.delete(conn.id);
+    conn.close();
+
+    if (!this.gameState) {
+      // Still in lobby — just update lobby
+      this.room.broadcast(JSON.stringify(this.buildLobbyMsg()));
+      return;
+    }
+
+    // Count remaining connected players
+    const remaining = Array.from(this.connections.values()).filter(c => c.playerIndex !== null);
+
+    if (remaining.length <= 1) {
+      // Only 1 player left — end the game, they win
+      const winner = remaining[0];
+      if (winner) {
+        const winnerId = this.gameState.players[winner.playerIndex!]?.id ?? null;
+        this.gameState = { ...this.gameState, phase: 'ended', winner: winnerId };
+      }
+      this.room.broadcast(JSON.stringify({
+        type: 'player-left',
+        playerName,
+        gameEnded: true,
+      } satisfies ServerMessage));
+      this.broadcastGameState();
+    } else {
+      // 2+ players remain — skip quitter's turns by advancing if it was their turn
+      let state = this.gameState;
+      if (meta.playerIndex !== null && state.currentPlayerIndex === meta.playerIndex) {
+        state = endTurn(state);
+        if (state.winner === null) state = drawCard(state);
+      }
+      this.gameState = state;
+      this.room.broadcast(JSON.stringify({
+        type: 'player-left',
+        playerName,
+        gameEnded: false,
+      } satisfies ServerMessage));
+      this.broadcastGameState();
+    }
   }
 
   private handleStartGame(sender: Party.Connection) {

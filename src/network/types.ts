@@ -52,7 +52,8 @@ export type ClientMessage =
   | { type: 'play-action'; cardId: string; applyAction: boolean; applySilver: boolean }
   | { type: 'resolve-action'; payload: ResolvePayload }
   | { type: 'draw-instead' }
-  | { type: 'restart-game' };
+  | { type: 'restart-game' }
+  | { type: 'quit' };
 
 export type ResolvePayload = {
   targetPlayerId?: string;
@@ -68,4 +69,5 @@ export type ServerMessage =
   | { type: 'joined'; playerId: string; playerIndex: number; roomId: string }
   | { type: 'lobby'; players: LobbyPlayer[] }
   | { type: 'game-state'; state: MaskedGameState; myPlayerIndex: number }
+  | { type: 'player-left'; playerName: string; gameEnded: boolean }
   | { type: 'error'; message: string };

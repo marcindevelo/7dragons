@@ -68,6 +68,8 @@ class GameClient {
   resolveAction(payload: ResolvePayload) {
     this.send({ type: 'resolve-action', payload });
   }
+
+  quit() { this.send({ type: 'quit' }); }
 }
 
 export const gameClient = new GameClient();
