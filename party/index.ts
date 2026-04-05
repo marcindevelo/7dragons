@@ -44,9 +44,9 @@ export default class GameRoom implements Party.Server {
   }
 
   onMessage(raw: string, sender: Party.Connection) {
-    // Invite channel: just relay to everyone else in the room
+    // Invite channel: relay to everyone in the room
     if (this.isInviteRoom()) {
-      this.room.broadcast(raw, [sender.id]);
+      this.room.broadcast(raw);
       return;
     }
     let msg: ClientMessage;

@@ -45,7 +45,7 @@ class InviteClient {
     sock.addEventListener('open', () => {
       sock.send(JSON.stringify({ type: 'invite', fromName, roomCode } satisfies InviteMessage));
       // Close after sending
-      setTimeout(() => sock.close(), 1000);
+      setTimeout(() => sock.close(), 3000);
     });
   }
 
