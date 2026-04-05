@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+:root {
+  --color-dragon-red: #c0392b;
+  --color-dragon-gold: #d4ac0d;
+  --color-dragon-blue: #1a6fa8;
+  --color-dragon-green: #1e8449;
+  --color-dragon-black: #2c2c2c;
+  --color-dragon-rainbow: conic-gradient(red, orange, yellow, green, blue, violet, red);
+  --color-dragon-silver: #95a5a6;
+}
+
+body, #root {
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  height: 100dvh;
+  background: #1a1a2e;
+  color: #f0f0f0;
+  font-family: system-ui, sans-serif;
+}

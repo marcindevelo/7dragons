@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run:*)",
+      "WebFetch(domain:www.looneylabs.com)",
+      "mcp__claude_ai_Figma__get_design_context",
+      "mcp__claude_ai_Figma__use_figma",
+      "mcp__claude_ai_Figma__get_screenshot",
+      "Bash(npx vitest:*)",
+      "Bash(npx tsc:*)",
+      "mcp__claude_ai_Figma__get_metadata",
+      "Bash(ls /Users/marcinpokojski/projects/7dragons/.env*)"
+    ]
+  }
+}
