@@ -117,6 +117,7 @@ export default function LobbyScreen() {
         {isSignedIn && (
           <div className="flex items-center gap-3">
             <span className="text-white/50 text-sm">Signed in as <span className="text-white font-semibold">{user.username}</span></span>
+            <button onClick={() => clerk.openUserProfile()} className="text-white/30 hover:text-white/60 text-xs transition-colors">Edit profile</button>
             <button onClick={() => signOut()} className="text-white/30 hover:text-white/60 text-xs transition-colors">Sign out</button>
           </div>
         )}
