@@ -113,7 +113,7 @@ export default function LobbyScreen() {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
         <OnlineBadge />
-        <h1 className="text-4xl font-bold text-white tracking-widest">Seven Dragons</h1>
+        <img src="/logo.png" alt="Seven Dragons" className="w-64 h-auto drop-shadow-2xl" />
         {isSignedIn && (
           <div className="flex items-center gap-3">
             <span className="text-white/50 text-sm">Signed in as <span className="text-white font-semibold">{user.username}</span></span>
@@ -150,7 +150,7 @@ export default function LobbyScreen() {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
         <OnlineBadge />
-        <h1 className="text-4xl font-bold text-white tracking-widest">Seven Dragons</h1>
+        <img src="/logo.png" alt="Seven Dragons" className="w-64 h-auto drop-shadow-2xl" />
         <div className="flex flex-col gap-4 w-72">
           <label className="text-white/60 text-sm">AI opponents</label>
           <div className="flex gap-2">
@@ -192,7 +192,7 @@ export default function LobbyScreen() {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
         <OnlineBadge />
-        <h1 className="text-4xl font-bold text-white tracking-widest">Seven Dragons</h1>
+        <img src="/logo.png" alt="Seven Dragons" className="w-64 h-auto drop-shadow-2xl" />
         <div className="flex flex-col gap-4 w-72">
           <div className="bg-white/5 rounded-lg px-3 py-2 flex items-center justify-between">
             <span className="text-white/40 text-xs">Playing as</span>
@@ -236,7 +236,7 @@ export default function LobbyScreen() {
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
       <OnlineBadge />
-      <h1 className="text-4xl font-bold text-white tracking-widest">Seven Dragons</h1>
+      <img src="/logo.png" alt="Seven Dragons" className="w-64 h-auto drop-shadow-2xl" />
 
       <div className="flex flex-col gap-4 w-80">
         <div className="bg-white/5 rounded-xl px-6 py-4 flex flex-col items-center gap-1">
