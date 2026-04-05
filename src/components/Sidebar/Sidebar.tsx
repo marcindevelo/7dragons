@@ -50,7 +50,7 @@ export default function Sidebar() {
       </div>
 
       {/* Draw pile + Discard */}
-      <div className="px-4 pt-4">
+      <div data-tutorial="draw-pile" className="px-4 pt-4">
         <div className="flex gap-2">
           <div>
             <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-1">DRAW PILE</p>
@@ -108,7 +108,7 @@ export default function Sidebar() {
 
       {/* Opponents */}
       {otherPlayers.length > 0 && (
-        <div className="px-4 pt-4">
+        <div data-tutorial="opponents" className="px-4 pt-4">
           <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-2">OPPONENTS</p>
           <div className="flex flex-col gap-1.5">
             {otherPlayers.map(p => (
@@ -131,7 +131,7 @@ export default function Sidebar() {
 
       {/* Your Goal */}
       {myGoal && (
-        <div className="px-4 pt-4">
+        <div data-tutorial="goal" className="px-4 pt-4">
           <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-2">YOUR GOAL</p>
           <div className={['bg-[#141921] border-2 rounded-xl p-3 flex items-center gap-3', GOAL_BORDER[myGoal.color]].join(' ')}>
             <div className={['w-8 h-8 rounded-full shrink-0', PANEL_BG[myGoal.color]].join(' ')} />

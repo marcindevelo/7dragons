@@ -1,68 +1,106 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DONE_KEY = '7dragons_tutorial_done';
-
-type SpotArea = {
-  left: string | number;
-  top: string | number;
-  width: string | number;
-  height: string | number;
-};
+const PAD = 8; // spotlight padding around element
 
 type Step = {
   title: string;
   desc: string;
-  spot: SpotArea;
-  tip: React.CSSProperties;
+  selector: string;          // data-tutorial attribute value
+  tipSide: 'right' | 'above' | 'below' | 'center';
 };
-
-const px = (v: string | number) => (typeof v === 'number' ? `${v}px` : v);
 
 const STEPS: Step[] = [
   {
     title: 'Plansza',
     desc: 'Tu układasz karty smoków. Silver Dragon stoi na środku i nigdy się nie rusza.',
-    spot: { left: 196, top: 0, width: 'calc(100vw - 196px)', height: 'calc(100vh - 130px)' },
-    tip: { right: '24px', bottom: '160px' },
+    selector: 'board',
+    tipSide: 'center',
   },
   {
     title: 'Twój cel',
     desc: 'To jest Twoja tajna karta celu. Musisz połączyć 7 paneli tego koloru w jedną ciągłą grupę.',
-    spot: { left: 6, top: 'calc(100vh - 190px)', width: 184, height: 120 },
-    tip: { left: '216px', bottom: '110px' },
+    selector: 'goal',
+    tipSide: 'right',
   },
   {
     title: 'Twoja ręka',
     desc: 'Tu są Twoje karty. Kliknij kartę żeby ją wybrać, kliknij drugi raz żeby obrócić o 180°, a potem połóż ją na planszy. Karty akcji zagrywasz jednym kliknięciem.',
-    spot: { left: 196, top: 'calc(100vh - 130px)', width: 'calc(100vw - 196px)', height: 130 },
-    tip: { left: '50%', bottom: '150px', transform: 'translateX(-50%)' },
+    selector: 'hand',
+    tipSide: 'above',
   },
   {
     title: 'Talia i stos odrzuconych',
     desc: 'Na początku tury dobierasz kartę z talii. Zagrane karty akcji lądują na stosie odrzuconych.',
-    spot: { left: 6, top: 136, width: 184, height: 96 },
-    tip: { left: '216px', top: '130px' },
+    selector: 'draw-pile',
+    tipSide: 'right',
   },
   {
     title: 'Przeciwnicy',
     desc: 'Widzisz ile kart mają inni gracze, ale nie widzisz ich celów ani rąk.',
-    spot: { left: 6, top: 270, width: 184, height: 90 },
-    tip: { left: '216px', top: '262px' },
+    selector: 'opponents',
+    tipSide: 'right',
   },
   {
     title: 'Twoja tura',
     desc: 'Gdy pojawi się komunikat na górze ekranu — Twoja tura. Dobierz kartę, a potem zagraj jedną.',
-    spot: { left: 'calc(50vw - 90px)', top: 18, width: 180, height: 48 },
-    tip: { left: '50%', top: '84px', transform: 'translateX(-50%)' },
+    selector: 'turn-toast',
+    tipSide: 'below',
   },
 ];
+
+type Rect = { left: number; top: number; width: number; height: number };
+const TIP_W = 288;
+const TIP_OFFSET = 16;
+
+function tipStyle(rect: Rect, side: Step['tipSide']): React.CSSProperties {
+  const vh = window.innerHeight;
+  const vw = window.innerWidth;
+
+  if (side === 'right') {
+    const left = rect.left + rect.width + TIP_OFFSET;
+    // If tooltip would overflow right edge, flip to center
+    const safeLeft = Math.min(left, vw - TIP_W - 12);
+    return { left: safeLeft, top: Math.max(8, rect.top) };
+  }
+  if (side === 'above') {
+    return {
+      left: Math.max(8, Math.min(rect.left + rect.width / 2 - TIP_W / 2, vw - TIP_W - 8)),
+      bottom: vh - rect.top + TIP_OFFSET,
+    };
+  }
+  if (side === 'below') {
+    return {
+      left: Math.max(8, Math.min(rect.left + rect.width / 2 - TIP_W / 2, vw - TIP_W - 8)),
+      top: rect.top + rect.height + TIP_OFFSET,
+    };
+  }
+  // center: place in center of the spotlight area
+  return {
+    left: Math.max(8, Math.min(rect.left + rect.width / 2 - TIP_W / 2, vw - TIP_W - 8)),
+    top: rect.top + rect.height / 2 - 100,
+  };
+}
 
 export default function GameTutorial() {
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(() => localStorage.getItem(DONE_KEY) === '1');
+  const [rect, setRect] = useState<Rect | null>(null);
 
-  if (done) return null;
+  useEffect(() => {
+    if (done) return;
+    // Small delay so DOM is fully rendered
+    const t = setTimeout(() => {
+      const el = document.querySelector(`[data-tutorial="${STEPS[step].selector}"]`);
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setRect({ left: r.left - PAD, top: r.top - PAD, width: r.width + PAD * 2, height: r.height + PAD * 2 });
+    }, 80);
+    return () => clearTimeout(t);
+  }, [step, done]);
+
+  if (done || !rect) return null;
 
   const s = STEPS[step];
   const isLast = step === STEPS.length - 1;
@@ -79,23 +117,23 @@ export default function GameTutorial() {
 
   return (
     <div className="fixed inset-0 z-[400] pointer-events-none">
-      {/* Spotlight hole */}
+      {/* Spotlight */}
       <AnimatePresence mode="wait">
         <motion.div
           key={`spot-${step}`}
           className="fixed rounded-xl"
           style={{
-            left: px(s.spot.left),
-            top: px(s.spot.top),
-            width: px(s.spot.width),
-            height: px(s.spot.height),
-            boxShadow: '0 0 0 9999px rgba(0,0,0,0.80)',
-            outline: '2px solid rgba(255,255,255,0.10)',
+            left: rect.left,
+            top: rect.top,
+            width: rect.width,
+            height: rect.height,
+            boxShadow: '0 0 0 9999px rgba(0,0,0,0.82)',
+            outline: '2px solid rgba(255,255,255,0.12)',
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.2 }}
         />
       </AnimatePresence>
 
@@ -103,8 +141,8 @@ export default function GameTutorial() {
       <AnimatePresence mode="wait">
         <motion.div
           key={`tip-${step}`}
-          className="fixed w-72 bg-zinc-900 border border-white/15 rounded-2xl p-4 shadow-2xl pointer-events-auto"
-          style={s.tip}
+          className="fixed bg-zinc-900 border border-white/15 rounded-2xl p-4 shadow-2xl pointer-events-auto"
+          style={{ width: TIP_W, ...tipStyle(rect, s.tipSide) }}
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
@@ -122,10 +160,7 @@ export default function GameTutorial() {
                 />
               ))}
             </div>
-            <button
-              onClick={finish}
-              className="text-white/30 hover:text-white/60 text-xs transition-colors"
-            >
+            <button onClick={finish} className="text-white/30 hover:text-white/60 text-xs transition-colors">
               Pomiń
             </button>
           </div>

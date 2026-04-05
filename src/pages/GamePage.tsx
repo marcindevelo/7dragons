@@ -136,7 +136,7 @@ export default function GamePage() {
     <div className="flex h-screen select-none overflow-hidden">
       <Sidebar />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <div className="flex-1 relative overflow-hidden">
+        <div data-tutorial="board" className="flex-1 relative overflow-hidden">
           <BoardArea
             board={state.board}
             silverColor={state.silverDragonColor}
@@ -157,7 +157,7 @@ export default function GamePage() {
         ) : pendingActionCardId ? (
           <ActionConfirm cardId={pendingActionCardId} />
         ) : (
-          <div className="relative">
+          <div data-tutorial="hand" className="relative">
             {isMultiplayer && !isMyTurn && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 rounded-t-lg">
                 <span className="text-white/60 text-sm font-medium">
