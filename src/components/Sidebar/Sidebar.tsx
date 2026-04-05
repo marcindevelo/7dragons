@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { useMultiplayerStore } from '../../store/multiplayerStore';
 import { SILVER_COLOR_BG, DRAGON_LABEL, PANEL_BG } from '../Card/colors';
 import type { DragonColor } from '../../engine/types';
+import HelpModal from '../HelpModal';
 
 const GOAL_BORDER: Record<DragonColor, string> = {
   red:   'border-red-600',
@@ -26,6 +28,7 @@ export default function Sidebar() {
   const drawInsteadOfPlay = useGameStore(s => s.drawInsteadOfPlay);
   const myPlayerIndex = useMultiplayerStore(s => s.myPlayerIndex);
   const sendQuit = useMultiplayerStore(s => s.sendQuit);
+  const [showHelp, setShowHelp] = useState(false);
 
   if (!state) return null;
 
@@ -148,8 +151,14 @@ export default function Sidebar() {
       {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Leave Game */}
-      <div className="px-4 pb-4 pt-3">
+      {/* Help + Leave Game */}
+      <div className="px-4 pb-4 pt-3 flex flex-col gap-2">
+        <button
+          onClick={() => setShowHelp(true)}
+          className="w-full py-2 rounded-lg border border-white/10 bg-white/5 text-white/50 text-xs font-semibold hover:bg-white/10 hover:text-white/70 transition-colors"
+        >
+          ? Help
+        </button>
         <button
           onClick={isMultiplayer ? sendQuit : goToLobby}
           className="w-full py-2 rounded-lg border border-red-800 bg-red-950/40 text-red-400 text-xs font-semibold hover:bg-red-900/40 hover:border-red-600 transition-colors"
@@ -157,6 +166,8 @@ export default function Sidebar() {
           ← Leave Game
         </button>
       </div>
+
+      {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
     </aside>
   );
 }
