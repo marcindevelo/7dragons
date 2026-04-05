@@ -1,5 +1,8 @@
 {
   "name": "7dragons",
   "main": "party/index.ts",
+  "parties": {
+    "notif": "party/notif.ts"
+  },
   "compatibilityDate": "2024-01-01"
 }

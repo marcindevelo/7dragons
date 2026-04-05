@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import { useGameStore } from '../store/gameStore';
 import { useMultiplayerStore } from '../store/multiplayerStore';
+import { inviteClient } from '../network/inviteClient';
 
 type Mode = 'home' | 'local' | 'create' | 'join' | 'waiting';
 
@@ -69,6 +70,8 @@ export default function LobbyScreen() {
   }, [myPlayerId, roomId]);
 
   const [copied, setCopied] = useState(false);
+  const [inviteNick, setInviteNick] = useState('');
+  const [inviteSent, setInviteSent] = useState(false);
   const copyRoomCode = useCallback(() => {
     if (!roomId) return;
     navigator.clipboard.writeText(roomId).then(() => {
@@ -80,6 +83,14 @@ export default function LobbyScreen() {
   function handleDisconnect() {
     disconnect();
     setMode('home');
+  }
+
+  function handleInvite() {
+    if (!inviteNick.trim() || !roomId || !onlineName) return;
+    inviteClient.sendInvite(inviteNick.trim(), onlineName, roomId);
+    setInviteSent(true);
+    setTimeout(() => setInviteSent(false), 2500);
+    setInviteNick('');
   }
 
   // ── Home ────────────────────────────────────────────────────────────────────
@@ -234,6 +245,27 @@ export default function LobbyScreen() {
           {lobbyPlayers.length === 0 && (
             <span className="text-white/30 text-sm">Waiting for players…</span>
           )}
+        </div>
+
+        {/* Invite by username */}
+        <div className="bg-white/5 rounded-xl px-6 py-4 flex flex-col gap-2">
+          <span className="text-white/40 text-xs uppercase tracking-widest mb-1">Invite player</span>
+          <div className="flex gap-2">
+            <input
+              value={inviteNick}
+              onChange={e => setInviteNick(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleInvite()}
+              className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:bg-white/20 transition-colors"
+              placeholder="Username…"
+            />
+            <button
+              onClick={handleInvite}
+              disabled={!inviteNick.trim()}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap"
+            >
+              {inviteSent ? '✓ Sent' : 'Invite'}
+            </button>
+          </div>
         </div>
 
         {error && <p className="text-red-400 text-sm">{error}</p>}
