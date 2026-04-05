@@ -98,7 +98,7 @@ export default function LobbyScreen() {
             onClick={() => setMode('local')}
             className="py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-lg tracking-wide transition-colors"
           >
-            Local Game
+            Start AI Game
           </button>
           <button
             onClick={() => requireAuth('create')}

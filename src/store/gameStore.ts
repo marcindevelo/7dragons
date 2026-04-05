@@ -40,7 +40,7 @@ type GameStore = {
   drawInsteadOfPlay: () => void;
 };
 
-const AI_DELAY = 700; // ms between AI actions
+const AI_DELAY = 2100; // ms between AI actions
 
 function scheduleAI(getState: () => GameStore, setState: (s: Partial<GameStore>) => void) {
   const { state, isMultiplayer } = getState();
