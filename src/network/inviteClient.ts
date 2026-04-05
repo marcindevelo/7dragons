@@ -19,8 +19,7 @@ class InviteClient {
     this.disconnect();
     this.socket = new PartySocket({
       host: PARTYKIT_HOST,
-      party: 'notif',
-      room: username.toLowerCase(),
+      room: `invite-${username.toLowerCase()}`,
     });
     this.socket.addEventListener('message', (e: MessageEvent) => {
       try {
@@ -41,8 +40,7 @@ class InviteClient {
   sendInvite(toUsername: string, fromName: string, roomCode: string) {
     const sock = new PartySocket({
       host: PARTYKIT_HOST,
-      party: 'notif',
-      room: toUsername.toLowerCase(),
+      room: `invite-${toUsername.toLowerCase()}`,
     });
     sock.addEventListener('open', () => {
       sock.send(JSON.stringify({ type: 'invite', fromName, roomCode } satisfies InviteMessage));

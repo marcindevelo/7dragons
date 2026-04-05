@@ -30,7 +30,12 @@ export default class GameRoom implements Party.Server {
 
   constructor(readonly room: Party.Room) {}
 
+  private isInviteRoom(): boolean {
+    return this.room.id.startsWith('invite-');
+  }
+
   onConnect(conn: Party.Connection) {
+    if (this.isInviteRoom()) return; // invite channels need no greeting
     // At this point we don't know clientId yet — join message comes next.
     // Send lobby so the new connection isn't stuck on a blank screen.
     if (!this.gameState) {
@@ -39,6 +44,11 @@ export default class GameRoom implements Party.Server {
   }
 
   onMessage(raw: string, sender: Party.Connection) {
+    // Invite channel: just relay to everyone else in the room
+    if (this.isInviteRoom()) {
+      this.room.broadcast(raw, [sender.id]);
+      return;
+    }
     let msg: ClientMessage;
     try {
       msg = JSON.parse(raw) as ClientMessage;
