@@ -31,7 +31,10 @@ export default function TurnToast() {
     setVisible(true);
 
     if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setVisible(false), 2200);
+    // "Your Turn" stays until replaced; AI turn disappears after 2.2s
+    if (!me) {
+      timerRef.current = setTimeout(() => setVisible(false), 2200);
+    }
   }, [state?.currentPlayerIndex, state?.phase]);
 
   return (
