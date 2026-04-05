@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react'; // useRef kept for prevIndex
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
 import { useMultiplayerStore } from '../store/multiplayerStore';
@@ -31,10 +31,6 @@ export default function TurnToast() {
     setVisible(true);
 
     if (timerRef.current) clearTimeout(timerRef.current);
-    // "Your Turn" stays until replaced; AI turn disappears after 2.2s
-    if (!me) {
-      timerRef.current = setTimeout(() => setVisible(false), 2200);
-    }
   }, [state?.currentPlayerIndex, state?.phase]);
 
   return (
