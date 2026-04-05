@@ -5,6 +5,7 @@ import BoardArea from '../components/Board/BoardArea';
 import HandBar from '../components/Hand/HandBar';
 import ActionConfirm from '../components/ActionConfirm';
 import BonusToast from '../components/BonusToast';
+import TurnToast from '../components/TurnToast';
 import Sidebar from '../components/Sidebar/Sidebar';
 import LobbyScreen from './LobbyScreen';
 import WinBanner from '../components/WinOverlay';
@@ -145,6 +146,7 @@ export default function GamePage() {
           {isTargeting && pendingAction && (
             <ActionTargeting pendingAction={pendingAction} />
           )}
+          <TurnToast />
           <BonusToast />
         </div>
         {state.phase === 'ended' ? (

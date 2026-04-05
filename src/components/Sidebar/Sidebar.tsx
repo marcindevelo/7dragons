@@ -37,7 +37,6 @@ export default function Sidebar() {
   const myGoal = state.goals.find(g => g.id === myPlayer.goalId);
   const otherPlayers = state.players.filter(p => p.id !== myPlayer.id);
   const topDiscard = state.discardPile[state.discardPile.length - 1] ?? null;
-  const isDrawPhase = state.phase === 'draw';
   const isPlayPhase = state.phase === 'play';
   const silverBg = SILVER_COLOR_BG[state.silverDragonColor];
 
@@ -47,23 +46,6 @@ export default function Sidebar() {
       {/* Title */}
       <div className="px-4 pt-5 pb-0">
         <p className="text-[#eff1f5] font-bold text-sm tracking-wide">Seven Dragons</p>
-      </div>
-
-      {/* Turn indicator */}
-      <div className="px-4 pt-3">
-        <div className={[
-          'rounded-lg py-2 text-center text-[13px] font-bold',
-          isMyTurn && isDrawPhase ? 'bg-yellow-500 text-[#0d1117]'
-            : isMyTurn ? 'bg-green-700/40 text-green-300 border border-green-600/40'
-            : 'bg-[#1a2130] text-[#96a3b7] border border-[#333c4a]',
-        ].join(' ')}>
-          {isMyTurn ? (isDrawPhase ? 'Your Turn' : 'Your Turn') : `${currentPlayer.name}'s turn`}
-        </div>
-        <p className="text-[#96a3b7] text-[11px] mt-2 leading-snug">
-          {isMyTurn
-            ? (isDrawPhase ? 'Draw a card to start your turn' : 'Select a card to play')
-            : 'Waiting for opponent…'}
-        </p>
       </div>
 
       {/* Draw pile + Discard */}
