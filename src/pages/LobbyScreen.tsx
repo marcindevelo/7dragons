@@ -10,7 +10,6 @@ export default function LobbyScreen() {
   const [mode, setMode] = useState<Mode>('home');
   const [pendingMode, setPendingMode] = useState<'create' | 'join' | null>(null);
   const [playerCount, setPlayerCount] = useState(2);
-  const [names, setNames] = useState(['Player 1', 'Player 2', 'Player 3', 'Player 4', 'Player 5']);
   const [roomCodeInput, setRoomCodeInput] = useState('');
 
   const { isSignedIn, user } = useUser();
@@ -32,7 +31,8 @@ export default function LobbyScreen() {
   const isHost = lobbyPlayers.some(p => p.isHost && p.id === myPlayerId);
 
   function handleLocalStart() {
-    startGame(names.slice(0, playerCount));
+    const aiNames = Array.from({ length: playerCount - 1 }, (_, i) => `AI ${i + 1}`);
+    startGame(['You', ...aiNames]);
   }
 
   function requireAuth(next: 'create' | 'join') {
@@ -123,15 +123,15 @@ export default function LobbyScreen() {
       <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
         <h1 className="text-4xl font-bold text-white tracking-widest">Seven Dragons</h1>
         <div className="flex flex-col gap-4 w-72">
-          <label className="text-white/60 text-sm">Players</label>
+          <label className="text-white/60 text-sm">AI opponents</label>
           <div className="flex gap-2">
-            {[2, 3, 4, 5].map(n => (
+            {[1, 2, 3, 4].map(n => (
               <button
                 key={n}
-                onClick={() => setPlayerCount(n)}
+                onClick={() => setPlayerCount(n + 1)}
                 className={[
                   'flex-1 py-2 rounded-lg text-sm font-bold transition-colors',
-                  playerCount === n
+                  playerCount === n + 1
                     ? 'bg-yellow-500 text-black'
                     : 'bg-white/10 text-white/60 hover:bg-white/20',
                 ].join(' ')}
@@ -141,25 +141,11 @@ export default function LobbyScreen() {
             ))}
           </div>
 
-          {names.slice(0, playerCount).map((name, i) => (
-            <input
-              key={i}
-              value={name}
-              onChange={e => {
-                const next = [...names];
-                next[i] = e.target.value;
-                setNames(next);
-              }}
-              className="bg-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:bg-white/20 transition-colors"
-              placeholder={`Player ${i + 1}`}
-            />
-          ))}
-
           <button
             onClick={handleLocalStart}
             className="mt-2 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-lg tracking-wide transition-colors"
           >
-            Start Game
+            Start AI Game
           </button>
           <button
             onClick={() => setMode('home')}
