@@ -47,10 +47,6 @@ export default function Sidebar() {
   return (
     <aside className="w-[196px] shrink-0 bg-[#0f131a] border-r border-[#333c4a] flex flex-col overflow-hidden">
 
-      {/* Title */}
-      <div className="px-4 pt-4 pb-0 flex justify-center">
-        <img src="/logo.png" alt="Seven Dragons" className="w-36 h-auto drop-shadow-lg" />
-      </div>
 
       {/* Draw pile + Discard */}
       <div data-tutorial="draw-pile" className="px-4 pt-4">
