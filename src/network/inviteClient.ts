@@ -8,18 +8,39 @@ export type InviteMessage = {
   roomCode: string;
 };
 
-type Listener = (msg: InviteMessage) => void;
+type InviteListener = (msg: InviteMessage) => void;
+type StatusListener = (connected: boolean) => void;
 
 class InviteClient {
   private socket: PartySocket | null = null;
-  private listeners = new Set<Listener>();
+  private listeners = new Set<InviteListener>();
+  private statusListeners = new Set<StatusListener>();
+  private pingInterval: ReturnType<typeof setInterval> | null = null;
 
   // Connect to own invite channel (call when user logs in)
   connect(username: string) {
     this.disconnect();
+    this._open(username);
+
+    // Every 5 seconds: reconnect if socket is not open
+    this.pingInterval = setInterval(() => {
+      if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+        this._open(username);
+      }
+    }, 5000);
+  }
+
+  private _open(username: string) {
+    this.socket?.close();
     this.socket = new PartySocket({
       host: PARTYKIT_HOST,
       room: `invite-${username.toLowerCase()}`,
+    });
+    this.socket.addEventListener('open', () => {
+      for (const l of this.statusListeners) l(true);
+    });
+    this.socket.addEventListener('close', () => {
+      for (const l of this.statusListeners) l(false);
     });
     this.socket.addEventListener('message', (e: MessageEvent) => {
       try {
@@ -32,8 +53,17 @@ class InviteClient {
   }
 
   disconnect() {
+    if (this.pingInterval !== null) {
+      clearInterval(this.pingInterval);
+      this.pingInterval = null;
+    }
     this.socket?.close();
     this.socket = null;
+    for (const l of this.statusListeners) l(false);
+  }
+
+  isConnected(): boolean {
+    return this.socket?.readyState === WebSocket.OPEN;
   }
 
   // Send invite to another user's channel
@@ -44,14 +74,18 @@ class InviteClient {
     });
     sock.addEventListener('open', () => {
       sock.send(JSON.stringify({ type: 'invite', fromName, roomCode } satisfies InviteMessage));
-      // Close after sending
       setTimeout(() => sock.close(), 3000);
     });
   }
 
-  onInvite(listener: Listener): () => void {
+  onInvite(listener: InviteListener): () => void {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
+  }
+
+  onStatus(listener: StatusListener): () => void {
+    this.statusListeners.add(listener);
+    return () => this.statusListeners.delete(listener);
   }
 }
 

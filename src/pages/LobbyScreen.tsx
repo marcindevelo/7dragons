@@ -4,6 +4,18 @@ import { useGameStore } from '../store/gameStore';
 import { useMultiplayerStore } from '../store/multiplayerStore';
 import { inviteClient } from '../network/inviteClient';
 
+function OnlineBadge() {
+  const [connected, setConnected] = useState(() => inviteClient.isConnected());
+  useEffect(() => inviteClient.onStatus(setConnected), []);
+  if (!connected) return null;
+  return (
+    <div className="fixed top-4 right-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/15 border border-green-500/30">
+      <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+      <span className="text-green-400 text-xs font-semibold">online</span>
+    </div>
+  );
+}
+
 type Mode = 'home' | 'local' | 'create' | 'join' | 'waiting';
 
 export default function LobbyScreen() {
@@ -100,6 +112,7 @@ export default function LobbyScreen() {
   if (mode === 'home') {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
+        <OnlineBadge />
         <h1 className="text-4xl font-bold text-white tracking-widest">Seven Dragons</h1>
         {isSignedIn && (
           <div className="flex items-center gap-3">
@@ -135,6 +148,7 @@ export default function LobbyScreen() {
   if (mode === 'local') {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
+        <OnlineBadge />
         <h1 className="text-4xl font-bold text-white tracking-widest">Seven Dragons</h1>
         <div className="flex flex-col gap-4 w-72">
           <label className="text-white/60 text-sm">AI opponents</label>
@@ -176,6 +190,7 @@ export default function LobbyScreen() {
   if (mode === 'create' || mode === 'join') {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
+        <OnlineBadge />
         <h1 className="text-4xl font-bold text-white tracking-widest">Seven Dragons</h1>
         <div className="flex flex-col gap-4 w-72">
           <div className="bg-white/5 rounded-lg px-3 py-2 flex items-center justify-between">
@@ -219,6 +234,7 @@ export default function LobbyScreen() {
   // ── Waiting room ────────────────────────────────────────────────────────────
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
+      <OnlineBadge />
       <h1 className="text-4xl font-bold text-white tracking-widest">Seven Dragons</h1>
 
       <div className="flex flex-col gap-4 w-80">
