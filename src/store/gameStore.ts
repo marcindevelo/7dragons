@@ -11,6 +11,7 @@ import {
 import { countNewColorConnections, bonusDrawCount } from '../engine/connections';
 import type { DragonColor } from '../engine/types';
 import { setMultiplayerCallbacks, useMultiplayerStore } from './multiplayerStore';
+import { aiChooseMove, aiResolveAction } from '../engine/ai';
 
 type BonusNotification = { count: number; colors: DragonColor[] };
 
@@ -38,6 +39,75 @@ type GameStore = {
   passTurn: () => void;
   drawInsteadOfPlay: () => void;
 };
+
+const AI_DELAY = 700; // ms between AI actions
+
+function scheduleAI(getState: () => GameStore, setState: (s: Partial<GameStore>) => void) {
+  const { state, isMultiplayer } = getState();
+  if (!state || isMultiplayer || state.phase === 'ended') return;
+
+  const currentPlayer = state.players[state.currentPlayerIndex];
+  if (!currentPlayer.isAI) return;
+
+  if (state.phase === 'draw') {
+    setTimeout(() => {
+      const { state: s } = getState();
+      if (!s || !s.players[s.currentPlayerIndex].isAI || s.phase !== 'draw') return;
+      const next = drawCard(s);
+      setState({ state: next });
+      scheduleAI(getState, setState);
+    }, AI_DELAY);
+    return;
+  }
+
+  if (state.phase === 'play') {
+    setTimeout(() => {
+      const { state: s } = getState();
+      if (!s || !s.players[s.currentPlayerIndex].isAI || s.phase !== 'play') return;
+
+      const move = aiChooseMove(s);
+      if (move.type === 'dragon') {
+        try {
+          let next = playDragonCard(s, move.cardId, move.pos, move.rotation);
+          if (next.winner === null) next = endTurn(next);
+          if (next.winner === null) next = drawCard(next);
+          setState({ state: next, selectedCardId: null });
+          scheduleAI(getState, setState);
+        } catch { /* ignore */ }
+      } else if (move.type === 'action') {
+        try {
+          const next = playActionCard(s, move.cardId, true, true);
+          setState({ state: next });
+          scheduleAI(getState, setState);
+        } catch { /* ignore */ }
+      } else {
+        // pass — no valid moves
+        let next = endTurn(s);
+        next = drawCard(next);
+        setState({ state: next });
+        scheduleAI(getState, setState);
+      }
+    }, AI_DELAY);
+    return;
+  }
+
+  if (state.phase === 'action-targeting') {
+    setTimeout(() => {
+      const { state: s } = getState();
+      if (!s || !s.players[s.currentPlayerIndex].isAI || s.phase !== 'action-targeting') return;
+      try {
+        const payload = aiResolveAction(s);
+        let next = resolvePendingAction(s, payload);
+        if (next.winner === null && !next.pendingAction) {
+          next = endTurn(next);
+          next = drawCard(next);
+        }
+        setState({ state: next });
+        scheduleAI(getState, setState);
+      } catch { /* ignore */ }
+    }, AI_DELAY);
+  }
+}
 
 export const useGameStore = create<GameStore>((set, get) => {
   // Register multiplayer callbacks so multiplayerStore can push state here
@@ -67,6 +137,7 @@ export const useGameStore = create<GameStore>((set, get) => {
       let s = createGame(names);
       s = drawCard(s);
       set({ state: s, selectedCardId: null, playerNames: names, isMultiplayer: false });
+      scheduleAI(get, p => set(p as Partial<GameStore>));
     },
 
     startMultiplayer() {
@@ -138,6 +209,7 @@ export const useGameStore = create<GameStore>((set, get) => {
         if (next.winner === null) next = endTurn(next);
         if (next.winner === null) next = drawCard(next);
         set({ state: next, selectedCardId: null, selectedRotation: 0, bonusNotification });
+        scheduleAI(get, p => set(p as Partial<GameStore>));
 
         if (bonusNotification) {
           setTimeout(() => set({ bonusNotification: null }), 3000);
@@ -163,8 +235,10 @@ export const useGameStore = create<GameStore>((set, get) => {
           let after = endTurn(next);
           after = drawCard(after);
           set({ state: after, selectedCardId: null, pendingActionCardId: null });
+          scheduleAI(get, p => set(p as Partial<GameStore>));
         } else {
           set({ state: next, selectedCardId: null, pendingActionCardId: null });
+          scheduleAI(get, p => set(p as Partial<GameStore>));
         }
       } catch {
         // ignore
@@ -187,6 +261,7 @@ export const useGameStore = create<GameStore>((set, get) => {
           next = drawCard(next);
         }
         set({ state: next, selectedCardId: null });
+        scheduleAI(get, p => set(p as Partial<GameStore>));
       } catch {
         // ignore
       }

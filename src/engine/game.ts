@@ -16,6 +16,7 @@ export function createGame(playerNames: string[], _seed?: number): GameState {
   const players: Player[] = playerNames.map((name, i) => ({
     id: `player_${i}`,
     name,
+    isAI: i > 0,
     hand: hands[i],
     goalId: shuffledGoals[i].id,
   }));

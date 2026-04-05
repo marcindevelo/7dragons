@@ -36,6 +36,7 @@ export type PlacedCard = {
 export type Player = {
   id: string;
   name: string;
+  isAI: boolean;
   hand: (DragonCard | ActionCard)[];
   goalId: string; // ID of their GoalCard
 };
