@@ -11,6 +11,7 @@ import Sidebar from '../components/Sidebar/Sidebar';
 import LobbyScreen from './LobbyScreen';
 import WinBanner from '../components/WinOverlay';
 import ActionTargeting from '../components/ActionTargeting';
+import GameTutorial from '../components/GameTutorial';
 import { validPlacements as computeValidPlacements } from '../engine/board';
 
 export default function GamePage() {
@@ -173,6 +174,7 @@ export default function GamePage() {
           </div>
         )}
       </div>
+      <GameTutorial />
     </div>
   );
 }
