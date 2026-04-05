@@ -72,6 +72,7 @@ export default function LobbyScreen() {
   const [copied, setCopied] = useState(false);
   const [inviteNick, setInviteNick] = useState('');
   const [inviteSent, setInviteSent] = useState(false);
+  const [pendingInvites, setPendingInvites] = useState<string[]>([]);
   const copyRoomCode = useCallback(() => {
     if (!roomId) return;
     navigator.clipboard.writeText(roomId).then(() => {
@@ -87,8 +88,10 @@ export default function LobbyScreen() {
 
   function handleInvite() {
     if (!inviteNick.trim() || !roomId || !onlineName) return;
-    inviteClient.sendInvite(inviteNick.trim(), onlineName, roomId);
+    const nick = inviteNick.trim();
+    inviteClient.sendInvite(nick, onlineName, roomId);
     setInviteSent(true);
+    setPendingInvites(prev => prev.includes(nick) ? prev : [...prev, nick]);
     setTimeout(() => setInviteSent(false), 2500);
     setInviteNick('');
   }
@@ -242,7 +245,17 @@ export default function LobbyScreen() {
               {p.id === myPlayerId && <span className="text-white/30 text-xs">(you)</span>}
             </div>
           ))}
-          {lobbyPlayers.length === 0 && (
+          {pendingInvites
+            .filter(nick => !lobbyPlayers.some(p => p.name.toLowerCase() === nick.toLowerCase()))
+            .map(nick => (
+              <div key={nick} className="flex items-center gap-2">
+                <span className="text-white/30 text-xs">⏳</span>
+                <span className="text-white/50 text-sm">{nick}</span>
+                <span className="text-white/30 text-xs">invite sent</span>
+              </div>
+            ))
+          }
+          {lobbyPlayers.length === 0 && pendingInvites.length === 0 && (
             <span className="text-white/30 text-sm">Waiting for players…</span>
           )}
         </div>
