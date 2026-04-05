@@ -1,61 +1,17 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import { useGameStore } from '../store/gameStore';
 import { useMultiplayerStore } from '../store/multiplayerStore';
-import { inviteClient, type RawEntry } from '../network/inviteClient';
+import { inviteClient } from '../network/inviteClient';
 
 function OnlineBadge() {
   const [connected, setConnected] = useState(() => inviteClient.isConnected());
-  const [open, setOpen] = useState(false);
-  const [log, setLog] = useState<RawEntry[]>(() => inviteClient.getLog());
-  const logRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => inviteClient.onStatus(setConnected), []);
-  useEffect(() => inviteClient.onRaw(() => {
-    setLog(inviteClient.getLog());
-    // scroll to bottom
-    setTimeout(() => {
-      if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
-    }, 0);
-  }), []);
-
-  if (!connected && !open) return null;
-
+  if (!connected) return null;
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col items-end gap-1">
-      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/15 border border-green-500/30">
-        <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-        <span className="text-green-400 text-xs font-semibold">online</span>
-        <button
-          onClick={() => setOpen(o => !o)}
-          className="text-green-400/50 hover:text-green-400 text-xs ml-1 transition-colors"
-        >
-          websocket
-        </button>
-      </div>
-
-      {open && (
-        <div className="w-80 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden">
-          <div className="flex items-center justify-between px-3 py-2 border-b border-white/10">
-            <span className="text-white/50 text-xs font-mono">invite-ws log</span>
-            <button onClick={() => setOpen(false)} className="text-white/30 hover:text-white/60 text-xs">✕</button>
-          </div>
-          <div ref={logRef} className="h-48 overflow-y-auto p-2 flex flex-col gap-0.5 font-mono text-xs">
-            {log.length === 0 && (
-              <span className="text-white/20">brak wiadomości</span>
-            )}
-            {log.map((e, i) => (
-              <div key={i} className="flex gap-2">
-                <span className="text-white/30 shrink-0">{e.ts}</span>
-                <span className={e.dir === 'out' ? 'text-blue-400' : 'text-green-400'}>
-                  {e.dir === 'out' ? '↑' : '↓'}
-                </span>
-                <span className="text-white/70 break-all">{e.raw}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+    <div className="fixed top-4 right-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/15 border border-green-500/30">
+      <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+      <span className="text-green-400 text-xs font-semibold">online</span>
     </div>
   );
 }
