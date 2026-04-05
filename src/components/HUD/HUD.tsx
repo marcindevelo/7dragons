@@ -30,7 +30,10 @@ export default function HUD() {
       <span className="text-white/30">|</span>
 
       {/* Deck */}
-      <span>Deck: {deckCount}</span>
+      {deckCount === 0
+        ? <span className="text-red-400 font-semibold">Deck empty</span>
+        : <span>Deck: {deckCount}</span>
+      }
 
       {/* Discard top */}
       {state.discardPile.length > 0 && (
