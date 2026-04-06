@@ -113,8 +113,7 @@ export default function LobbyScreen() {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.58)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
-        <img src="/logo.png" alt="Seven Dragons" className="w-64 h-auto drop-shadow-2xl" />
-        {isSignedIn && (
+                {isSignedIn && (
           <div className="flex items-center gap-3">
             <span className="text-white/50 text-sm">Signed in as <span className="text-white font-semibold">{user.username}</span></span>
             <button onClick={() => clerk.openUserProfile()} className="text-white/30 hover:text-white/60 text-xs transition-colors">Edit profile</button>
@@ -150,8 +149,7 @@ export default function LobbyScreen() {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.58)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
-        <img src="/logo.png" alt="Seven Dragons" className="w-64 h-auto drop-shadow-2xl" />
-        <div className="flex flex-col gap-4 w-72">
+                <div className="flex flex-col gap-4 w-72">
           <label className="text-white/60 text-sm">AI opponents</label>
           <div className="flex gap-2">
             {[1, 2, 3, 4].map(n => (
@@ -192,8 +190,7 @@ export default function LobbyScreen() {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.58)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
-        <img src="/logo.png" alt="Seven Dragons" className="w-64 h-auto drop-shadow-2xl" />
-        <div className="flex flex-col gap-4 w-72">
+                <div className="flex flex-col gap-4 w-72">
           <div className="bg-white/5 rounded-lg px-3 py-2 flex items-center justify-between">
             <span className="text-white/40 text-xs">Playing as</span>
             <span className="text-white font-semibold text-sm">{onlineName}</span>
@@ -236,8 +233,7 @@ export default function LobbyScreen() {
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.58)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <OnlineBadge />
-      <img src="/logo.png" alt="Seven Dragons" className="w-64 h-auto drop-shadow-2xl" />
-
+      
       <div className="flex flex-col gap-4 w-80">
         <div className="bg-white/5 rounded-xl px-6 py-4 flex flex-col items-center gap-1">
           <span className="text-white/40 text-xs uppercase tracking-widest">Room code</span>
