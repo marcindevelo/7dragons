@@ -111,7 +111,7 @@ export default function LobbyScreen() {
   // ── Home ────────────────────────────────────────────────────────────────────
   if (mode === 'home') {
     return (
-      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.58)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
                 {isSignedIn && (
           <div className="flex items-center gap-3">
@@ -120,7 +120,7 @@ export default function LobbyScreen() {
             <button onClick={() => signOut()} className="text-white/30 hover:text-white/60 text-xs transition-colors">Sign out</button>
           </div>
         )}
-        <div className="flex flex-col gap-3 w-64">
+        <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-3 w-64">
           <button
             onClick={() => setMode('local')}
             className="py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-lg tracking-wide transition-colors"
@@ -147,9 +147,9 @@ export default function LobbyScreen() {
   // ── Local hot-seat ──────────────────────────────────────────────────────────
   if (mode === 'local') {
     return (
-      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.58)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
-                <div className="flex flex-col gap-4 w-72">
+        <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-4 w-72">
           <label className="text-white/60 text-sm">AI opponents</label>
           <div className="flex gap-2">
             {[1, 2, 3, 4].map(n => (
@@ -167,10 +167,9 @@ export default function LobbyScreen() {
               </button>
             ))}
           </div>
-
           <button
             onClick={handleLocalStart}
-            className="mt-2 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-lg tracking-wide transition-colors"
+            className="py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-lg tracking-wide transition-colors"
           >
             Start AI Game
           </button>
@@ -188,10 +187,10 @@ export default function LobbyScreen() {
   // ── Create / Join ───────────────────────────────────────────────────────────
   if (mode === 'create' || mode === 'join') {
     return (
-      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.58)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
-                <div className="flex flex-col gap-4 w-72">
-          <div className="bg-white/5 rounded-lg px-3 py-2 flex items-center justify-between">
+        <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-4 w-72">
+          <div className="bg-white/5 rounded-lg px-3 py-2 flex items-center justify-between border border-white/10">
             <span className="text-white/40 text-xs">Playing as</span>
             <span className="text-white font-semibold text-sm">{onlineName}</span>
           </div>
@@ -231,11 +230,11 @@ export default function LobbyScreen() {
 
   // ── Waiting room ────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.58)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <OnlineBadge />
       
       <div className="flex flex-col gap-4 w-80">
-        <div className="bg-white/5 rounded-xl px-6 py-4 flex flex-col items-center gap-1">
+        <div className="bg-black/50 backdrop-blur-md rounded-xl px-6 py-4 flex flex-col items-center gap-1 border border-white/10">
           <span className="text-white/40 text-xs uppercase tracking-widest">Room code</span>
           <div className="flex items-center gap-3">
             <span className="text-white font-mono text-3xl tracking-widest font-bold">{roomId ?? '…'}</span>
@@ -249,7 +248,7 @@ export default function LobbyScreen() {
           <span className="text-white/30 text-xs">Share this code with other players</span>
         </div>
 
-        <div className="bg-white/5 rounded-xl px-6 py-4 flex flex-col gap-2">
+        <div className="bg-black/50 backdrop-blur-md rounded-xl px-6 py-4 flex flex-col gap-2 border border-white/10">
           <span className="text-white/40 text-xs uppercase tracking-widest mb-1">Players in room</span>
           {lobbyPlayers.map(p => (
             <div key={p.id} className="flex items-center gap-2">
@@ -274,7 +273,7 @@ export default function LobbyScreen() {
         </div>
 
         {/* Invite by username */}
-        <div className="bg-white/5 rounded-xl px-6 py-4 flex flex-col gap-2">
+        <div className="bg-black/50 backdrop-blur-md rounded-xl px-6 py-4 flex flex-col gap-2 border border-white/10">
           <span className="text-white/40 text-xs uppercase tracking-widest mb-1">Invite player</span>
           <div className="flex gap-2">
             <input
