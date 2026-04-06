@@ -111,7 +111,7 @@ export default function LobbyScreen() {
   // ── Home ────────────────────────────────────────────────────────────────────
   if (mode === 'home') {
     return (
-      <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
+      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.58)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
         <img src="/logo.png" alt="Seven Dragons" className="w-64 h-auto drop-shadow-2xl" />
         {isSignedIn && (
@@ -148,7 +148,7 @@ export default function LobbyScreen() {
   // ── Local hot-seat ──────────────────────────────────────────────────────────
   if (mode === 'local') {
     return (
-      <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
+      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.58)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
         <img src="/logo.png" alt="Seven Dragons" className="w-64 h-auto drop-shadow-2xl" />
         <div className="flex flex-col gap-4 w-72">
@@ -190,7 +190,7 @@ export default function LobbyScreen() {
   // ── Create / Join ───────────────────────────────────────────────────────────
   if (mode === 'create' || mode === 'join') {
     return (
-      <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
+      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.58)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
         <img src="/logo.png" alt="Seven Dragons" className="w-64 h-auto drop-shadow-2xl" />
         <div className="flex flex-col gap-4 w-72">
@@ -234,7 +234,7 @@ export default function LobbyScreen() {
 
   // ── Waiting room ────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col items-center justify-center h-screen gap-8 bg-[#0e0e1a]">
+    <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.58)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <OnlineBadge />
       <img src="/logo.png" alt="Seven Dragons" className="w-64 h-auto drop-shadow-2xl" />
 
