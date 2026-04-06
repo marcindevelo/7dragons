@@ -233,8 +233,9 @@ export default function LobbyScreen() {
     <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <OnlineBadge />
       
-      <div className="flex flex-col gap-4 w-80">
-        <div className="bg-black/50 backdrop-blur-md rounded-xl px-6 py-4 flex flex-col items-center gap-1 border border-white/10">
+      <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-4 w-80">
+        {/* Room code */}
+        <div className="flex flex-col items-center gap-1">
           <span className="text-white/40 text-xs uppercase tracking-widest">Room code</span>
           <div className="flex items-center gap-3">
             <span className="text-white font-mono text-3xl tracking-widest font-bold">{roomId ?? '…'}</span>
@@ -248,8 +249,11 @@ export default function LobbyScreen() {
           <span className="text-white/30 text-xs">Share this code with other players</span>
         </div>
 
-        <div className="bg-black/50 backdrop-blur-md rounded-xl px-6 py-4 flex flex-col gap-2 border border-white/10">
-          <span className="text-white/40 text-xs uppercase tracking-widest mb-1">Players in room</span>
+        <div className="border-t border-white/10" />
+
+        {/* Players */}
+        <div className="flex flex-col gap-2">
+          <span className="text-white/40 text-xs uppercase tracking-widest">Players in room</span>
           {lobbyPlayers.map(p => (
             <div key={p.id} className="flex items-center gap-2">
               {p.isHost && <span className="text-yellow-400 text-xs">★</span>}
@@ -272,15 +276,17 @@ export default function LobbyScreen() {
           )}
         </div>
 
-        {/* Invite by username */}
-        <div className="bg-black/50 backdrop-blur-md rounded-xl px-6 py-4 flex flex-col gap-2 border border-white/10">
-          <span className="text-white/40 text-xs uppercase tracking-widest mb-1">Invite player</span>
+        <div className="border-t border-white/10" />
+
+        {/* Invite */}
+        <div className="flex flex-col gap-2">
+          <span className="text-white/40 text-xs uppercase tracking-widest">Invite player</span>
           <div className="flex gap-2">
             <input
               value={inviteNick}
               onChange={e => setInviteNick(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleInvite()}
-              className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:bg-white/20 transition-colors"
+              className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:bg-white/15 transition-colors"
               placeholder="Username…"
             />
             <button
@@ -295,7 +301,7 @@ export default function LobbyScreen() {
 
         {error && <p className="text-red-400 text-sm">{error}</p>}
 
-        {isHost && (
+        {isHost ? (
           <button
             onClick={startOnlineGame}
             disabled={lobbyPlayers.length < 2}
@@ -303,14 +309,13 @@ export default function LobbyScreen() {
           >
             Start Game ({lobbyPlayers.length} players)
           </button>
-        )}
-        {!isHost && (
+        ) : (
           <p className="text-white/30 text-sm text-center">Waiting for host to start…</p>
         )}
 
         <button
           onClick={handleDisconnect}
-          className="text-white/40 hover:text-white/70 text-sm transition-colors"
+          className="text-white/40 hover:text-white/70 text-sm transition-colors text-center"
         >
           ← Leave room
         </button>
