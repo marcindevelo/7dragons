@@ -113,14 +113,19 @@ export default function LobbyScreen() {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
-                {isSignedIn && (
-          <div className="flex items-center gap-3">
-            <span className="text-white/50 text-sm">Signed in as <span className="text-white font-semibold">{user.username}</span></span>
-            <button onClick={() => clerk.openUserProfile()} className="text-white/30 hover:text-white/60 text-xs transition-colors">Edit profile</button>
-            <button onClick={() => signOut()} className="text-white/30 hover:text-white/60 text-xs transition-colors">Sign out</button>
-          </div>
-        )}
-        <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-3 w-64">
+                <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-3 w-64">
+          {isSignedIn && (
+            <>
+              <div className="flex flex-col items-center gap-1 pb-1">
+                <span className="text-white/40 text-xs">Signed in as <span className="text-white font-semibold">{user.username}</span></span>
+                <div className="flex gap-3">
+                  <button onClick={() => clerk.openUserProfile()} className="text-white/30 hover:text-white/60 text-xs transition-colors">Edit profile</button>
+                  <button onClick={() => signOut()} className="text-white/30 hover:text-white/60 text-xs transition-colors">Sign out</button>
+                </div>
+              </div>
+              <div className="border-t border-white/10" />
+            </>
+          )}
           <button
             onClick={() => setMode('local')}
             className="py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-lg tracking-wide transition-colors"
