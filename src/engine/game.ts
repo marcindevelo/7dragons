@@ -109,7 +109,7 @@ export function drawCard(state: GameState): GameState {
 }
 
 // Play a dragon card to the board
-export function playDragonCard(state: GameState, cardId: string, pos: BoardPosition, rotation: 0 | 90 | 180 | 270 = 0): GameState {
+export function playDragonCard(state: GameState, cardId: string, pos: BoardPosition, rotation: 0 | 180 = 0): GameState {
   if (state.phase !== 'play') throw new Error('Not in play phase');
 
   const currentPlayer = state.players[state.currentPlayerIndex];

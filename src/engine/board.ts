@@ -16,20 +16,15 @@ export function parseKey(key: string): BoardPosition {
 }
 
 // Returns the 4 panel positions for a card at (cx, cy) in panel space.
-// Supports all 4 rotations (0, 90, 180, 270 degrees clockwise).
-// For a 2×2 panel grid [[c00,c01],[c10,c11]]:
-//   0°:   [row][col]        90°:  [1-col][row]
-//   180°: [1-row][1-col]   270°:  [col][1-row]
+// Cards are rectangles — only 0° and 180° rotations are valid.
+// rotation=180 reverses the panel layout (flip both axes).
 export function cardPanels(placed: PlacedCard): Array<{ px: number; py: number; color: PanelColor }> {
   const { pos, card, rotation } = placed;
   const result: Array<{ px: number; py: number; color: PanelColor }> = [];
   for (let row = 0; row < 2; row++) {
     for (let col = 0; col < 2; col++) {
-      let srcRow: number, srcCol: number;
-      if (rotation === 90)       { srcRow = 1 - col; srcCol = row; }
-      else if (rotation === 180) { srcRow = 1 - row; srcCol = 1 - col; }
-      else if (rotation === 270) { srcRow = col;     srcCol = 1 - row; }
-      else                       { srcRow = row;     srcCol = col; }
+      const srcRow = rotation === 180 ? 1 - row : row;
+      const srcCol = rotation === 180 ? 1 - col : col;
       result.push({
         px: pos.x * 2 + col,
         py: pos.y * 2 + row,
@@ -107,7 +102,7 @@ export function isPlacementValid(
   card: DragonCard,
   pos: BoardPosition,
   silverColor: DragonColor | 'all',
-  rotation: 0 | 90 | 180 | 270 = 0
+  rotation: 0 | 180 = 0
 ): boolean {
   if (board.has(posKey(pos.x, pos.y))) return false;
   if (pos.x === 0 && pos.y === 0) return false;
@@ -126,16 +121,17 @@ export function isPlacementValid(
   return false;
 }
 
-// Returns all positions where card can be placed (in at least one of the 4 rotations).
+// Returns all positions where card can be placed (in at least one rotation).
 export function validPlacements(
   board: Map<string, PlacedCard>,
   card: DragonCard,
   silverColor: DragonColor | 'all'
 ): BoardPosition[] {
   const candidates = adjacentEmptyPositions(board);
-  const rotations = [0, 90, 180, 270] as const;
-  return candidates.filter((pos) =>
-    rotations.some((r) => isPlacementValid(board, card, pos, silverColor, r))
+  return candidates.filter(
+    (pos) =>
+      isPlacementValid(board, card, pos, silverColor, 0) ||
+      isPlacementValid(board, card, pos, silverColor, 180)
   );
 }
 

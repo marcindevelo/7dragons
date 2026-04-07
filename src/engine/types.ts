@@ -30,7 +30,7 @@ export type BoardPosition = { x: number; y: number };
 export type PlacedCard = {
   card: DragonCard;
   pos: BoardPosition;
-  rotation: 0 | 90 | 180 | 270; // for future UI use, always 0 in logic
+  rotation: 0 | 180;
 };
 
 export type Player = {
