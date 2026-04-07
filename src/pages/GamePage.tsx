@@ -75,9 +75,9 @@ export default function GamePage() {
   const targetablePosKeys = useMemo((): Set<string> | undefined => {
     if (!isTargeting || !pendingAction || !isMyTurn) return undefined;
     if (pendingAction.type === 'zap-card') return new Set(state!.board.keys());
-    if (pendingAction.type === 'move-card' && !moveFromKey) return new Set(state!.board.keys());
+    if (pendingAction.type === 'move-card') return new Set(state!.board.keys());
     return undefined;
-  }, [isTargeting, pendingAction, state, moveFromKey, isMyTurn]);
+  }, [isTargeting, pendingAction, state, isMyTurn]);
 
   if (!state) return <LobbyScreen />;
 
@@ -117,12 +117,10 @@ export default function GamePage() {
     }
 
     if (pendingAction.type === 'move-card') {
-      if (!moveFromKey) {
-        // Step 1: pick which card to move — init rotation from current card rotation
-        const placed = state.board.get(posKey);
-        setMoveRotation(placed?.rotation ?? 0);
-        setMoveFromKey(posKey);
-      }
+      // Step 1 or re-selection: pick (or switch to) which card to move
+      const placed = state.board.get(posKey);
+      setMoveRotation(placed?.rotation ?? 0);
+      setMoveFromKey(posKey);
     }
   }
 
@@ -166,6 +164,7 @@ export default function GamePage() {
             silverColor={state.silverDragonColor}
             validPlacements={showDropZones}
             targetablePosKeys={targetablePosKeys}
+            selectedPosKey={moveFromKey}
             onDropZoneClick={handleDropZoneClick}
             onBoardCardClick={handleBoardCardClick}
           />

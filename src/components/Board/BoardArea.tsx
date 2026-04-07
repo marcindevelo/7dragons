@@ -16,6 +16,7 @@ type Props = {
   silverColor: DragonColor | 'all';
   validPlacements?: BoardPosition[];
   targetablePosKeys?: Set<string>;
+  selectedPosKey?: string | null;
   onDropZoneClick?: (pos: BoardPosition) => void;
   onBoardCardClick?: (posKey: string) => void;
 };
@@ -25,6 +26,7 @@ export default function BoardArea({
   silverColor,
   validPlacements = [],
   targetablePosKeys,
+  selectedPosKey,
   onDropZoneClick,
   onBoardCardClick,
 }: Props) {
@@ -107,7 +109,7 @@ export default function BoardArea({
   return (
     <div
       ref={containerRef}
-      className="w-full h-full overflow-hidden relative bg-[#0e0e1a] cursor-grab active:cursor-grabbing"
+      className="w-full h-full overflow-hidden relative bg-transparent cursor-grab active:cursor-grabbing"
       data-pannable="true"
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
@@ -148,10 +150,12 @@ export default function BoardArea({
           {Array.from(board.entries()).map(([key, placed]) => {
             const { left, top } = gridToPx(placed.pos.x, placed.pos.y);
             const isTargetable = targetablePosKeys?.has(key);
+            const isSelected = key === selectedPosKey;
+            const isClickable = isTargetable || isSelected;
             return (
               <motion.div
                 key={key}
-                className={['absolute pointer-events-auto', isTargetable ? 'cursor-pointer' : ''].join(' ')}
+                className={['absolute pointer-events-auto', isClickable ? 'cursor-pointer' : ''].join(' ')}
                 style={{
                   left: `calc(50% + ${left}px - ${CARD_W / 2}px)`,
                   top:  `calc(50% + ${top}px - ${CARD_H / 2}px)`,
@@ -160,14 +164,17 @@ export default function BoardArea({
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 25, duration: 0.2 }}
-                onClick={isTargetable ? () => onBoardCardClick?.(key) : undefined}
+                onClick={isClickable ? () => onBoardCardClick?.(key) : undefined}
               >
                 <DragonCard
                   card={placed.card}
                   size="md"
                   rotation={placed.rotation as 0 | 180}
                 />
-                {isTargetable && (
+                {isSelected && (
+                  <div className="absolute inset-0 rounded-lg border-2 border-cyan-400 bg-cyan-400/15 pointer-events-none shadow-[0_0_12px_2px_rgba(34,211,238,0.35)]" />
+                )}
+                {isTargetable && !isSelected && (
                   <div className="absolute inset-0 rounded-lg border-2 border-yellow-400 bg-yellow-400/10 hover:bg-yellow-400/20 transition-colors pointer-events-none" />
                 )}
               </motion.div>
