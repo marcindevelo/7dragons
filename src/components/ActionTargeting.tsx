@@ -25,15 +25,20 @@ export default function ActionTargeting({ pendingAction }: Props) {
   // ── Rotate Goals ──────────────────────────────────────────────────────────
   if (pendingAction.type === 'rotate-goals') {
     const myIdx = state.currentPlayerIndex;
-    const ring = [
+    const rawRing = [
       ...state.players.map((p, i) => ({ label: i === myIdx ? 'You' : p.name, isMe: i === myIdx, isPlayer: true })),
       ...state.unusedGoalOrder.map(() => ({ label: '?', isMe: false, isPlayer: false })),
     ];
-    const n = ring.length;
+    const n = rawRing.length;
     // Left: ring shifts left → seat i gets ring[i+1] → I receive from (myIdx+1)%n
-    const leftSource = ring[(myIdx + 1) % n];
+    const leftSource = rawRing[(myIdx + 1) % n];
     // Right: ring shifts right → seat i gets ring[i-1] → I receive from (myIdx-1+n)%n
-    const rightSource = ring[(myIdx - 1 + n) % n];
+    const rightSource = rawRing[(myIdx - 1 + n) % n];
+
+    // Rotate so current player is always in the middle
+    const midPos = Math.floor(n / 2);
+    const start = (myIdx - midPos + n) % n;
+    const ring = [...rawRing.slice(start), ...rawRing.slice(0, start)];
 
     return (
       <div className="absolute inset-0 flex items-center justify-center z-40 bg-black/60 backdrop-blur-sm">
