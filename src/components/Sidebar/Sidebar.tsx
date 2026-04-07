@@ -5,6 +5,17 @@ import { SILVER_COLOR_BG, DRAGON_LABEL, PANEL_BG } from '../Card/colors';
 import type { DragonColor } from '../../engine/types';
 import HelpModal from '../HelpModal';
 
+export function SidebarToggle({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="sm:hidden fixed bottom-20 left-3 z-40 w-9 h-9 rounded-full bg-black/70 border border-white/20 backdrop-blur-sm flex items-center justify-center text-white/60 hover:text-white transition-colors"
+    >
+      ☰
+    </button>
+  );
+}
+
 const GOAL_BORDER: Record<DragonColor, string> = {
   red:   'border-red-600',
   gold:  'border-yellow-500',
@@ -21,14 +32,14 @@ const GOAL_TEXT: Record<DragonColor, string> = {
   black: 'text-zinc-400',
 };
 
-export default function Sidebar() {
+export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean; onClose?: () => void }) {
   const state = useGameStore(s => s.state);
   const isMultiplayer = useGameStore(s => s.isMultiplayer);
   const goToLobby = useGameStore(s => s.goToLobby);
-  const drawInsteadOfPlay = useGameStore(s => s.drawInsteadOfPlay);
   const myPlayerIndex = useMultiplayerStore(s => s.myPlayerIndex);
   const sendQuit = useMultiplayerStore(s => s.sendQuit);
   const [showHelp, setShowHelp] = useState(false);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
 
   if (!state) return null;
 
@@ -36,16 +47,29 @@ export default function Sidebar() {
   // In multiplayer: "my" player is myPlayerIndex, not currentPlayerIndex
   const myPlayer = (isMultiplayer && myPlayerIndex !== null && myPlayerIndex >= 0)
     ? (state.players[myPlayerIndex] ?? currentPlayer)
-    : currentPlayer;
-  const isMyTurn = !isMultiplayer || myPlayerIndex === state.currentPlayerIndex;
+    : state.players[0]; // in singleplayer, human is always index 0
   const myGoal = state.goals.find(g => g.id === myPlayer.goalId);
   const otherPlayers = state.players.filter(p => p.id !== myPlayer.id);
   const topDiscard = state.discardPile[state.discardPile.length - 1] ?? null;
-  const isPlayPhase = state.phase === 'play';
   const silverBg = SILVER_COLOR_BG[state.silverDragonColor];
 
   return (
-    <aside className="w-[196px] shrink-0 bg-[#0f131a] border-r border-[#333c4a] flex flex-col overflow-hidden">
+    <>
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="sm:hidden fixed inset-0 z-40 bg-black/60"
+          onClick={onClose}
+        />
+      )}
+    <aside className={[
+      'flex flex-col overflow-hidden border-white/10',
+      // Desktop: static in layout
+      'sm:relative sm:w-[196px] sm:shrink-0 sm:border-r sm:translate-x-0',
+      // Mobile: fixed drawer
+      'fixed top-0 left-0 h-full w-[220px] z-50 bg-black/90 backdrop-blur-md border-r transition-transform duration-300',
+      mobileOpen ? 'translate-x-0' : '-translate-x-full sm:translate-x-0',
+    ].join(' ')}>
 
 
       {/* Draw pile + Discard */}
@@ -54,21 +78,11 @@ export default function Sidebar() {
           <div>
             <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-1">DRAW PILE</p>
             <button
-              disabled={!isPlayPhase || !isMyTurn || state.deck.length === 0}
-              onClick={isPlayPhase && isMyTurn ? drawInsteadOfPlay : undefined}
-              title={isPlayPhase && isMyTurn ? 'Dobierz kartę zamiast zagrać' : undefined}
-              className={[
-                'rounded-lg w-[70px] h-[72px] flex flex-col items-center justify-center transition-colors',
-                isPlayPhase && isMyTurn && state.deck.length > 0
-                  ? 'bg-[#0c0f15] border-2 border-green-500/60 hover:border-green-400 hover:bg-green-900/20 cursor-pointer'
-                  : 'bg-[#0c0f15] border border-[#333c4a] cursor-default',
-              ].join(' ')}
+              disabled
+              className="bg-[#0c0f15] border border-[#333c4a] cursor-default rounded-lg w-[70px] h-[72px] flex flex-col items-center justify-center"
             >
               <span className="text-[#eff1f5] text-2xl font-bold leading-none">{state.deck.length}</span>
               <span className="text-[#96a3b7] text-[9px] mt-0.5">cards left</span>
-              {isPlayPhase && state.deck.length > 0 && (
-                <span className="text-green-400 text-[8px] mt-1 leading-none">draw</span>
-              )}
             </button>
           </div>
           <div>
@@ -118,7 +132,6 @@ export default function Sidebar() {
                 <div className="min-w-0">
                   <p className="text-[#eff1f5] text-xs font-semibold leading-none truncate">{p.name}</p>
                   <p className="text-[#96a3b7] text-[10px] mt-0.5">
-                    {/* handCount is accurate in multiplayer (masked state), hand.length in local */}
                     {('handCount' in p ? (p as { handCount: number }).handCount : p.hand.length)} cards · Goal: ?
                   </p>
                 </div>
@@ -156,7 +169,7 @@ export default function Sidebar() {
           ? Help
         </button>
         <button
-          onClick={isMultiplayer ? sendQuit : goToLobby}
+          onClick={() => setShowLeaveConfirm(true)}
           className="w-full py-2 rounded-lg border border-red-800 bg-red-950/40 text-red-400 text-xs font-semibold hover:bg-red-900/40 hover:border-red-600 transition-colors"
         >
           ← Leave Game
@@ -164,6 +177,36 @@ export default function Sidebar() {
       </div>
 
       {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
+
+      {showLeaveConfirm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="bg-zinc-900 border border-white/20 rounded-2xl p-6 shadow-2xl max-w-xs w-full mx-4 flex flex-col gap-4">
+            <div>
+              <p className="text-white font-bold text-base leading-tight">Leave the game?</p>
+              <p className="text-white/50 text-sm mt-1">
+                {isMultiplayer
+                  ? 'You will be removed from the room and other players will continue without you.'
+                  : 'Your current game will be lost.'}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowLeaveConfirm(false)}
+                className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm transition-colors"
+              >
+                Stay
+              </button>
+              <button
+                onClick={() => { setShowLeaveConfirm(false); isMultiplayer ? sendQuit() : goToLobby(); }}
+                className="flex-1 py-2.5 rounded-xl bg-red-700 hover:bg-red-600 text-white font-bold text-sm transition-colors"
+              >
+                Leave
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
+    </>
   );
 }
