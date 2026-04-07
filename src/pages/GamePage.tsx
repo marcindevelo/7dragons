@@ -7,12 +7,13 @@ import ActionConfirm from '../components/ActionConfirm';
 import BonusToast from '../components/BonusToast';
 import TurnToast from '../components/TurnToast';
 import PlayerLeftToast from '../components/PlayerLeftToast';
-import Sidebar from '../components/Sidebar/Sidebar';
+import Sidebar, { SidebarToggle } from '../components/Sidebar/Sidebar';
+import MobileTopBar from '../components/MobileTopBar';
 import LobbyScreen from './LobbyScreen';
 import WinBanner from '../components/WinOverlay';
 import ActionTargeting from '../components/ActionTargeting';
 import GameTutorial from '../components/GameTutorial';
-import { validPlacements as computeValidPlacements } from '../engine/board';
+import { isPlacementValid, adjacentEmptyPositions, validPlacements as computeValidPlacements } from '../engine/board';
 
 export default function GamePage() {
   const state = useGameStore(s => s.state);
@@ -30,12 +31,19 @@ export default function GamePage() {
 
   // For move-card: track which board card was picked first
   const [moveFromKey, setMoveFromKey] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const isPlayPhase = state?.phase === 'play';
   const isTargeting = state?.phase === 'action-targeting';
   const pendingAction = state?.pendingAction ?? null;
 
-  // Valid placements for selected dragon card
+  // In singleplayer: only interact when it's the human player's turn (not AI)
+  // In multiplayer: only interact when it's our player's turn
+  const isMyTurn = !isMultiplayer
+    ? !(state?.players[state.currentPlayerIndex]?.isAI ?? false)
+    : myPlayerIndex === state?.currentPlayerIndex;
+
+  // Valid placements for selected dragon card — filtered by current rotation
   const validPlacements = useMemo(() => {
     if (!state || !selectedCardId || !isPlayPhase) return [];
     const activePlayer = (isMultiplayer && myPlayerIndex !== null)
@@ -43,8 +51,10 @@ export default function GamePage() {
       : state.players[state.currentPlayerIndex];
     const card = activePlayer.hand.find(c => c.id === selectedCardId);
     if (!card || card.type !== 'dragon') return [];
-    return computeValidPlacements(state.board, card, state.silverDragonColor);
-  }, [state, selectedCardId, isPlayPhase, isMultiplayer, myPlayerIndex]);
+    return adjacentEmptyPositions(state.board).filter(pos =>
+      isPlacementValid(state.board, card, pos, state.silverDragonColor, selectedRotation)
+    );
+  }, [state, selectedCardId, isPlayPhase, isMultiplayer, myPlayerIndex, selectedRotation]);
 
   // For move-card step 2: valid destinations for the picked card
   const moveDestinations = useMemo(() => {
@@ -57,24 +67,21 @@ export default function GamePage() {
     return computeValidPlacements(boardWithout, placed.card, state.silverDragonColor);
   }, [state, pendingAction, moveFromKey]);
 
-  // Board cards targetable for zap/move
+  // Board cards targetable for zap/move (only when it's our turn)
   const targetablePosKeys = useMemo((): Set<string> | undefined => {
-    if (!isTargeting || !pendingAction) return undefined;
+    if (!isTargeting || !pendingAction || !isMyTurn) return undefined;
     if (pendingAction.type === 'zap-card') return new Set(state!.board.keys());
     if (pendingAction.type === 'move-card' && !moveFromKey) return new Set(state!.board.keys());
     return undefined;
-  }, [isTargeting, pendingAction, state, moveFromKey]);
+  }, [isTargeting, pendingAction, state, moveFromKey, isMyTurn]);
 
   if (!state) return <LobbyScreen />;
 
   const currentPlayer = state.players[state.currentPlayerIndex];
-
-  // In multiplayer: only the player whose turn it is can interact
-  const isMyTurn = !isMultiplayer || myPlayerIndex === state.currentPlayerIndex;
   // In multiplayer: show the hand of the local player (myPlayerIndex), not the current player
   const handPlayer = (isMultiplayer && myPlayerIndex !== null && myPlayerIndex >= 0)
     ? (state.players[myPlayerIndex] ?? currentPlayer)
-    : currentPlayer;
+    : state.players[0]; // in singleplayer, human is always index 0
 
   function handleSelectCard(id: string) {
     if (!isPlayPhase || !isMyTurn) return;
@@ -99,7 +106,7 @@ export default function GamePage() {
   }
 
   function handleBoardCardClick(posKey: string) {
-    if (!isTargeting || !pendingAction) return;
+    if (!isTargeting || !pendingAction || !isMyTurn) return;
 
     if (pendingAction.type === 'zap-card') {
       resolveAction({ targetPosKey: posKey });
@@ -114,6 +121,7 @@ export default function GamePage() {
   }
 
   function handleDropZoneClick(pos: import('../engine/types').BoardPosition) {
+    if (!isMyTurn) return;
     if (isPlayPhase && selectedCardId) {
       placeCard(pos);
       return;
@@ -125,17 +133,19 @@ export default function GamePage() {
     }
   }
 
-  // During move step 2, show destinations as drop zones
-  const showDropZones = isTargeting && pendingAction?.type === 'move-card' && moveFromKey
+  // During move step 2, show destinations as drop zones (only when it's our turn)
+  const showDropZones = isMyTurn && isTargeting && pendingAction?.type === 'move-card' && moveFromKey
     ? moveDestinations
-    : isPlayPhase && selectedCardId
+    : isMyTurn && isPlayPhase && selectedCardId
       ? validPlacements
       : [];
 
   return (
-    <div className="flex h-screen select-none overflow-hidden">
-      <Sidebar />
-      <div className="flex flex-col flex-1 overflow-hidden">
+    <div className="flex h-dvh select-none overflow-hidden" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.88),rgba(0,0,0,0.88)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <Sidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <SidebarToggle onClick={() => setSidebarOpen(v => !v)} />
+      <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+        <MobileTopBar />
         <div data-tutorial="board" className="flex-1 relative overflow-hidden">
           <BoardArea
             board={state.board}
@@ -145,7 +155,7 @@ export default function GamePage() {
             onDropZoneClick={handleDropZoneClick}
             onBoardCardClick={handleBoardCardClick}
           />
-          {isTargeting && pendingAction && (
+          {isTargeting && pendingAction && isMyTurn && (
             <ActionTargeting pendingAction={pendingAction} />
           )}
           <TurnToast />
@@ -158,10 +168,10 @@ export default function GamePage() {
           <ActionConfirm cardId={pendingActionCardId} />
         ) : (
           <div data-tutorial="hand" className="relative">
-            {isMultiplayer && !isMyTurn && (
+            {!isMyTurn && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 rounded-t-lg">
                 <span className="text-white/60 text-sm font-medium">
-                  Waiting for {currentPlayer.name}…
+                  {isMultiplayer ? `Waiting for ${currentPlayer.name}…` : `${currentPlayer.name} is thinking…`}
                 </span>
               </div>
             )}
@@ -170,6 +180,7 @@ export default function GamePage() {
               selectedCardId={selectedCardId}
               selectedRotation={selectedRotation}
               onSelectCard={handleSelectCard}
+              cardSize={window.innerWidth < 640 ? 'sm' : 'md'}
             />
           </div>
         )}
