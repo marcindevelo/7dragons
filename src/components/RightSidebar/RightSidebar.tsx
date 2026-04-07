@@ -23,8 +23,27 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
 
   const myIdx = isMultiplayer ? (myPlayerIndex ?? 0) : 0;
 
-  // Full "table" ring: players in seat order + unused goal slots
-  const unusedCount = state.unusedGoalOrder.length;
+  // Build unified ring: players in seat order, then unused goal slots
+  const playerItems = state.players.map((p, i) => {
+    const isMe = i === myIdx;
+    const isCurrentTurn = i === state.currentPlayerIndex;
+    const goal = state.goals.find(g => g.id === p.goalId);
+    const goalVisible = goal && (goal.id as string) !== 'hidden';
+    const handCount = ('handCount' in p)
+      ? (p as unknown as { handCount: number }).handCount
+      : p.hand.length;
+    const goalBg = goalVisible ? (PANEL_BG[goal!.color as DragonColor] ?? 'bg-zinc-700') : null;
+    const goalLabel = goalVisible ? DRAGON_LABEL[goal!.color as DragonColor] : '?';
+
+    return { type: 'player' as const, isMe, isCurrentTurn, goalBg, goalLabel, name: p.name, handCount, id: p.id };
+  });
+
+  const unusedItems = state.unusedGoalOrder.map((_, i) => ({
+    type: 'unused' as const,
+    id: `unused-${i}`,
+  }));
+
+  const ring = [...playerItems, ...unusedItems];
 
   return (
     <>
@@ -38,51 +57,36 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
 
       <aside className={[
         'flex flex-col overflow-y-auto overflow-x-hidden border-white/10',
-        // Desktop: static in layout, right side
         'sm:relative sm:w-[196px] sm:shrink-0 sm:border-l sm:translate-x-0',
-        // Mobile: fixed drawer from right
         'fixed top-0 right-0 h-full w-[220px] z-50 bg-black/90 backdrop-blur-md border-l transition-transform duration-300',
         mobileOpen ? 'translate-x-0' : 'translate-x-full sm:translate-x-0',
       ].join(' ')}>
 
-        <div className="px-4 pt-4 pb-4 flex flex-col gap-4">
+        <div className="px-4 pt-4 pb-4 flex flex-col">
+          <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-3">GOALS ON TABLE</p>
 
-          {/* Players at table */}
-          <div>
-            <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-2">PLAYERS AT TABLE</p>
-            <div className="flex flex-col gap-1.5">
-              {state.players.map((p, i) => {
-                const isMe = i === myIdx;
-                const isCurrentTurn = i === state.currentPlayerIndex;
-                const goal = state.goals.find(g => g.id === p.goalId);
-                const goalVisible = goal && (goal.id as string) !== 'hidden';
-                const handCount = ('handCount' in p)
-                  ? (p as unknown as { handCount: number }).handCount
-                  : p.hand.length;
-                const goalBg = goalVisible ? (PANEL_BG[goal!.color as DragonColor] ?? 'bg-zinc-700') : null;
-                const goalLabel = goalVisible ? DRAGON_LABEL[goal!.color as DragonColor] : '?';
+          <div className="flex flex-col">
+            {ring.map((item, idx) => (
+              <div key={item.id} className="flex flex-col items-stretch">
 
-                return (
-                  <div
-                    key={p.id}
-                    className={[
-                      'rounded-xl px-3 py-2.5 flex items-center gap-2.5 border transition-colors',
-                      isCurrentTurn
-                        ? 'bg-yellow-500/10 border-yellow-500/40'
-                        : 'bg-[#191f28] border-white/5',
-                    ].join(' ')}
-                  >
-                    {/* Seat number + turn indicator */}
+                {item.type === 'player' ? (
+                  <div className={[
+                    'rounded-xl px-3 py-2.5 flex items-center gap-2.5 border transition-colors',
+                    item.isCurrentTurn
+                      ? 'bg-yellow-500/10 border-yellow-500/40'
+                      : 'bg-[#191f28] border-white/5',
+                  ].join(' ')}>
+                    {/* Avatar */}
                     <div className="relative shrink-0">
                       <div className={[
                         'w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm',
-                        goalBg ?? 'bg-[#2a3342]',
+                        item.goalBg ?? 'bg-[#2a3342]',
                       ].join(' ')}>
-                        <span className={goalBg ? 'text-white/90' : 'text-[#96a3b7]'}>
-                          {goalBg ? goalLabel[0] : p.name[0].toUpperCase()}
+                        <span className={item.goalBg ? 'text-white/90' : 'text-[#96a3b7]'}>
+                          {item.goalBg ? item.goalLabel[0] : item.name[0].toUpperCase()}
                         </span>
                       </div>
-                      {isCurrentTurn && (
+                      {item.isCurrentTurn && (
                         <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-yellow-400 border-2 border-black" />
                       )}
                     </div>
@@ -90,34 +94,21 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
                     {/* Name + hand count */}
                     <div className="min-w-0 flex-1">
                       <p className="text-[#eff1f5] text-xs font-semibold leading-none truncate">
-                        {isMe ? 'You' : p.name}
+                        {item.isMe ? 'You' : item.name}
                       </p>
                       <p className="text-[#96a3b7] text-[10px] mt-0.5">
-                        {handCount} {handCount === 1 ? 'card' : 'cards'}
+                        {item.handCount} {item.handCount === 1 ? 'card' : 'cards'}
                       </p>
                     </div>
 
-                    {/* Goal color chip */}
+                    {/* Goal chip */}
                     <div className="shrink-0 flex flex-col items-center gap-0.5">
-                      <div className={['w-4 h-4 rounded-full border border-white/20', goalBg ?? 'bg-zinc-700'].join(' ')} />
-                      <span className="text-[8px] text-white/30 leading-none">{goalVisible ? goalLabel : '?'}</span>
+                      <div className={['w-4 h-4 rounded-full border border-white/20', item.goalBg ?? 'bg-zinc-700'].join(' ')} />
+                      <span className="text-[8px] text-white/30 leading-none">{item.goalLabel}</span>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Unused goals */}
-          {unusedCount > 0 && (
-            <div>
-              <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-2">UNUSED GOALS</p>
-              <div className="flex flex-col gap-1.5">
-                {Array.from({ length: unusedCount }).map((_, i) => (
-                  <div
-                    key={`unused-${i}`}
-                    className="rounded-xl px-3 py-2.5 flex items-center gap-2.5 border border-white/5 bg-zinc-900/30"
-                  >
+                ) : (
+                  <div className="rounded-xl px-3 py-2.5 flex items-center gap-2.5 border border-white/5 bg-zinc-900/30">
                     <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center shrink-0">
                       <span className="text-white/20 text-sm font-bold">?</span>
                     </div>
@@ -127,46 +118,21 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
                     </div>
                     <div className="w-4 h-4 rounded-full bg-zinc-700 border border-white/10 shrink-0" />
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
+                )}
 
-          {/* Turn order ring — visual hint */}
-          <div>
-            <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-2">TURN ORDER</p>
-            <div className="flex flex-wrap items-center gap-1">
-              {state.players.map((p, i) => {
-                const isMe = i === myIdx;
-                const isCurrentTurn = i === state.currentPlayerIndex;
-                return (
-                  <div key={p.id} className="flex items-center gap-1">
-                    <div className={[
-                      'px-2 py-0.5 rounded-md text-[10px] font-semibold border',
-                      isCurrentTurn
-                        ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-200'
-                        : isMe
-                          ? 'bg-green-900/40 border-green-700/40 text-green-300/70'
-                          : 'bg-zinc-800 border-white/10 text-white/40',
-                    ].join(' ')}>
-                      {isMe ? 'You' : p.name.split(' ')[0]}
-                    </div>
-                    <span className="text-white/15 text-[10px]">→</span>
-                  </div>
-                );
-              })}
-              {Array.from({ length: unusedCount }).map((_, i) => (
-                <div key={`ur-${i}`} className="flex items-center gap-1">
-                  <div className="px-2 py-0.5 rounded-md text-[10px] font-semibold border bg-zinc-900 border-white/5 text-white/20">?</div>
-                  <span className="text-white/15 text-[10px]">{i < unusedCount - 1 ? '→' : '↺'}</span>
+                {/* Arrow connector */}
+                <div className="flex justify-center py-1">
+                  <span className={[
+                    'text-[11px]',
+                    idx < ring.length - 1 ? 'text-white/15' : 'text-white/20',
+                  ].join(' ')}>
+                    {idx < ring.length - 1 ? '↓' : '↺'}
+                  </span>
                 </div>
-              ))}
-              {unusedCount === 0 && (
-                <span className="text-white/15 text-[10px]">↺</span>
-              )}
-            </div>
-          </div>
 
+              </div>
+            ))}
+          </div>
         </div>
       </aside>
     </>
