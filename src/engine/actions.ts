@@ -109,7 +109,7 @@ export function moveCard(
   }
 
   // Check placement is valid at new position
-  if (!isPlacementValid(newBoard, placed.card, toPos, state.silverDragonColor)) {
+  if (!isPlacementValid(newBoard, placed.card, toPos, state.silverDragonColor, placed.rotation)) {
     throw new Error('Invalid placement at target position');
   }
 

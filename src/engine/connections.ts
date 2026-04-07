@@ -7,7 +7,7 @@ export function countNewColorConnections(
   placedCard: import('./types').DragonCard,
   pos: BoardPosition,
   silverColor: DragonColor | 'all',
-  rotation: 0 | 180 = 0
+  rotation: 0 | 90 | 180 | 270 = 0
 ): Set<DragonColor> {
   const tempPlaced: PlacedCard = { card: placedCard, pos, rotation };
   const newPanels = cardPanels(tempPlaced);

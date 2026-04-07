@@ -4,6 +4,7 @@ import {
   posKey,
   parseKey,
   isPlacementValid,
+  validPlacements,
   isBoardConnected,
   adjacentEmptyPositions,
   boardPanels,
@@ -48,10 +49,10 @@ describe('isPlacementValid', () => {
     expect(isPlacementValid(board, redCard, { x: 1, y: 0 }, 'red')).toBe(true);
   });
 
-  it('returns true regardless of color when adjacent to Silver Dragon', () => {
+  it('returns false when color does not match Silver Dragon', () => {
     const board = new Map<string, PlacedCard>();
-    // Any card can be placed next to Silver — color matching not required
-    expect(isPlacementValid(board, blueCard, { x: 1, y: 0 }, 'red')).toBe(true);
+    // Silver is red — blue card cannot connect to it
+    expect(isPlacementValid(board, blueCard, { x: 1, y: 0 }, 'red')).toBe(false);
   });
 
   it('returns false when position is already occupied', () => {
@@ -81,18 +82,38 @@ describe('isPlacementValid', () => {
     expect(isPlacementValid(board, goldCard, { x: 2, y: 0 }, 'all')).toBe(true);
   });
 
-  it('returns true for any color when adjacent to placed card', () => {
+  it('returns false when color does not match adjacent placed card', () => {
     const board = new Map<string, PlacedCard>();
     board.set(posKey(1, 0), makePlaced(redCard, 1, 0));
-    // Any card can be placed adjacent — color matching not required
-    expect(isPlacementValid(board, blueCard, { x: 2, y: 0 }, 'red')).toBe(true);
+    // Red card at (1,0), blue card at (2,0) — no color match on shared edge
+    expect(isPlacementValid(board, blueCard, { x: 2, y: 0 }, 'red')).toBe(false);
   });
 
-  it('Silver Dragon color does not affect placement validation', () => {
+  it('Silver Dragon color determines valid placements next to it', () => {
     const board = new Map<string, PlacedCard>();
-    // Any card can be placed next to Silver regardless of Silver's color
+    // Silver is blue — blue card matches, red card does not
     expect(isPlacementValid(board, blueCard, { x: 1, y: 0 }, 'blue')).toBe(true);
-    expect(isPlacementValid(board, redCard, { x: 1, y: 0 }, 'blue')).toBe(true);
+    expect(isPlacementValid(board, redCard, { x: 1, y: 0 }, 'blue')).toBe(false);
+  });
+
+  it('rotation 180 exposes different panels on shared edge', () => {
+    // Card panels: top-left=red, others=blue. At (1,0) next to red Silver.
+    // rotation=0: left edge panels are panels[0][0]=red and panels[1][0]=blue → red matches ✓
+    // rotation=180: left edge panels are panels[1][1]=blue and panels[0][1]=blue → no match ✗
+    const asymCard = makeCard('asym1', [['red', 'blue'], ['blue', 'blue']]);
+    const board = new Map<string, PlacedCard>();
+    expect(isPlacementValid(board, asymCard, { x: 1, y: 0 }, 'red', 0)).toBe(true);
+    expect(isPlacementValid(board, asymCard, { x: 1, y: 0 }, 'red', 180)).toBe(false);
+  });
+
+  it('validPlacements returns position when at least one rotation matches', () => {
+    // Half card (red/blue) next to red Silver — valid only at rotation=0
+    // validPlacements should still return (1,0) because one rotation works
+    const halfCard = makeCard('half1', [['red', 'red'], ['blue', 'blue']]);
+    const board = new Map<string, PlacedCard>();
+    const positions = validPlacements(board, halfCard, 'red');
+    const keys = positions.map((p) => posKey(p.x, p.y));
+    expect(keys).toContain('1,0');
   });
 });
 

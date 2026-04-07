@@ -177,13 +177,15 @@ Gracz **może pominąć jedno** z tych dwóch:
 
 ### 5 typów akcji (3 karty każdego typu)
 
-| Akcja | Efekt |
-|---|---|
-| **Trade Hands** | Zamień całą rękę z dowolnym graczem (nie zmieniasz kart Goal). |
-| **Trade Goals** | Zamień kartę Goal z dowolnym graczem. Możesz też wymienić z nieużywaną kartą Goal (patrz: Nieużywane Cele). |
-| **Move a Card** | Weź kartę z planszy i połóż ją w nowym, poprawnym miejscu. Nie możesz ruszyć Silver Dragon. |
-| **Rotate Goals** | Wszyscy gracze podają swoje karty Goal sąsiadowi w wybranym kierunku (w/pod prąd). |
-| **Zap a Card** | Weź kartę z planszy do ręki. Nie możesz zabrać Silver Dragon. Po zabraniu ręka jest o 1 większa. |
+Każdy typ akcji ma **jeden stały kolor smoka** na ilustracji — ten kolor przyjmuje Silver Dragon po zagraniu tej karty.
+
+| Akcja | Kolor smoka | `silverColor` | Efekt |
+|---|---|---|---|
+| **Move a Card** | Green | `'green'` | Weź kartę z planszy i połóż ją w nowym, poprawnym miejscu. Nie możesz ruszyć Silver Dragon. |
+| **Zap a Card** | Red | `'red'` | Weź kartę z planszy do ręki. Nie możesz zabrać Silver Dragon. Po zabraniu ręka jest o 1 większa. |
+| **Rotate Goals** | Blue | `'blue'` | Wszyscy gracze podają swoje karty Goal sąsiadowi w wybranym kierunku (w/pod prąd). |
+| **Trade Goals** | Gold | `'gold'` | Zamień kartę Goal z dowolnym graczem. Możesz też wymienić z nieużywaną kartą Goal (patrz: Nieużywane Cele). |
+| **Trade Hands** | Black | `'black'` | Zamień całą rękę z dowolnym graczem (nie zmieniasz kart Goal). |
 
 ---
 

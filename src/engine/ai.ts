@@ -172,7 +172,7 @@ export function aiResolveAction(state: GameState): AIActionResolution {
       if (!isBoardConnected(testBoard)) continue;
 
       const positions = adjacentEmptyPositions(testBoard).filter(
-        p => !(p.x === 0 && p.y === 0) && isPlacementValid(testBoard, placed.card, p, state.silverDragonColor)
+        p => !(p.x === 0 && p.y === 0) && isPlacementValid(testBoard, placed.card, p, state.silverDragonColor, placed.rotation)
       );
 
       for (const pos of positions) {
@@ -194,7 +194,7 @@ export function aiResolveAction(state: GameState): AIActionResolution {
         testBoard.delete(key);
         if (!isBoardConnected(testBoard)) continue;
         const positions = adjacentEmptyPositions(testBoard).filter(
-          p => !(p.x === 0 && p.y === 0) && isPlacementValid(testBoard, placed.card, p, state.silverDragonColor)
+          p => !(p.x === 0 && p.y === 0) && isPlacementValid(testBoard, placed.card, p, state.silverDragonColor, placed.rotation)
         );
         if (positions.length > 0) {
           bestKey = key;

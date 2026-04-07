@@ -141,26 +141,33 @@ export const dragonCards: DragonCard[] = [
 // 3 per type × 5 types = 15
 // silverColor = the dragon image on that action card (sets Silver Dragon color when played)
 
+// Kolory ustalono na podstawie ilustracji na kartach (każdy typ akcji ma jeden stały kolor):
+// Move a Card  = green  (zielona kobieta-smok)
+// Zap a Card   = red    (czerwone płomienie)
+// Rotate Goals = blue   (niebieski smok)
+// Trade Goals  = gold   (złoty smok)
+// Trade Hands  = black  (czarny smok)
+
 export const actionCards: ActionCard[] = [
-  { id: 'trade-hands_1',  type: 'action', action: 'trade-hands',  silverColor: 'red'   },
-  { id: 'trade-hands_2',  type: 'action', action: 'trade-hands',  silverColor: 'gold'  },
-  { id: 'trade-hands_3',  type: 'action', action: 'trade-hands',  silverColor: 'blue'  },
+  { id: 'move-card_1',    type: 'action', action: 'move-card',    silverColor: 'green' },
+  { id: 'move-card_2',    type: 'action', action: 'move-card',    silverColor: 'green' },
+  { id: 'move-card_3',    type: 'action', action: 'move-card',    silverColor: 'green' },
 
-  { id: 'trade-goals_1',  type: 'action', action: 'trade-goals',  silverColor: 'green' },
-  { id: 'trade-goals_2',  type: 'action', action: 'trade-goals',  silverColor: 'black' },
-  { id: 'trade-goals_3',  type: 'action', action: 'trade-goals',  silverColor: 'red'   },
+  { id: 'zap-card_1',     type: 'action', action: 'zap-card',     silverColor: 'red'   },
+  { id: 'zap-card_2',     type: 'action', action: 'zap-card',     silverColor: 'red'   },
+  { id: 'zap-card_3',     type: 'action', action: 'zap-card',     silverColor: 'red'   },
 
-  { id: 'rotate-goals_1', type: 'action', action: 'rotate-goals', silverColor: 'gold'  },
+  { id: 'rotate-goals_1', type: 'action', action: 'rotate-goals', silverColor: 'blue'  },
   { id: 'rotate-goals_2', type: 'action', action: 'rotate-goals', silverColor: 'blue'  },
-  { id: 'rotate-goals_3', type: 'action', action: 'rotate-goals', silverColor: 'green' },
+  { id: 'rotate-goals_3', type: 'action', action: 'rotate-goals', silverColor: 'blue'  },
 
-  { id: 'move-card_1',    type: 'action', action: 'move-card',    silverColor: 'black' },
-  { id: 'move-card_2',    type: 'action', action: 'move-card',    silverColor: 'red'   },
-  { id: 'move-card_3',    type: 'action', action: 'move-card',    silverColor: 'gold'  },
+  { id: 'trade-goals_1',  type: 'action', action: 'trade-goals',  silverColor: 'gold'  },
+  { id: 'trade-goals_2',  type: 'action', action: 'trade-goals',  silverColor: 'gold'  },
+  { id: 'trade-goals_3',  type: 'action', action: 'trade-goals',  silverColor: 'gold'  },
 
-  { id: 'zap-card_1',     type: 'action', action: 'zap-card',     silverColor: 'blue'  },
-  { id: 'zap-card_2',     type: 'action', action: 'zap-card',     silverColor: 'green' },
-  { id: 'zap-card_3',     type: 'action', action: 'zap-card',     silverColor: 'black' },
+  { id: 'trade-hands_1',  type: 'action', action: 'trade-hands',  silverColor: 'black' },
+  { id: 'trade-hands_2',  type: 'action', action: 'trade-hands',  silverColor: 'black' },
+  { id: 'trade-hands_3',  type: 'action', action: 'trade-hands',  silverColor: 'black' },
 ];
 
 // ─── GOAL CARDS (5 cards) ─────────────────────────────────────────────────────
