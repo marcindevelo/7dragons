@@ -43,7 +43,12 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
     id: `unused-${i}`,
   }));
 
-  const ring = [...playerItems, ...unusedItems];
+  const rawRing = [...playerItems, ...unusedItems];
+
+  // Rotate ring so "You" (myIdx) is always at position 2 (middle of 5)
+  const midPos = Math.floor(rawRing.length / 2);
+  const start = (myIdx - midPos + rawRing.length) % rawRing.length;
+  const ring = [...rawRing.slice(start), ...rawRing.slice(0, start)];
 
   return (
     <>
