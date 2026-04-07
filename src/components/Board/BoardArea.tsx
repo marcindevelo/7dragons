@@ -17,6 +17,7 @@ type Props = {
   validPlacements?: BoardPosition[];
   targetablePosKeys?: Set<string>;
   selectedPosKey?: string | null;
+  selectedRotation?: 0 | 180;
   onDropZoneClick?: (pos: BoardPosition) => void;
   onBoardCardClick?: (posKey: string) => void;
 };
@@ -27,6 +28,7 @@ export default function BoardArea({
   validPlacements = [],
   targetablePosKeys,
   selectedPosKey,
+  selectedRotation,
   onDropZoneClick,
   onBoardCardClick,
 }: Props) {
@@ -169,7 +171,7 @@ export default function BoardArea({
                 <DragonCard
                   card={placed.card}
                   size="md"
-                  rotation={placed.rotation as 0 | 180}
+                  rotation={isSelected && selectedRotation !== undefined ? selectedRotation : placed.rotation as 0 | 180}
                 />
                 {isSelected && (
                   <div className="absolute inset-0 rounded-lg border-2 border-cyan-400 bg-cyan-400/15 pointer-events-none shadow-[0_0_12px_2px_rgba(34,211,238,0.35)]" />

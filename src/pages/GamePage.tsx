@@ -165,6 +165,7 @@ export default function GamePage() {
             validPlacements={showDropZones}
             targetablePosKeys={targetablePosKeys}
             selectedPosKey={moveFromKey}
+            selectedRotation={moveFromKey ? moveRotation : undefined}
             onDropZoneClick={handleDropZoneClick}
             onBoardCardClick={handleBoardCardClick}
           />
