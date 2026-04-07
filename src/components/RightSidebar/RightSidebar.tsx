@@ -41,6 +41,7 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
   const unusedItems = state.unusedGoalOrder.map((_, i) => ({
     type: 'unused' as const,
     id: `unused-${i}`,
+    seatNumber: playerItems.length + i + 1,
   }));
 
   const rawRing = [...playerItems, ...unusedItems];
@@ -118,7 +119,7 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
                       <span className="text-white/20 text-sm font-bold">?</span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-white/30 text-xs font-semibold leading-none">Unused goal</p>
+                      <p className="text-white/30 text-xs font-semibold leading-none">Unused goal #{item.seatNumber}</p>
                       <p className="text-white/20 text-[10px] mt-0.5">face down</p>
                     </div>
                     <div className="w-4 h-4 rounded-full bg-zinc-700 border border-white/10 shrink-0" />

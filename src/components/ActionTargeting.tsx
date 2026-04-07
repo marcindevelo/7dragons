@@ -143,7 +143,7 @@ export default function ActionTargeting({ pendingAction }: Props) {
                 onClick={() => resolveAction({ targetPlayerId: undefined, unusedGoalIndex: i })}
                 className="py-3 bg-zinc-700 hover:bg-zinc-600 text-white/60 font-semibold rounded-xl transition-colors"
               >
-                Unused goal #{i + 1}
+                Unused goal #{state.players.length + i + 1}
               </button>
             ))}
           </div>
