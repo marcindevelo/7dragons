@@ -8,6 +8,7 @@ import BonusToast from '../components/BonusToast';
 import TurnToast from '../components/TurnToast';
 import PlayerLeftToast from '../components/PlayerLeftToast';
 import Sidebar, { SidebarToggle } from '../components/Sidebar/Sidebar';
+import RightSidebar, { RightSidebarToggle } from '../components/RightSidebar/RightSidebar';
 import MobileTopBar from '../components/MobileTopBar';
 import LobbyScreen from './LobbyScreen';
 import WinBanner from '../components/WinOverlay';
@@ -32,6 +33,7 @@ export default function GamePage() {
   // For move-card: track which board card was picked first
   const [moveFromKey, setMoveFromKey] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
 
   const isPlayPhase = state?.phase === 'play';
   const isTargeting = state?.phase === 'action-targeting';
@@ -144,6 +146,7 @@ export default function GamePage() {
     <div className="flex h-dvh select-none overflow-hidden" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.88),rgba(0,0,0,0.88)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <Sidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <SidebarToggle onClick={() => setSidebarOpen(v => !v)} />
+      <RightSidebarToggle onClick={() => setRightSidebarOpen(v => !v)} />
       <div className="flex flex-col flex-1 overflow-hidden min-w-0">
         <MobileTopBar />
         <div data-tutorial="board" className="flex-1 relative overflow-hidden">
@@ -186,6 +189,7 @@ export default function GamePage() {
         )}
       </div>
       <GameTutorial />
+      <RightSidebar mobileOpen={rightSidebarOpen} onClose={() => setRightSidebarOpen(false)} />
     </div>
   );
 }
