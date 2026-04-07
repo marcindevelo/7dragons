@@ -28,7 +28,7 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
     const isMe = i === myIdx;
     const isCurrentTurn = i === state.currentPlayerIndex;
     const goal = state.goals.find(g => g.id === p.goalId);
-    const goalVisible = goal && (goal.id as string) !== 'hidden';
+    const goalVisible = goal && (goal.id as string) !== 'hidden' && i === myIdx;
     const handCount = ('handCount' in p)
       ? (p as unknown as { handCount: number }).handCount
       : p.hand.length;
