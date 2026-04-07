@@ -14,7 +14,7 @@ import LobbyScreen from './LobbyScreen';
 import WinBanner from '../components/WinOverlay';
 import ActionTargeting from '../components/ActionTargeting';
 import GameTutorial from '../components/GameTutorial';
-import { isPlacementValid, adjacentEmptyPositions, validPlacements as computeValidPlacements } from '../engine/board';
+import { isPlacementValid, adjacentEmptyPositions } from '../engine/board';
 
 export default function GamePage() {
   const state = useGameStore(s => s.state);
@@ -32,6 +32,7 @@ export default function GamePage() {
 
   // For move-card: track which board card was picked first
   const [moveFromKey, setMoveFromKey] = useState<string | null>(null);
+  const [moveRotation, setMoveRotation] = useState<0 | 180>(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
 
@@ -58,16 +59,17 @@ export default function GamePage() {
     );
   }, [state, selectedCardId, isPlayPhase, isMultiplayer, myPlayerIndex, selectedRotation]);
 
-  // For move-card step 2: valid destinations for the picked card
+  // For move-card step 2: valid destinations for the picked card at current moveRotation
   const moveDestinations = useMemo(() => {
     if (!state || pendingAction?.type !== 'move-card' || !moveFromKey) return [];
     const placed = state.board.get(moveFromKey);
     if (!placed) return [];
-    // Build board without the card being moved
     const boardWithout = new Map(state.board);
     boardWithout.delete(moveFromKey);
-    return computeValidPlacements(boardWithout, placed.card, state.silverDragonColor);
-  }, [state, pendingAction, moveFromKey]);
+    return adjacentEmptyPositions(boardWithout).filter(pos =>
+      isPlacementValid(boardWithout, placed.card, pos, state.silverDragonColor, moveRotation)
+    );
+  }, [state, pendingAction, moveFromKey, moveRotation]);
 
   // Board cards targetable for zap/move (only when it's our turn)
   const targetablePosKeys = useMemo((): Set<string> | undefined => {
@@ -116,7 +118,9 @@ export default function GamePage() {
 
     if (pendingAction.type === 'move-card') {
       if (!moveFromKey) {
-        // Step 1: pick which card to move
+        // Step 1: pick which card to move — init rotation from current card rotation
+        const placed = state.board.get(posKey);
+        setMoveRotation(placed?.rotation ?? 0);
         setMoveFromKey(posKey);
       }
     }
@@ -130,9 +134,16 @@ export default function GamePage() {
     }
     if (isTargeting && pendingAction?.type === 'move-card' && moveFromKey) {
       // Step 2: place the moved card
-      resolveAction({ targetPosKey: moveFromKey, toPos: pos });
+      resolveAction({ targetPosKey: moveFromKey, toPos: pos, toRotation: moveRotation });
       setMoveFromKey(null);
     }
+  }
+
+  function handleLeaveInPlace() {
+    if (!moveFromKey) return;
+    const [x, y] = moveFromKey.split(',').map(Number);
+    resolveAction({ targetPosKey: moveFromKey, toPos: { x, y }, toRotation: moveRotation });
+    setMoveFromKey(null);
   }
 
   // During move step 2, show destinations as drop zones (only when it's our turn)
@@ -160,6 +171,22 @@ export default function GamePage() {
           />
           {isTargeting && pendingAction && isMyTurn && (
             <ActionTargeting pendingAction={pendingAction} />
+          )}
+          {isTargeting && pendingAction?.type === 'move-card' && moveFromKey && isMyTurn && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 flex gap-2">
+              <button
+                onClick={() => setMoveRotation(r => r === 0 ? 180 : 0)}
+                className="px-4 py-2 rounded-xl bg-zinc-800 border border-white/20 text-white font-semibold text-sm hover:bg-zinc-700 transition-colors flex items-center gap-1.5"
+              >
+                ↻ Obróć
+              </button>
+              <button
+                onClick={handleLeaveInPlace}
+                className="px-4 py-2 rounded-xl bg-zinc-800 border border-white/20 text-white font-semibold text-sm hover:bg-zinc-700 transition-colors"
+              >
+                Pozostaw tutaj
+              </button>
+            </div>
           )}
           <TurnToast />
           <PlayerLeftToast />

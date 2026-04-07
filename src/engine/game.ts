@@ -251,6 +251,7 @@ export function resolvePendingAction(
     targetPlayerId?: string;
     targetPosKey?: string;
     toPos?: BoardPosition;
+    toRotation?: 0 | 180;
     direction?: 'left' | 'right';
     unusedGoalIndex?: number;
   }
@@ -283,7 +284,7 @@ export function resolvePendingAction(
     case 'move-card': {
       if (!payload.targetPosKey) throw new Error('targetPosKey required');
       if (!payload.toPos) throw new Error('toPos required');
-      newState = moveCard(state, payload.targetPosKey, payload.toPos);
+      newState = moveCard(state, payload.targetPosKey, payload.toPos, payload.toRotation);
       break;
     }
     case 'zap-card': {

@@ -94,10 +94,21 @@ export function rotateGoals(state: GameState, direction: 'left' | 'right'): Game
 export function moveCard(
   state: GameState,
   fromPosKey: string,
-  toPos: BoardPosition
+  toPos: BoardPosition,
+  toRotation?: 0 | 180
 ): GameState {
   const placed = state.board.get(fromPosKey);
   if (!placed) throw new Error(`No card at position ${fromPosKey}`);
+
+  const rotation = toRotation ?? placed.rotation;
+  const toPosKey = posKey(toPos.x, toPos.y);
+
+  // Special case: moving in place (rotation change only)
+  if (fromPosKey === toPosKey) {
+    const newBoard = new Map(state.board);
+    newBoard.set(fromPosKey, { card: placed.card, pos: toPos, rotation });
+    return { ...state, board: newBoard };
+  }
 
   // Create board without the card
   const newBoard = new Map(state.board);
@@ -109,7 +120,7 @@ export function moveCard(
   }
 
   // Check placement is valid at new position
-  if (!isPlacementValid(newBoard, placed.card, toPos, state.silverDragonColor, placed.rotation)) {
+  if (!isPlacementValid(newBoard, placed.card, toPos, state.silverDragonColor, rotation)) {
     throw new Error('Invalid placement at target position');
   }
 
@@ -117,9 +128,9 @@ export function moveCard(
   const newPlaced: PlacedCard = {
     card: placed.card,
     pos: toPos,
-    rotation: placed.rotation,
+    rotation,
   };
-  newBoard.set(posKey(toPos.x, toPos.y), newPlaced);
+  newBoard.set(toPosKey, newPlaced);
 
   // Check board is still connected after placing
   if (!isBoardConnected(newBoard)) {
