@@ -24,23 +24,61 @@ export default function ActionTargeting({ pendingAction }: Props) {
 
   // ── Rotate Goals ──────────────────────────────────────────────────────────
   if (pendingAction.type === 'rotate-goals') {
+    const myIdx = state.currentPlayerIndex;
+    const ring = [
+      ...state.players.map((p, i) => ({ label: i === myIdx ? 'You' : p.name, isMe: i === myIdx, isPlayer: true })),
+      ...state.unusedGoalOrder.map(() => ({ label: '?', isMe: false, isPlayer: false })),
+    ];
+    const n = ring.length;
+    // Left: ring shifts left → seat i gets ring[i+1] → I receive from (myIdx+1)%n
+    const leftSource = ring[(myIdx + 1) % n];
+    // Right: ring shifts right → seat i gets ring[i-1] → I receive from (myIdx-1+n)%n
+    const rightSource = ring[(myIdx - 1 + n) % n];
+
     return (
       <div className="absolute inset-0 flex items-center justify-center z-40 bg-black/60 backdrop-blur-sm">
-        <div className="bg-zinc-900 rounded-2xl p-8 border border-white/20 shadow-2xl text-center max-w-xs w-full mx-4">
-          <p className="text-white font-bold text-lg mb-2">Rotate Goals</p>
-          <p className="text-white/50 text-sm mb-6">Choose direction to pass goals</p>
+        <div className="bg-zinc-900 rounded-2xl p-5 border border-white/20 shadow-2xl text-center max-w-sm w-full mx-4">
+          <p className="text-white font-bold text-lg mb-1">Rotate Goals</p>
+          <p className="text-white/40 text-xs mb-4">Goals pass around the ring — choose direction</p>
+
+          {/* Ring visualization */}
+          <div className="flex items-center justify-center flex-wrap gap-1 mb-5">
+            {ring.map((seat, i) => (
+              <div key={i} className="flex items-center gap-1">
+                <div className={[
+                  'px-2.5 py-1 rounded-lg text-xs font-semibold border',
+                  seat.isMe
+                    ? 'bg-green-800/60 border-green-500/50 text-green-100'
+                    : seat.isPlayer
+                      ? 'bg-zinc-700 border-white/20 text-white/80'
+                      : 'bg-zinc-800 border-white/10 text-white/30',
+                ].join(' ')}>
+                  {seat.label}
+                </div>
+                <span className="text-white/20 text-xs">{i < ring.length - 1 ? '→' : '↺'}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Buttons with receive preview */}
           <div className="flex gap-3">
             <button
               onClick={() => resolveAction({ direction: 'left' })}
-              className="flex-1 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-colors"
+              className="flex-1 py-3 px-2 bg-blue-700/80 hover:bg-blue-600 text-white font-bold rounded-xl transition-colors flex flex-col items-center gap-0.5"
             >
-              ← Left
+              <span>← Left</span>
+              <span className="text-blue-200/70 text-[10px] font-normal leading-tight">
+                receive: <span className="font-semibold text-blue-100">{leftSource.label}</span>
+              </span>
             </button>
             <button
               onClick={() => resolveAction({ direction: 'right' })}
-              className="flex-1 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-colors"
+              className="flex-1 py-3 px-2 bg-blue-700/80 hover:bg-blue-600 text-white font-bold rounded-xl transition-colors flex flex-col items-center gap-0.5"
             >
-              Right →
+              <span>Right →</span>
+              <span className="text-blue-200/70 text-[10px] font-normal leading-tight">
+                receive: <span className="font-semibold text-blue-100">{rightSource.label}</span>
+              </span>
             </button>
           </div>
         </div>
@@ -56,15 +94,18 @@ export default function ActionTargeting({ pendingAction }: Props) {
           <p className="text-white font-bold text-lg mb-2">Trade Hands</p>
           <p className="text-white/50 text-sm mb-6">Choose a player to swap hands with</p>
           <div className="flex flex-col gap-3">
-            {otherPlayers.map(p => (
-              <button
-                key={p.id}
-                onClick={() => resolveAction({ targetPlayerId: p.id })}
-                className="py-3 bg-zinc-700 hover:bg-zinc-600 text-white font-semibold rounded-xl transition-colors"
-              >
-                {p.name} ({p.hand.length} cards)
-              </button>
-            ))}
+            {otherPlayers.map(p => {
+              const count = 'handCount' in p ? (p as unknown as { handCount: number }).handCount : p.hand.length;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => resolveAction({ targetPlayerId: p.id })}
+                  className="py-3 bg-zinc-700 hover:bg-zinc-600 text-white font-semibold rounded-xl transition-colors"
+                >
+                  {p.name} ({count} cards)
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
