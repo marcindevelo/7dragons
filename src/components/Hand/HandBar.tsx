@@ -7,11 +7,12 @@ type Props = {
   selectedCardId: string | null;
   selectedRotation?: 0 | 180;
   onSelectCard: (id: string) => void;
+  cardSize?: 'sm' | 'md';
 };
 
-export default function HandBar({ hand, selectedCardId, selectedRotation = 0, onSelectCard }: Props) {
+export default function HandBar({ hand, selectedCardId, selectedRotation = 0, onSelectCard, cardSize = 'md' }: Props) {
   return (
-    <div className="h-36 bg-black/50 border-t border-white/10 flex items-center justify-center gap-3 px-4 shrink-0 overflow-x-auto">
+    <div className="h-24 sm:h-36 bg-transparent border-t border-white/10 flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-4 shrink-0 overflow-x-auto">
       {hand.length === 0 && (
         <span className="text-white/20 text-sm tracking-widest">No cards</span>
       )}
@@ -32,7 +33,7 @@ export default function HandBar({ hand, selectedCardId, selectedRotation = 0, on
                   selected={selected}
                   rotation={selected ? selectedRotation : 0}
                   onClick={() => onSelectCard(card.id)}
-                  size="md"
+                  size={cardSize}
                 />
               ) : (
                 <ActionCardComp

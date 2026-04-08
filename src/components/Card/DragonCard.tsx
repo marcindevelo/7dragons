@@ -42,7 +42,7 @@ export default function DragonCard({ card, selected, rotation = 0, onClick, size
 
       {/* Dragon emblem overlay */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <img src="/dragon-emblem.png" alt="" className="h-full w-auto opacity-35 mix-blend-multiply" />
+        <img src="/card-emblem.png" alt="" className="w-full h-full object-contain opacity-20" />
       </div>
     </button>
   );

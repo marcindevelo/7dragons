@@ -46,12 +46,21 @@ export default function TurnToast() {
           transition={{ type: 'spring', stiffness: 420, damping: 30 }}
         >
           <div className={[
-            'px-6 py-2.5 rounded-xl text-sm font-bold shadow-xl shadow-black/50 border',
+            'relative overflow-hidden px-6 py-2.5 rounded-xl text-sm font-bold shadow-xl shadow-black/50 border',
             isMe
               ? 'bg-green-700/90 text-green-100 border-green-500/60'
               : 'bg-zinc-800/90 text-white/80 border-white/10',
           ].join(' ')}>
             {label}
+            {!isMe && (
+              <motion.div
+                className="absolute bottom-0 left-0 h-px bg-yellow-400"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 4, ease: 'linear' }}
+                style={{ transformOrigin: 'left', width: '100%' }}
+              />
+            )}
           </div>
         </motion.div>
       )}

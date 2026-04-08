@@ -105,7 +105,15 @@ function scheduleAI(getState: () => GameStore, setState: (s: Partial<GameStore>)
         }
         setState({ state: next });
         scheduleAI(getState, setState);
-      } catch { /* ignore */ }
+      } catch {
+        // AI couldn't resolve action (e.g. no valid move-card targets) — skip and end turn
+        try {
+          let next = endTurn(s);
+          next = drawCard(next);
+          setState({ state: next });
+          scheduleAI(getState, setState);
+        } catch { /* ignore */ }
+      }
     }, AI_DELAY);
   }
 }

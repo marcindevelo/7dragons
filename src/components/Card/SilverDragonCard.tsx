@@ -50,7 +50,7 @@ export default function SilverDragonCard({ silverColor, size = 'md' }: Props) {
       />
 
       {/* Dragon emblem */}
-      <img src="/dragon-emblem.png" alt="" className="h-3/4 w-auto opacity-45 mix-blend-multiply" />
+      <img src="/card-emblem.png" alt="" className="h-3/4 w-auto opacity-50" />
 
       {/* Color badge */}
       <motion.div

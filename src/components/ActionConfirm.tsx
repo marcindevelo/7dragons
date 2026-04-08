@@ -34,61 +34,46 @@ export default function ActionConfirm({ cardId }: Props) {
   const silverLabel = DRAGON_LABEL[silverColor];
 
   return (
-    <div className="h-36 shrink-0 bg-[#0d1117] border-t border-white/10 flex items-center justify-between px-8 gap-6">
+    <div className="shrink-0 bg-[#0d1117] border-t border-white/10 px-4 py-3 flex flex-col gap-3">
 
-      {/* Card info */}
-      <div className="flex items-center gap-4">
-        <div className="bg-zinc-800 border border-white/20 rounded-xl px-4 py-2 text-center min-w-[96px]">
-          <p className="text-white font-bold text-sm">{actionLabel}</p>
-          <div className="flex items-center justify-center gap-1.5 mt-1">
-            <div className={['w-2.5 h-2.5 rounded-full shrink-0', silverBg].join(' ')} />
-            <span className="text-white/50 text-[11px]">{silverLabel}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Silver Dragon toggle */}
+      {/* Row 1: card info + silver toggle */}
       <div className="flex items-center gap-3">
-        <div className="flex flex-col gap-1">
-          <p className="text-white/70 text-xs font-semibold tracking-wide">Silver Dragon</p>
-          <p className="text-white/40 text-[11px] leading-snug">
-            {applySilver
-              ? `Zmieni kolor na ${silverLabel}`
-              : 'Kolor pozostanie bez zmian'}
-          </p>
+        {/* Card badge */}
+        <div className="bg-zinc-800 border border-white/20 rounded-xl px-3 py-1.5 flex items-center gap-2 shrink-0">
+          <div className={['w-2.5 h-2.5 rounded-full shrink-0', silverBg].join(' ')} />
+          <p className="text-white font-bold text-sm leading-none">{actionLabel}</p>
         </div>
+
+        <div className="flex-1" />
+
+        {/* Silver Dragon pill toggle */}
         <button
           onClick={() => setApplySilver(v => !v)}
           className={[
-            'relative w-12 h-6 rounded-full transition-colors border',
+            'flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-colors shrink-0',
             applySilver
-              ? `${silverBg} border-transparent`
-              : 'bg-zinc-700 border-zinc-600',
+              ? 'bg-zinc-700 border-white/20 text-white'
+              : 'bg-zinc-800/50 border-white/10 text-white/40',
           ].join(' ')}
-          title="Toggle Silver Dragon color change"
         >
-          <span
-            className={[
-              'absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all',
-              applySilver ? 'left-[calc(100%-22px)]' : 'left-0.5',
-            ].join(' ')}
-          />
+          <div className={['w-2 h-2 rounded-full shrink-0 transition-colors', applySilver ? silverBg : 'bg-zinc-600'].join(' ')} />
+          <span>Silver → {applySilver ? silverLabel : 'off'}</span>
         </button>
       </div>
 
-      {/* Action buttons */}
-      <div className="flex gap-3 shrink-0">
-        <button
-          onClick={() => playAction(cardId, true, applySilver)}
-          className="px-6 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-sm transition-colors"
-        >
-          Play {actionLabel}
-        </button>
+      {/* Row 2: Cancel + Play buttons */}
+      <div className="flex gap-2">
         <button
           onClick={cancelActionStaging}
-          className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl text-sm transition-colors"
+          className="flex-1 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl text-sm transition-colors"
         >
           Cancel
+        </button>
+        <button
+          onClick={() => playAction(cardId, true, applySilver)}
+          className="flex-[2] py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-sm transition-colors"
+        >
+          Play {actionLabel}
         </button>
       </div>
     </div>

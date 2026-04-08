@@ -1,9 +1,10 @@
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type Props = { onClose: () => void };
 
 export default function HelpModal({ onClose }: Props) {
-  return (
+  return createPortal(
     <AnimatePresence>
       <motion.div
         className="fixed inset-0 z-[500] flex items-center justify-center p-4"
@@ -100,7 +101,8 @@ export default function HelpModal({ onClose }: Props) {
           </button>
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
 

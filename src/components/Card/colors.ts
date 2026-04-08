@@ -5,7 +5,7 @@ export const PANEL_BG: Record<string, string> = {
   gold:    'bg-yellow-500',
   blue:    'bg-blue-700',
   green:   'bg-green-700',
-  black:   'bg-zinc-800',
+  black:   'bg-zinc-950',
   rainbow: 'bg-gradient-to-br from-red-500 via-yellow-400 via-green-500 to-blue-600',
   empty:   'bg-zinc-900/40',
 };
@@ -24,7 +24,7 @@ export const SILVER_COLOR_BG: Record<DragonColor | 'all', string> = {
   gold:  'bg-yellow-500',
   blue:  'bg-blue-700',
   green: 'bg-green-700',
-  black: 'bg-zinc-800',
+  black: 'bg-zinc-950',
 };
 
 export function panelBg(color: PanelColor): string {
