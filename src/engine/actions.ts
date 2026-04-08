@@ -66,12 +66,13 @@ export function tradeGoals(
 // "Right" = each seat gets the previous seat's goal (ring shifts right by 1).
 export function rotateGoals(state: GameState, direction: 'left' | 'right'): GameState {
   const players = state.players.map((p) => ({ ...p }));
+  const { seatOrder } = state;
 
-  // Build full ring using tracked unused seat order (not recomputed from goals array)
-  const ring: string[] = [
-    ...players.map((p) => p.goalId),
-    ...state.unusedGoalOrder,
-  ];
+  // Build ring of goals in seat order: player seat → player's goalId, null seat → next unused goal
+  let unusedCursor = 0;
+  const ring: string[] = seatOrder.map(seat =>
+    seat !== null ? players[seat].goalId : state.unusedGoalOrder[unusedCursor++]
+  );
 
   const n = ring.length;
   const rotated =
@@ -79,13 +80,16 @@ export function rotateGoals(state: GameState, direction: 'left' | 'right'): Game
       ? [...ring.slice(1), ring[0]]
       : [ring[n - 1], ...ring.slice(0, n - 1)];
 
-  // Assign back to players
-  for (let i = 0; i < players.length; i++) {
-    players[i] = { ...players[i], goalId: rotated[i] };
-  }
-
-  // Update unused seat order (seats after player positions)
-  const unusedGoalOrder = rotated.slice(players.length);
+  // Assign back using same seat order
+  unusedCursor = 0;
+  const unusedGoalOrder: string[] = [];
+  seatOrder.forEach((seat, i) => {
+    if (seat !== null) {
+      players[seat] = { ...players[seat], goalId: rotated[i] };
+    } else {
+      unusedGoalOrder.push(rotated[i]);
+    }
+  });
 
   return { ...state, players, unusedGoalOrder };
 }

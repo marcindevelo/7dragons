@@ -26,6 +26,16 @@ export function createGame(playerNames: string[], _seed?: number): GameState {
     .filter(g => !heldGoalIds.has(g.id))
     .map(g => g.id);
 
+  // Randomly assign all 5 seats: shuffle player indices + nulls for unused seats
+  const seatOrder: Array<number | null> = [
+    ...players.map((_, i) => i as number | null),
+    ...unusedGoalOrder.map(() => null),
+  ];
+  for (let i = seatOrder.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [seatOrder[i], seatOrder[j]] = [seatOrder[j], seatOrder[i]];
+  }
+
   return {
     board: new Map<string, PlacedCard>(),
     deck: remainingDeck,
@@ -34,6 +44,7 @@ export function createGame(playerNames: string[], _seed?: number): GameState {
     players,
     goals: [...goalCards],
     unusedGoalOrder,
+    seatOrder,
     currentPlayerIndex: 0,
     phase: 'draw',
     pendingAction: null,

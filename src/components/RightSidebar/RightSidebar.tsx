@@ -23,32 +23,31 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
 
   const myIdx = isMultiplayer ? (myPlayerIndex ?? 0) : 0;
 
-  // Build unified ring: players in seat order, then unused goal slots
-  const playerItems = state.players.map((p, i) => {
-    const isMe = i === myIdx;
-    const isCurrentTurn = i === state.currentPlayerIndex;
-    const goal = state.goals.find(g => g.id === p.goalId);
-    const goalVisible = goal && (goal.id as string) !== 'hidden' && i === myIdx;
-    const handCount = ('handCount' in p)
-      ? (p as unknown as { handCount: number }).handCount
-      : p.hand.length;
-    const goalBg = goalVisible ? (PANEL_BG[goal!.color as DragonColor] ?? 'bg-zinc-700') : null;
-    const goalLabel = goalVisible ? DRAGON_LABEL[goal!.color as DragonColor] : '?';
-
-    return { type: 'player' as const, isMe, isCurrentTurn, goalBg, goalLabel, name: p.name, handCount, id: p.id };
+  // Build ring from seatOrder (random seat positions assigned at game start)
+  let unusedCursor = 0;
+  const rawRing = state.seatOrder.map((seat, seatIdx) => {
+    if (seat !== null) {
+      const p = state.players[seat];
+      const isMe = seat === myIdx;
+      const isCurrentTurn = seat === state.currentPlayerIndex;
+      const goal = state.goals.find(g => g.id === p.goalId);
+      const goalVisible = goal && (goal.id as string) !== 'hidden' && isMe;
+      const handCount = ('handCount' in p)
+        ? (p as unknown as { handCount: number }).handCount
+        : p.hand.length;
+      const goalBg = goalVisible ? (PANEL_BG[goal!.color as DragonColor] ?? 'bg-zinc-700') : null;
+      const goalLabel = goalVisible ? DRAGON_LABEL[goal!.color as DragonColor] : '?';
+      return { type: 'player' as const, isMe, isCurrentTurn, goalBg, goalLabel, name: p.name, handCount, id: p.id, seatNumber: seatIdx + 1 };
+    } else {
+      const slotIdx = unusedCursor++;
+      return { type: 'unused' as const, id: `unused-${slotIdx}`, seatNumber: seatIdx + 1 };
+    }
   });
 
-  const unusedItems = state.unusedGoalOrder.map((_, i) => ({
-    type: 'unused' as const,
-    id: `unused-${i}`,
-    seatNumber: playerItems.length + i + 1,
-  }));
-
-  const rawRing = [...playerItems, ...unusedItems];
-
   // Rotate ring so "You" (myIdx) is always at position 2 (middle of 5)
+  const myRingIdx = rawRing.findIndex(item => item.type === 'player' && item.isMe);
   const midPos = Math.floor(rawRing.length / 2);
-  const start = (myIdx - midPos + rawRing.length) % rawRing.length;
+  const start = (myRingIdx - midPos + rawRing.length) % rawRing.length;
   const ring = [...rawRing.slice(start), ...rawRing.slice(0, start)];
 
   return (

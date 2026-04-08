@@ -58,6 +58,7 @@ export type GameState = {
   players: Player[];
   goals: GoalCard[];                 // all 5 goal cards (including unused ones)
   unusedGoalOrder: string[];         // ordered goalIds for unused "imaginary player" seats
+  seatOrder: Array<number | null>;   // seat 0..4: player index or null (unused seat)
   currentPlayerIndex: number;
   phase: GamePhase;
   pendingAction: PendingAction | null;

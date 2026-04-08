@@ -25,19 +25,26 @@ export default function ActionTargeting({ pendingAction }: Props) {
   // ── Rotate Goals ──────────────────────────────────────────────────────────
   if (pendingAction.type === 'rotate-goals') {
     const myIdx = state.currentPlayerIndex;
-    const rawRing = [
-      ...state.players.map((p, i) => ({ label: i === myIdx ? 'You' : p.name, isMe: i === myIdx, isPlayer: true })),
-      ...state.unusedGoalOrder.map(() => ({ label: '?', isMe: false, isPlayer: false })),
-    ];
+    // Build ring from seatOrder (matches the actual seat layout assigned at game start)
+    let unusedCursor = 0;
+    const rawRing = state.seatOrder.map(seat => {
+      if (seat !== null) {
+        return { label: seat === myIdx ? 'You' : state.players[seat].name, isMe: seat === myIdx, isPlayer: true };
+      } else {
+        unusedCursor++;
+        return { label: '?', isMe: false, isPlayer: false };
+      }
+    });
     const n = rawRing.length;
-    // Left: ring shifts left → seat i gets ring[i+1] → I receive from (myIdx+1)%n
-    const leftSource = rawRing[(myIdx + 1) % n];
-    // Right: ring shifts right → seat i gets ring[i-1] → I receive from (myIdx-1+n)%n
-    const rightSource = rawRing[(myIdx - 1 + n) % n];
+    const myRingIdx = rawRing.findIndex(s => s.isMe);
+    // Left: ring shifts left → my seat gets the next seat's goal
+    const leftSource = rawRing[(myRingIdx + 1) % n];
+    // Right: ring shifts right → my seat gets the previous seat's goal
+    const rightSource = rawRing[(myRingIdx - 1 + n) % n];
 
     // Rotate so current player is always in the middle
     const midPos = Math.floor(n / 2);
-    const start = (myIdx - midPos + n) % n;
+    const start = (myRingIdx - midPos + n) % n;
     const ring = [...rawRing.slice(start), ...rawRing.slice(0, start)];
 
     return (
