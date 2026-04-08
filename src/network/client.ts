@@ -17,13 +17,18 @@ function getOrCreateClientId(): string {
 }
 
 type Listener = (msg: ServerMessage) => void;
+type StatusListener = (connected: boolean) => void;
 
 class GameClient {
   private socket: PartySocket | null = null;
   private listeners = new Set<Listener>();
+  private statusListeners = new Set<StatusListener>();
+  private currentName: string | null = null;
+  private isFirstOpen = true;
 
   connect(roomId: string) {
     this.disconnect();
+    this.isFirstOpen = true;
     this.socket = new PartySocket({
       host: PARTYKIT_HOST,
       room: roomId,
@@ -34,9 +39,24 @@ class GameClient {
         for (const l of this.listeners) l(msg);
       } catch { /* ignore */ }
     });
+    this.socket.addEventListener('open', () => {
+      for (const l of this.statusListeners) l(true);
+      if (this.isFirstOpen) {
+        this.isFirstOpen = false;
+        return; // first open: join() is called explicitly by the store
+      }
+      // Reconnected after a drop — re-send join to restore game slot and get fresh state
+      if (this.currentName) {
+        this.send({ type: 'join', name: this.currentName, clientId: getOrCreateClientId() });
+      }
+    });
+    this.socket.addEventListener('close', () => {
+      for (const l of this.statusListeners) l(false);
+    });
   }
 
   disconnect() {
+    this.currentName = null;
     this.socket?.close();
     this.socket = null;
   }
@@ -50,9 +70,21 @@ class GameClient {
     return () => this.listeners.delete(listener);
   }
 
+  onStatus(listener: StatusListener): () => void {
+    this.statusListeners.add(listener);
+    return () => this.statusListeners.delete(listener);
+  }
+
+  isConnected(): boolean {
+    return this.socket?.readyState === WebSocket.OPEN;
+  }
+
   // ── Convenience methods ─────────────────────────────────────────────────
 
-  join(name: string) { this.send({ type: 'join', name, clientId: getOrCreateClientId() }); }
+  join(name: string) {
+    this.currentName = name;
+    this.send({ type: 'join', name, clientId: getOrCreateClientId() });
+  }
   startGame() { this.send({ type: 'start-game' }); }
   drawCard() { this.send({ type: 'draw-card' }); }
   drawInstead() { this.send({ type: 'draw-instead' }); }
