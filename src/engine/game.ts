@@ -1,4 +1,4 @@
-import type { GameState, BoardPosition, Player, PlacedCard, ActionCard } from './types';
+import type { GameState, BoardPosition, Player, PlacedCard, ActionCard, ActionEvent } from './types';
 import { buildMainDeck, dealInitialHands, goalCards, shuffleDeck } from './deck';
 import { posKey, isPlacementValid } from './board';
 import { checkWin, largestGroup } from './win';
@@ -51,6 +51,7 @@ export function createGame(playerNames: string[], _seed?: number): GameState {
     winner: null,
     applyActionEffect: false,
     applySilverChange: false,
+    lastActionEvent: null,
   };
 }
 
@@ -271,43 +272,59 @@ export function resolvePendingAction(
 
   const currentPlayer = state.players[state.currentPlayerIndex];
   let newState: GameState;
+  let eventDescription = '';
 
   switch (state.pendingAction.type) {
     case 'trade-hands': {
       if (!payload.targetPlayerId) throw new Error('targetPlayerId required');
       newState = tradeHands(state, currentPlayer.id, payload.targetPlayerId);
+      const target = state.players.find(p => p.id === payload.targetPlayerId);
+      eventDescription = `swapped hands with ${target?.name ?? '?'}`;
       break;
     }
     case 'trade-goals': {
-      newState = tradeGoals(
-        state,
-        currentPlayer.id,
-        payload.targetPlayerId ?? null,
-        payload.unusedGoalIndex
-      );
+      newState = tradeGoals(state, currentPlayer.id, payload.targetPlayerId ?? null, payload.unusedGoalIndex);
+      if (payload.targetPlayerId) {
+        const target = state.players.find(p => p.id === payload.targetPlayerId);
+        eventDescription = `swapped goals with ${target?.name ?? '?'}`;
+      } else {
+        const seatNum = state.players.length + (payload.unusedGoalIndex ?? 0) + 1;
+        eventDescription = `swapped goals with Unused goal #${seatNum}`;
+      }
       break;
     }
     case 'rotate-goals': {
       if (!payload.direction) throw new Error('direction required');
       newState = rotateGoals(state, payload.direction);
+      eventDescription = `rotated all goals to the ${payload.direction}`;
       break;
     }
     case 'move-card': {
       if (!payload.targetPosKey) throw new Error('targetPosKey required');
       if (!payload.toPos) throw new Error('toPos required');
       newState = moveCard(state, payload.targetPosKey, payload.toPos, payload.toRotation);
+      eventDescription = 'moved a card on the board';
       break;
     }
     case 'zap-card': {
       if (!payload.targetPosKey) throw new Error('targetPosKey required');
       newState = zapCard(state, payload.targetPosKey);
+      eventDescription = 'removed a card from the board';
       break;
     }
     default:
       throw new Error('Unknown pending action type');
   }
 
-  return { ...newState, pendingAction: null, phase: 'play' };
+  const lastActionEvent: ActionEvent = {
+    seq: (state.lastActionEvent?.seq ?? 0) + 1,
+    playerId: currentPlayer.id,
+    playerName: currentPlayer.name,
+    action: state.pendingAction.type,
+    description: eventDescription,
+  };
+
+  return { ...newState, pendingAction: null, phase: 'play', lastActionEvent };
 }
 
 // Advance to next player's turn

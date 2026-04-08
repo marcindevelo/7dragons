@@ -14,6 +14,7 @@ import LobbyScreen from './LobbyScreen';
 import WinBanner from '../components/WinOverlay';
 import ActionTargeting from '../components/ActionTargeting';
 import GameTutorial from '../components/GameTutorial';
+import ActionEventToast from '../components/ActionEventToast';
 import { isPlacementValid, adjacentEmptyPositions } from '../engine/board';
 
 export default function GamePage() {
@@ -189,6 +190,7 @@ export default function GamePage() {
             </div>
           )}
           <TurnToast />
+          <ActionEventToast />
           <PlayerLeftToast />
           <BonusToast />
         </div>

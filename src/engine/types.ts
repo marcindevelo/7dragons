@@ -50,6 +50,14 @@ export type PendingAction =
   | { type: 'trade-goals'; targetPlayerId: string | null } // null = unused goal pile
   | { type: 'rotate-goals'; direction: 'left' | 'right' | null };
 
+export type ActionEvent = {
+  seq: number;          // monotonically increasing — detects new events even for same action
+  playerId: string;
+  playerName: string;
+  action: ActionType;
+  description: string;  // full human-readable sentence shown in the alert
+};
+
 export type GameState = {
   board: Map<string, PlacedCard>;    // key: posKey(x,y)
   deck: (DragonCard | ActionCard)[];
@@ -65,4 +73,5 @@ export type GameState = {
   winner: string | null;             // player id
   applyActionEffect: boolean;        // two-step Silver + action choice
   applySilverChange: boolean;
+  lastActionEvent: ActionEvent | null;
 };
