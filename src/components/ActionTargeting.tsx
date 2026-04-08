@@ -26,8 +26,10 @@ export default function ActionTargeting({ pendingAction }: Props) {
   if (pendingAction.type === 'rotate-goals') {
     const myIdx = state.currentPlayerIndex;
     // Build ring from seatOrder (matches the actual seat layout assigned at game start)
+    // Fall back to player-order ring if seatOrder missing (old server state)
+    const effectiveSeatOrder = state.seatOrder ?? state.players.map((_, i) => i as number | null);
     let unusedCursor = 0;
-    const rawRing = state.seatOrder.map(seat => {
+    const rawRing = effectiveSeatOrder.map(seat => {
       if (seat !== null) {
         return { label: seat === myIdx ? 'You' : state.players[seat].name, isMe: seat === myIdx, isPlayer: true };
       } else {

@@ -20,6 +20,7 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
   const myPlayerIndex = useMultiplayerStore(s => s.myPlayerIndex);
 
   if (!state) return null;
+  if (!state.seatOrder) return null; // guard against old server state without seatOrder
 
   const myIdx = isMultiplayer ? (myPlayerIndex ?? 0) : 0;
 
