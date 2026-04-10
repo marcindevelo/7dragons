@@ -56,6 +56,8 @@ export type ActionEvent = {
   playerName: string;
   action: ActionType;
   description: string;  // full human-readable sentence shown in the alert
+  targetPlayerId?: string; // set when action directly affects a specific player
+  targetName?: string;     // display name of that player (for 'you' substitution)
 };
 
 export type GameState = {

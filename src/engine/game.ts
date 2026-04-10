@@ -290,6 +290,8 @@ export function resolvePendingAction(
   const currentPlayer = state.players[state.currentPlayerIndex];
   let newState: GameState;
   let eventDescription = '';
+  let eventTargetPlayerId: string | undefined;
+  let eventTargetName: string | undefined;
 
   switch (state.pendingAction.type) {
     case 'trade-hands': {
@@ -297,6 +299,8 @@ export function resolvePendingAction(
       newState = tradeHands(state, currentPlayer.id, payload.targetPlayerId);
       const target = state.players.find(p => p.id === payload.targetPlayerId);
       eventDescription = `swapped hands with ${target?.name ?? '?'}`;
+      eventTargetPlayerId = payload.targetPlayerId;
+      eventTargetName = target?.name;
       break;
     }
     case 'trade-goals': {
@@ -304,6 +308,8 @@ export function resolvePendingAction(
       if (payload.targetPlayerId) {
         const target = state.players.find(p => p.id === payload.targetPlayerId);
         eventDescription = `swapped goals with ${target?.name ?? '?'}`;
+        eventTargetPlayerId = payload.targetPlayerId;
+        eventTargetName = target?.name;
       } else {
         const seatNum = state.players.length + (payload.unusedGoalIndex ?? 0) + 1;
         eventDescription = `swapped goals with Unused goal #${seatNum}`;
@@ -339,6 +345,8 @@ export function resolvePendingAction(
     playerName: currentPlayer.name,
     action: state.pendingAction.type,
     description: eventDescription,
+    targetPlayerId: eventTargetPlayerId,
+    targetName: eventTargetName,
   };
 
   return { ...newState, pendingAction: null, phase: 'play', lastActionEvent };

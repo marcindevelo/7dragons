@@ -31,7 +31,13 @@ export default function ActionEventToast() {
     // Only show to opponents, not to the player who performed the action
     if (ev.playerId === myPlayerId) return;
 
-    setEvent({ playerName: ev.playerName, action: ev.action, description: ev.description });
+    // Personalise: replace target's name with "you" if this viewer is the target
+    let description = ev.description;
+    if (ev.targetPlayerId === myPlayerId && ev.targetName) {
+      description = description.replace(ev.targetName, 'you');
+    }
+
+    setEvent({ playerName: ev.playerName, action: ev.action, description });
     setVisible(true);
   }, [state?.lastActionEvent?.seq]);
 
