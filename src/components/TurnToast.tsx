@@ -39,7 +39,7 @@ export default function TurnToast() {
         <motion.div
           key={label}
           data-tutorial="turn-toast"
-          className="absolute top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none"
+          className="absolute top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
           initial={{ y: -20, opacity: 0, scale: 0.9 }}
           animate={{ y: 0, opacity: 1, scale: 1 }}
           exit={{ y: -12, opacity: 0, scale: 0.95 }}

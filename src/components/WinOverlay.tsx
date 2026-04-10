@@ -77,7 +77,7 @@ export default function WinBanner() {
             onClick={goToLobby}
             className="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-sm transition-colors"
           >
-            New players
+            Lobby
           </button>
         </div>
       </motion.div>
