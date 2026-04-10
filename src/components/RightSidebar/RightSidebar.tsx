@@ -137,16 +137,24 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
               ))}
             </div>
 
-            {/* Right: wrap rail — exits bottom of last item, runs up right side, enters top of first */}
-            <div className="relative w-3 self-stretch">
-              {/* Bracket: top + right + bottom borders = open-left ⊏ shape */}
-              <div className="absolute inset-y-5 inset-x-0 border-r border-y border-white/20 rounded-r-2xl" />
-              {/* Arrowhead in the middle of the rail pointing UP — shows direction of flow along the rail */}
-              <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-center">
-                <svg width="8" height="6" viewBox="0 0 8 6" fill="none" className="opacity-35 rotate-180">
-                  <path d="M4 6L0 0h8L4 6z" fill="white" />
-                </svg>
+            {/* Right: wrap rail — bracket with broken midpoint showing upward arrow */}
+            <div className="w-3 self-stretch flex flex-col">
+              {/* Top corner: short horizontal cap + right border start */}
+              <div className="h-5 border-r border-t border-white/20 rounded-tr-2xl" />
+              {/* Upper vertical segment */}
+              <div className="flex-1 border-r border-white/20" />
+              {/* Gap with arrowhead centered on the rail line */}
+              <div className="relative h-6">
+                <div className="absolute inset-y-0 right-0 translate-x-1/2 flex items-center">
+                  <svg width="7" height="10" viewBox="0 0 7 10" fill="none" className="opacity-40">
+                    <path d="M3.5 0L7 10H0L3.5 0z" fill="white" />
+                  </svg>
+                </div>
               </div>
+              {/* Lower vertical segment */}
+              <div className="flex-1 border-r border-white/20" />
+              {/* Bottom corner: right border end + short horizontal cap */}
+              <div className="h-5 border-r border-b border-white/20 rounded-br-2xl" />
             </div>
 
           </div>
