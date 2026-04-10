@@ -36,6 +36,9 @@ export function createGame(playerNames: string[], _seed?: number): GameState {
     [seatOrder[i], seatOrder[j]] = [seatOrder[j], seatOrder[i]];
   }
 
+  // First player to act is whoever sits in the first non-null seat
+  const firstPlayerIndex = (seatOrder.find(s => s !== null) ?? 0) as number;
+
   return {
     board: new Map<string, PlacedCard>(),
     deck: remainingDeck,
@@ -45,7 +48,7 @@ export function createGame(playerNames: string[], _seed?: number): GameState {
     goals: [...goalCards],
     unusedGoalOrder,
     seatOrder,
-    currentPlayerIndex: 0,
+    currentPlayerIndex: firstPlayerIndex,
     phase: 'draw',
     pendingAction: null,
     winner: null,
@@ -74,11 +77,22 @@ function computeClosestWinner(state: GameState): GameState {
 // When deck is empty and current player has no cards, advance past empty-handed players.
 // If all hands empty → closest-to-7 win.
 function advancePastEmptyHands(state: GameState): GameState {
-  const n = state.players.length;
+  const seatOrder = state.seatOrder;
+  const n = seatOrder ? seatOrder.length : state.players.length;
+
+  // Walk seat order (or sequential order as fallback) to find next player with cards
+  let cur = state.currentPlayerIndex;
   for (let i = 1; i < n; i++) {
-    const nextIdx = (state.currentPlayerIndex + i) % n;
+    let nextIdx: number;
+    if (seatOrder) {
+      const curSeat = seatOrder.indexOf(cur);
+      let seat = seatOrder[(curSeat + i) % n];
+      if (seat === null) continue;
+      nextIdx = seat;
+    } else {
+      nextIdx = (state.currentPlayerIndex + i) % n;
+    }
     if (state.players[nextIdx].hand.length > 0) {
-      // Found a player with cards — move to their play phase (no draw since deck empty)
       return {
         ...state,
         currentPlayerIndex: nextIdx,
@@ -327,15 +341,28 @@ export function resolvePendingAction(
   return { ...newState, pendingAction: null, phase: 'play', lastActionEvent };
 }
 
+// Return the next player index following seatOrder (skipping null/unused seats).
+// Falls back to sequential index if seatOrder is missing (old state).
+function nextPlayerInSeatOrder(state: GameState): number {
+  const seatOrder = state.seatOrder;
+  if (!seatOrder) return (state.currentPlayerIndex + 1) % state.players.length;
+
+  const n = seatOrder.length;
+  const currentSeat = seatOrder.indexOf(state.currentPlayerIndex);
+  for (let i = 1; i <= n; i++) {
+    const seat = seatOrder[(currentSeat + i) % n];
+    if (seat !== null) return seat;
+  }
+  return state.currentPlayerIndex; // fallback (should never happen)
+}
+
 // Advance to next player's turn
 export function endTurn(state: GameState): GameState {
   if (state.phase === 'ended') return state;
 
-  const nextPlayerIndex = (state.currentPlayerIndex + 1) % state.players.length;
-
   return {
     ...state,
-    currentPlayerIndex: nextPlayerIndex,
+    currentPlayerIndex: nextPlayerInSeatOrder(state),
     phase: 'draw',
     pendingAction: null,
     applyActionEffect: false,
