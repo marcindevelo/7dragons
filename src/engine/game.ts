@@ -207,6 +207,9 @@ export function playActionCard(
 ): GameState {
   if (state.phase !== 'play') throw new Error('Not in play phase');
 
+  // First action card ever played must change Silver Dragon color
+  if (state.silverDragonColor === 'all') applySilver = true;
+
   const currentPlayer = state.players[state.currentPlayerIndex];
   const cardIndex = currentPlayer.hand.findIndex((c) => c.id === cardId);
   if (cardIndex === -1) throw new Error('Card not in hand');

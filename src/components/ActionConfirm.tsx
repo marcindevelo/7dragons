@@ -33,6 +33,9 @@ export default function ActionConfirm({ cardId }: Props) {
   const silverBg = PANEL_BG[silverColor] ?? 'bg-zinc-700';
   const silverLabel = DRAGON_LABEL[silverColor];
 
+  // First action card ever played must change Silver Dragon color (can't stay 'all')
+  const silverForced = state.silverDragonColor === 'all';
+
   return (
     <div className="shrink-0 bg-[#0d1117] border-t border-white/10 px-4 py-3 flex flex-col gap-3">
 
@@ -46,18 +49,21 @@ export default function ActionConfirm({ cardId }: Props) {
 
         <div className="flex-1" />
 
-        {/* Silver Dragon pill toggle */}
+        {/* Silver Dragon pill toggle — locked when Silver is still 'all' */}
         <button
-          onClick={() => setApplySilver(v => !v)}
+          onClick={() => !silverForced && setApplySilver(v => !v)}
           className={[
             'flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-colors shrink-0',
-            applySilver
-              ? 'bg-zinc-700 border-white/20 text-white'
-              : 'bg-zinc-800/50 border-white/10 text-white/40',
+            silverForced
+              ? 'bg-zinc-700 border-white/20 text-white cursor-not-allowed opacity-80'
+              : applySilver
+                ? 'bg-zinc-700 border-white/20 text-white'
+                : 'bg-zinc-800/50 border-white/10 text-white/40',
           ].join(' ')}
+          title={silverForced ? 'First action must change Silver Dragon color' : undefined}
         >
-          <div className={['w-2 h-2 rounded-full shrink-0 transition-colors', applySilver ? silverBg : 'bg-zinc-600'].join(' ')} />
-          <span>Silver → {applySilver ? silverLabel : 'off'}</span>
+          <div className={['w-2 h-2 rounded-full shrink-0 transition-colors', (silverForced || applySilver) ? silverBg : 'bg-zinc-600'].join(' ')} />
+          <span>Silver → {(silverForced || applySilver) ? silverLabel : 'off'}</span>
         </button>
       </div>
 
