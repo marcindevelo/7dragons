@@ -126,15 +126,32 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
                   </div>
                 )}
 
-                {/* Arrow connector */}
-                <div className="flex justify-center py-1">
-                  <span className={[
-                    'text-[11px]',
-                    idx < ring.length - 1 ? 'text-white/15' : 'text-white/20',
-                  ].join(' ')}>
-                    {idx < ring.length - 1 ? '↓' : '↺'}
-                  </span>
-                </div>
+                {/* Connector */}
+                {idx < ring.length - 1 ? (
+                  /* Between items: vertical line + downward arrowhead */
+                  <div className="flex flex-col items-center py-0.5">
+                    <div className="w-px h-3 bg-white/20" />
+                    <svg width="10" height="7" viewBox="0 0 10 7" fill="none" className="opacity-25">
+                      <path d="M5 7L0 0h10L5 7z" fill="white" />
+                    </svg>
+                  </div>
+                ) : (
+                  /* Wrap-around: ↓ then corner right + ↑ back to top */
+                  <div className="flex py-0.5 px-3">
+                    <div className="flex flex-col items-center">
+                      <div className="w-px h-3 bg-white/20" />
+                      <div className="w-px h-3 bg-white/10" />
+                    </div>
+                    <div className="flex flex-col justify-end">
+                      <div className="w-5 h-px bg-white/15" />
+                    </div>
+                    <div className="flex flex-col items-center justify-end">
+                      <svg width="10" height="7" viewBox="0 0 10 7" fill="none" className="opacity-20 rotate-180">
+                        <path d="M5 7L0 0h10L5 7z" fill="white" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
 
               </div>
             ))}
