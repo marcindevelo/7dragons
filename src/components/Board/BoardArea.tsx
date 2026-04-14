@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type { PlacedCard, BoardPosition, DragonColor } from '../../engine/types';
 import { DragonCard, SilverDragonCard } from '../Card';
 import { posKey, adjacentEmptyPositions } from '../../engine/board';
+import { useTranslation } from '../../i18n/LanguageContext';
 
 const CARD_W  = 80;
 const CARD_H  = 112;
@@ -40,6 +41,7 @@ export default function BoardArea({
   onDropZoneClick,
   onBoardCardClick,
 }: Props) {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const [silverBlocked, setSilverBlocked] = useState(false);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -158,7 +160,7 @@ export default function BoardArea({
               <SilverDragonCard silverColor={silverColor} size="md" />
               {silverBlocked && (
                 <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 text-red-400 text-xs font-semibold px-2 py-1 rounded-lg pointer-events-none z-50">
-                  Nie można zabrać Silver Queen
+                  {t('board.cantZapSilver')}
                 </div>
               )}
             </div>
@@ -274,7 +276,7 @@ export default function BoardArea({
       {/* Hint when idle */}
       {validPlacements.length === 0 && !targetablePosKeys?.size && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none">
-          <p className="text-white/20 text-xs tracking-widest">Select a card to see placements</p>
+          <p className="text-white/20 text-xs tracking-widest">{t('board.selectCard')}</p>
         </div>
       )}
     </div>

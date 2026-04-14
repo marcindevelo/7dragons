@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { useMultiplayerStore } from '../store/multiplayerStore';
-import { SILVER_COLOR_BG, DRAGON_LABEL, PANEL_BG } from './Card/colors';
-import type { DragonColor } from '../engine/types';
+import { SILVER_COLOR_BG, PANEL_BG } from './Card/colors';
+import { useTranslation } from '../i18n/LanguageContext';
 
 function useElapsedTime(startedAt: number | null): string {
   const [elapsed, setElapsed] = useState(0);
@@ -20,6 +20,7 @@ function useElapsedTime(startedAt: number | null): string {
 }
 
 export default function MobileTopBar() {
+  const { t } = useTranslation();
   const state = useGameStore(s => s.state);
   const isMultiplayer = useGameStore(s => s.isMultiplayer);
   const myPlayerIndex = useMultiplayerStore(s => s.myPlayerIndex);
@@ -42,7 +43,7 @@ export default function MobileTopBar() {
       {/* Draw pile — informational only */}
       <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-white/10 bg-white/5">
         <span className="text-white font-bold text-sm leading-none">{state.deck.length}</span>
-        <span className="text-white/40 text-[10px] leading-none">cards</span>
+        <span className="text-white/40 text-[10px] leading-none">{t('mobile.cards')}</span>
       </div>
 
       {/* Discard */}
@@ -52,7 +53,7 @@ export default function MobileTopBar() {
             {topDiscard.action.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase())}
           </span>
         ) : (
-          <span className="text-white/30 text-[10px]">empty</span>
+          <span className="text-white/30 text-[10px]">{t('mobile.empty')}</span>
         )}
       </div>
 
@@ -68,7 +69,7 @@ export default function MobileTopBar() {
       <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/10 bg-white/5">
         <div className={['w-2.5 h-2.5 rounded-full shrink-0', silverBg].join(' ')} />
         <span className="text-white/60 text-[10px]">
-          {state.silverDragonColor === 'all' ? 'All' : DRAGON_LABEL[state.silverDragonColor as DragonColor]}
+          {state.silverDragonColor === 'all' ? t('color.all') : t('color.' + state.silverDragonColor)}
         </span>
       </div>
 
@@ -76,7 +77,7 @@ export default function MobileTopBar() {
       {myGoal && (
         <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/10 bg-white/5">
           <div className={['w-2.5 h-2.5 rounded-full shrink-0', PANEL_BG[myGoal.color]].join(' ')} />
-          <span className="text-white/60 text-[10px]">{DRAGON_LABEL[myGoal.color]}</span>
+          <span className="text-white/60 text-[10px]">{t('color.' + myGoal.color)}</span>
         </div>
       )}
     </div>

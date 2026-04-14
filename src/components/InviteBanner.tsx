@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import type { InviteMessage } from '../network/inviteClient';
+import { useTranslation } from '../i18n/LanguageContext';
 
 type Props = {
   invite: InviteMessage | null;
@@ -8,6 +9,7 @@ type Props = {
 };
 
 export default function InviteBanner({ invite, onJoin, onDismiss }: Props) {
+  const { t } = useTranslation();
   return (
     <AnimatePresence>
       {invite && (
@@ -21,10 +23,10 @@ export default function InviteBanner({ invite, onJoin, onDismiss }: Props) {
           <div className="flex items-center gap-4 bg-zinc-900 border border-blue-500/50 rounded-2xl px-5 py-4 shadow-2xl shadow-black/70 min-w-[320px]">
             <div className="flex flex-col flex-1 min-w-0">
               <span className="text-white font-bold text-sm leading-tight">
-                {invite.fromName} invites you to play!
+                {t('invite.text', { name: invite.fromName })}
               </span>
               <span className="text-white/40 text-xs mt-0.5">
-                Room: <span className="font-mono text-white/70 tracking-widest">{invite.roomCode}</span>
+                {t('invite.room')} <span className="font-mono text-white/70 tracking-widest">{invite.roomCode}</span>
               </span>
             </div>
             <div className="flex gap-2 shrink-0">
@@ -32,7 +34,7 @@ export default function InviteBanner({ invite, onJoin, onDismiss }: Props) {
                 onClick={() => onJoin(invite.roomCode)}
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-colors"
               >
-                Join
+                {t('invite.join')}
               </button>
               <button
                 onClick={onDismiss}

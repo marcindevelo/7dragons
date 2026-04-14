@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from '../i18n/LanguageContext';
 import { useGameStore } from '../store/gameStore';
 import { useMultiplayerStore } from '../store/multiplayerStore';
 import BoardArea from '../components/Board/BoardArea';
@@ -18,6 +19,7 @@ import ActionEventToast from '../components/ActionEventToast';
 import { isPlacementValid, adjacentEmptyPositions, isBoardConnected } from '../engine/board';
 
 export default function GamePage() {
+  const { t } = useTranslation();
   const state = useGameStore(s => s.state);
   const isMultiplayer = useGameStore(s => s.isMultiplayer);
   const selectedCardId = useGameStore(s => s.selectedCardId);
@@ -206,8 +208,8 @@ export default function GamePage() {
               {moveDestinations.length === 0 && (
                 <p className="text-white/50 text-xs bg-black/60 px-3 py-1 rounded-lg pointer-events-auto">
                   {isMoveCardBridge
-                    ? 'Ta karta łączy dwie grupy — nie można jej przesunąć. Możesz ją obrócić i pozostawić tutaj.'
-                    : 'Brak możliwych pozycji — karta nie pasuje kolorowo do żadnego sąsiada'}
+                    ? t('game.cardConnects')
+                    : t('game.noPositions')}
                 </p>
               )}
               <div className="flex gap-2">
@@ -215,13 +217,13 @@ export default function GamePage() {
                   onClick={() => setMoveRotation(r => r === 0 ? 180 : 0)}
                   className="px-4 py-2 rounded-xl bg-zinc-800 border border-white/20 text-white font-semibold text-sm hover:bg-zinc-700 transition-colors flex items-center gap-1.5 pointer-events-auto"
                 >
-                  ↻ Obróć
+                  {t('game.rotate')}
                 </button>
                 <button
                   onClick={handleLeaveInPlace}
                   className="px-4 py-2 rounded-xl bg-zinc-800 border border-white/20 text-white font-semibold text-sm hover:bg-zinc-700 transition-colors pointer-events-auto"
                 >
-                  Pozostaw tutaj
+                  {t('game.leaveHere')}
                 </button>
               </div>
             </div>
@@ -240,7 +242,7 @@ export default function GamePage() {
             {!isMyTurn && (
               <div className="flex items-center justify-center py-1 bg-black/40 border-t border-white/10">
                 <span className="text-white/50 text-xs font-medium">
-                  {isMultiplayer ? `Waiting for ${currentPlayer.name}…` : `${currentPlayer.name} is thinking…`}
+                  {isMultiplayer ? t('game.waiting', { name: currentPlayer.name }) : t('game.thinking', { name: currentPlayer.name })}
                 </span>
               </div>
             )}

@@ -1,21 +1,15 @@
 import { useState } from 'react';
 import { useGameStore } from '../store/gameStore';
-import { PANEL_BG, DRAGON_LABEL } from './Card/colors';
+import { PANEL_BG } from './Card/colors';
 import type { ActionCard } from '../engine/types';
+import { useTranslation } from '../i18n/LanguageContext';
 
 type Props = {
   cardId: string;
 };
 
-const ACTION_LABEL: Record<string, string> = {
-  'trade-hands':  'Trade Hands',
-  'trade-goals':  'Trade Goals',
-  'rotate-goals': 'Rotate Goals',
-  'move-card':    'Move a Card',
-  'zap-card':     'Zap a Card',
-};
-
 export default function ActionConfirm({ cardId }: Props) {
+  const { t } = useTranslation();
   const state = useGameStore(s => s.state);
   const playAction = useGameStore(s => s.playAction);
   const cancelActionStaging = useGameStore(s => s.cancelActionStaging);
@@ -28,10 +22,10 @@ export default function ActionConfirm({ cardId }: Props) {
   const card = currentPlayer.hand.find(c => c.id === cardId) as ActionCard | undefined;
   if (!card) return null;
 
-  const actionLabel = ACTION_LABEL[card.action] ?? card.action;
+  const actionLabel = t(`action.${card.action}.full`);
   const silverColor = card.silverColor;
   const silverBg = PANEL_BG[silverColor] ?? 'bg-zinc-700';
-  const silverLabel = DRAGON_LABEL[silverColor];
+  const silverLabel = t(`color.${silverColor}`);
 
   // First action card ever played must change Silver Dragon color (can't stay 'all')
   const silverForced = state.silverDragonColor === 'all';
@@ -60,10 +54,10 @@ export default function ActionConfirm({ cardId }: Props) {
                 ? 'bg-zinc-700 border-white/20 text-white'
                 : 'bg-zinc-800/50 border-white/10 text-white/40',
           ].join(' ')}
-          title={silverForced ? 'First action must change Silver Queen color' : undefined}
+          title={silverForced ? t('actionConfirm.silverForced') : undefined}
         >
           <div className={['w-2 h-2 rounded-full shrink-0 transition-colors', (silverForced || applySilver) ? silverBg : 'bg-zinc-600'].join(' ')} />
-          <span>Silver → {(silverForced || applySilver) ? silverLabel : 'off'}</span>
+          <span>{t('hud.silver')} {(silverForced || applySilver) ? silverLabel : t('actionConfirm.silverOff')}</span>
         </button>
       </div>
 
@@ -73,13 +67,13 @@ export default function ActionConfirm({ cardId }: Props) {
           onClick={cancelActionStaging}
           className="flex-1 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl text-sm transition-colors"
         >
-          Cancel
+          {t('actionConfirm.cancel')}
         </button>
         <button
           onClick={() => playAction(cardId, true, applySilver)}
           className="flex-[2] py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-sm transition-colors"
         >
-          Play {actionLabel}
+          {t('actionConfirm.play', { action: actionLabel })}
         </button>
       </div>
     </div>

@@ -1,7 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function PlayerLeftToast() {
+  const { t } = useTranslation();
   const notification = useGameStore(s => s.playerLeftNotification);
 
   return (
@@ -16,8 +18,8 @@ export default function PlayerLeftToast() {
         >
           <div className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-zinc-900/95 border border-red-500/40 text-red-300 shadow-xl shadow-black/50 whitespace-nowrap">
             {notification.gameEnded
-              ? `${notification.name} left — game over`
-              : `${notification.name} left the game`}
+              ? t('playerLeft.gameOver', { name: notification.name })
+              : t('playerLeft.left', { name: notification.name })}
           </div>
         </motion.div>
       )}

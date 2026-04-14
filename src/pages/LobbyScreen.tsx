@@ -4,8 +4,11 @@ import { useGameStore } from '../store/gameStore';
 import { useMultiplayerStore } from '../store/multiplayerStore';
 import { inviteClient } from '../network/inviteClient';
 import TechInfoModal from '../components/TechInfoModal';
+import LangSwitcher from '../components/LangSwitcher';
+import { useTranslation } from '../i18n/LanguageContext';
 
 function TechBadge() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -13,7 +16,7 @@ function TechBadge() {
         onClick={() => setOpen(true)}
         className="fixed bottom-4 right-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-500/15 border border-zinc-500/30 hover:bg-zinc-500/25 transition-colors"
       >
-        <span className="text-zinc-400 text-xs font-semibold">? tech stack</span>
+        <span className="text-zinc-400 text-xs font-semibold">{t('lobby.techStack')}</span>
       </button>
       {open && <TechInfoModal onClose={() => setOpen(false)} />}
     </>
@@ -21,13 +24,14 @@ function TechBadge() {
 }
 
 function OnlineBadge() {
+  const { t } = useTranslation();
   const [connected, setConnected] = useState(() => inviteClient.isConnected());
   useEffect(() => inviteClient.onStatus(setConnected), []);
   if (!connected) return null;
   return (
-    <div className="fixed top-4 right-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/15 border border-green-500/30">
+    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/15 border border-green-500/30">
       <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-      <span className="text-green-400 text-xs font-semibold">online</span>
+      <span className="text-green-400 text-xs font-semibold">{t('lobby.online')}</span>
     </div>
   );
 }
@@ -35,6 +39,7 @@ function OnlineBadge() {
 type Mode = 'home' | 'local' | 'create' | 'join' | 'waiting';
 
 export default function LobbyScreen() {
+  const { t } = useTranslation();
   const startGame = useGameStore(s => s.startGame);
   const [mode, setMode] = useState<Mode>('home');
   const [pendingMode, setPendingMode] = useState<'create' | 'join' | null>(null);
@@ -129,16 +134,19 @@ export default function LobbyScreen() {
   if (mode === 'home') {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg2.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <OnlineBadge />
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+          <LangSwitcher />
+          <OnlineBadge />
+        </div>
         <TechBadge />
                 <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-3 w-64">
           {isSignedIn && (
             <>
               <div className="flex flex-col items-center gap-1 pb-1">
-                <span className="text-white/40 text-xs">Signed in as <span className="text-white font-semibold">{user.username}</span></span>
+                <span className="text-white/40 text-xs">{t('lobby.signedAs')} <span className="text-white font-semibold">{user.username}</span></span>
                 <div className="flex gap-3">
-                  <button onClick={() => clerk.openUserProfile()} className="text-white/30 hover:text-white/60 text-xs transition-colors">Edit profile</button>
-                  <button onClick={() => signOut()} className="text-white/30 hover:text-white/60 text-xs transition-colors">Sign out</button>
+                  <button onClick={() => clerk.openUserProfile()} className="text-white/30 hover:text-white/60 text-xs transition-colors">{t('lobby.editProfile')}</button>
+                  <button onClick={() => signOut()} className="text-white/30 hover:text-white/60 text-xs transition-colors">{t('lobby.signOut')}</button>
                 </div>
               </div>
               <div className="border-t border-white/10" />
@@ -148,19 +156,19 @@ export default function LobbyScreen() {
             onClick={() => setMode('local')}
             className="py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-lg tracking-wide transition-colors"
           >
-            Start AI Game
+            {t('lobby.startAI')}
           </button>
           <button
             onClick={() => requireAuth('create')}
             className="py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-lg tracking-wide transition-colors"
           >
-            Create Online Room
+            {t('lobby.createRoom')}
           </button>
           <button
             onClick={() => requireAuth('join')}
             className="py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-lg tracking-wide transition-colors"
           >
-            Join Room
+            {t('lobby.joinRoom')}
           </button>
         </div>
       </div>
@@ -171,10 +179,13 @@ export default function LobbyScreen() {
   if (mode === 'local') {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg2.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <OnlineBadge />
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+          <LangSwitcher />
+          <OnlineBadge />
+        </div>
         <TechBadge />
         <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-4 w-72">
-          <label className="text-white/60 text-sm">AI opponents</label>
+          <label className="text-white/60 text-sm">{t('lobby.aiOpponents')}</label>
           <div className="flex gap-2">
             {[1, 2, 3, 4].map(n => (
               <button
@@ -195,13 +206,13 @@ export default function LobbyScreen() {
             onClick={handleLocalStart}
             className="py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-lg tracking-wide transition-colors"
           >
-            Start AI Game
+            {t('lobby.startAI')}
           </button>
           <button
             onClick={() => setMode('home')}
             className="text-white/40 hover:text-white/70 text-sm transition-colors"
           >
-            ← Back
+            {t('lobby.back')}
           </button>
         </div>
       </div>
@@ -212,17 +223,20 @@ export default function LobbyScreen() {
   if (mode === 'create' || mode === 'join') {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg2.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <OnlineBadge />
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+          <LangSwitcher />
+          <OnlineBadge />
+        </div>
         <TechBadge />
         <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-4 w-72">
           <div className="bg-white/5 rounded-lg px-3 py-2 flex items-center justify-between border border-white/10">
-            <span className="text-white/40 text-xs">Playing as</span>
+            <span className="text-white/40 text-xs">{t('lobby.playingAs')}</span>
             <span className="text-white font-semibold text-sm">{onlineName}</span>
           </div>
 
           {mode === 'join' && (
             <>
-              <label className="text-white/60 text-sm">Room code</label>
+              <label className="text-white/60 text-sm">{t('lobby.roomCode')}</label>
               <input
                 value={roomCodeInput}
                 onChange={e => setRoomCodeInput(e.target.value.toUpperCase())}
@@ -240,13 +254,13 @@ export default function LobbyScreen() {
             disabled={isConnecting || !onlineName.trim() || (mode === 'join' && !roomCodeInput.trim())}
             className="mt-2 py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold rounded-xl text-lg tracking-wide transition-colors"
           >
-            {isConnecting ? 'Connecting…' : mode === 'create' ? 'Create Room' : 'Join Room'}
+            {isConnecting ? t('lobby.connecting') : mode === 'create' ? t('lobby.create') : t('lobby.join')}
           </button>
           <button
             onClick={() => setMode('home')}
             className="text-white/40 hover:text-white/70 text-sm transition-colors"
           >
-            ← Back
+            {t('lobby.back')}
           </button>
         </div>
       </div>
@@ -256,35 +270,38 @@ export default function LobbyScreen() {
   // ── Waiting room ────────────────────────────────────────────────────────────
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg2.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-      <OnlineBadge />
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+        <LangSwitcher />
+        <OnlineBadge />
+      </div>
       <TechBadge />
-      
+
       <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-4 w-80">
         {/* Room code */}
         <div className="flex flex-col items-center gap-1">
-          <span className="text-white/40 text-xs uppercase tracking-widest">Room code</span>
+          <span className="text-white/40 text-xs uppercase tracking-widest">{t('lobby.roomCode')}</span>
           <div className="flex items-center gap-3">
             <span className="text-white font-mono text-3xl tracking-widest font-bold">{roomId ?? '…'}</span>
             <button
               onClick={copyRoomCode}
               className="px-3 h-9 rounded-lg bg-yellow-500 hover:bg-yellow-400 text-black font-bold transition-colors flex items-center justify-center text-xs leading-none whitespace-nowrap"
             >
-              {copied ? '✓ Copied' : 'Copy code'}
+              {copied ? t('lobby.copied') : t('lobby.copyCode')}
             </button>
           </div>
-          <span className="text-white/30 text-xs">Share this code with other players</span>
+          <span className="text-white/30 text-xs">{t('lobby.shareCode')}</span>
         </div>
 
         <div className="border-t border-white/10" />
 
         {/* Players */}
         <div className="flex flex-col gap-2">
-          <span className="text-white/40 text-xs uppercase tracking-widest">Players in room</span>
+          <span className="text-white/40 text-xs uppercase tracking-widest">{t('lobby.playersInRoom')}</span>
           {lobbyPlayers.map(p => (
             <div key={p.id} className="flex items-center gap-2">
               {p.isHost && <span className="text-yellow-400 text-xs">★</span>}
               <span className="text-white text-sm">{p.name}</span>
-              {p.id === myPlayerId && <span className="text-white/30 text-xs">(you)</span>}
+              {p.id === myPlayerId && <span className="text-white/30 text-xs">{t('lobby.you')}</span>}
             </div>
           ))}
           {pendingInvites
@@ -293,12 +310,12 @@ export default function LobbyScreen() {
               <div key={nick} className="flex items-center gap-2">
                 <span className="text-white/30 text-xs">⏳</span>
                 <span className="text-white/50 text-sm">{nick}</span>
-                <span className="text-white/30 text-xs">invite sent</span>
+                <span className="text-white/30 text-xs">{t('lobby.inviteSent')}</span>
               </div>
             ))
           }
           {lobbyPlayers.length === 0 && pendingInvites.length === 0 && (
-            <span className="text-white/30 text-sm">Waiting for players…</span>
+            <span className="text-white/30 text-sm">{t('lobby.waiting')}</span>
           )}
         </div>
 
@@ -306,21 +323,21 @@ export default function LobbyScreen() {
 
         {/* Invite */}
         <div className="flex flex-col gap-2">
-          <span className="text-white/40 text-xs uppercase tracking-widest">Invite player</span>
+          <span className="text-white/40 text-xs uppercase tracking-widest">{t('lobby.invitePlayer')}</span>
           <div className="flex gap-2">
             <input
               value={inviteNick}
               onChange={e => setInviteNick(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleInvite()}
               className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:bg-white/15 transition-colors"
-              placeholder="Username…"
+              placeholder={t('lobby.usernamePlaceholder')}
             />
             <button
               onClick={handleInvite}
               disabled={!inviteNick.trim()}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap"
             >
-              {inviteSent ? '✓ Sent' : 'Invite'}
+              {inviteSent ? t('lobby.sent') : t('lobby.invite')}
             </button>
           </div>
         </div>
@@ -333,17 +350,17 @@ export default function LobbyScreen() {
             disabled={lobbyPlayers.length < 2}
             className="py-3 bg-yellow-500 hover:bg-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed text-black font-bold rounded-xl text-lg tracking-wide transition-colors"
           >
-            Start Game ({lobbyPlayers.length} players)
+            {t('lobby.startGame', { count: lobbyPlayers.length })}
           </button>
         ) : (
-          <p className="text-white/30 text-sm text-center">Waiting for host to start…</p>
+          <p className="text-white/30 text-sm text-center">{t('lobby.waitingForHost')}</p>
         )}
 
         <button
           onClick={handleDisconnect}
           className="text-white/40 hover:text-white/70 text-sm transition-colors text-center"
         >
-          ← Leave room
+          {t('lobby.leaveRoom')}
         </button>
       </div>
     </div>

@@ -1,7 +1,8 @@
 import { useGameStore } from '../../store/gameStore';
 import { useMultiplayerStore } from '../../store/multiplayerStore';
-import { PANEL_BG, DRAGON_LABEL } from '../Card/colors';
+import { PANEL_BG } from '../Card/colors';
 import type { DragonColor } from '../../engine/types';
+import { useTranslation } from '../../i18n/LanguageContext';
 
 export function RightSidebarToggle({ onClick }: { onClick: () => void }) {
   return (
@@ -15,6 +16,7 @@ export function RightSidebarToggle({ onClick }: { onClick: () => void }) {
 }
 
 export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boolean; onClose?: () => void }) {
+  const { t } = useTranslation();
   const state = useGameStore(s => s.state);
   const isMultiplayer = useGameStore(s => s.isMultiplayer);
   const myPlayerIndex = useMultiplayerStore(s => s.myPlayerIndex);
@@ -37,7 +39,7 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
         ? (p as unknown as { handCount: number }).handCount
         : p.hand.length;
       const goalBg = goalVisible ? (PANEL_BG[goal!.color as DragonColor] ?? 'bg-zinc-700') : null;
-      const goalLabel = goalVisible ? DRAGON_LABEL[goal!.color as DragonColor] : '?';
+      const goalLabel = goalVisible ? t(`color.${goal!.color}`) : '?';
       return { type: 'player' as const, isMe, isCurrentTurn, goalBg, goalLabel, name: p.name, handCount, id: p.id, seatNumber: seatIdx + 1 };
     } else {
       const slotIdx = unusedCursor++;
@@ -69,7 +71,7 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
       ].join(' ')}>
 
         <div className="px-4 pt-4 pb-4 flex flex-col">
-          <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-3">GOALS ON TABLE</p>
+          <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-3">{t('right.goalsOnTable')}</p>
 
           {/* Ring: items column + right-side wrap rail */}
           <div className="flex gap-1.5">
@@ -100,10 +102,10 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-[#eff1f5] text-xs font-semibold leading-none truncate">
-                          {item.isMe ? 'You' : item.name}
+                          {item.isMe ? t('right.you') : item.name}
                         </p>
                         <p className="text-[#96a3b7] text-[10px] mt-0.5">
-                          {item.handCount} {item.handCount === 1 ? 'card' : 'cards'}
+                          {item.handCount} {item.handCount === 1 ? t('right.card') : t('right.cards')}
                         </p>
                       </div>
                       <div className="shrink-0 flex flex-col items-center gap-0.5">
@@ -117,8 +119,8 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
                         <span className="text-white/20 text-sm font-bold">?</span>
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-white/30 text-xs font-semibold leading-none">Unused goal #{item.seatNumber}</p>
-                        <p className="text-white/20 text-[10px] mt-0.5">face down</p>
+                        <p className="text-white/30 text-xs font-semibold leading-none">{t('right.unusedGoal', { n: item.seatNumber })}</p>
+                        <p className="text-white/20 text-[10px] mt-0.5">{t('right.faceDown')}</p>
                       </div>
                       <div className="w-4 h-4 rounded-full bg-zinc-700 border border-white/10 shrink-0" />
                     </div>

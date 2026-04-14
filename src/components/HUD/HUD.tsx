@@ -1,13 +1,15 @@
 import { useGameStore } from '../../store/gameStore';
 import { GoalCard } from '../Card';
+import { useTranslation } from '../../i18n/LanguageContext';
 
 export default function HUD() {
+  const { t } = useTranslation();
   const state = useGameStore(s => s.state);
   const goals = useGameStore(s => s.state?.goals ?? []);
 
   if (!state) return (
     <div className="h-12 bg-black/60 border-b border-white/10 flex items-center px-4 text-white/30 text-xs tracking-widest uppercase shrink-0">
-      5 Queens
+      {t('hud.title')}
     </div>
   );
 
@@ -16,12 +18,12 @@ export default function HUD() {
 
   return (
     <div className="h-12 bg-black/60 border-b border-white/10 flex items-center px-4 gap-4 shrink-0 text-xs text-white/70">
-      <span className="font-bold text-white tracking-wide">5 Queens</span>
+      <span className="font-bold text-white tracking-wide">{t('hud.title')}</span>
       <span className="text-white/30">|</span>
 
       {/* Current player */}
       <span>
-        Turn: <span className="text-yellow-400 font-semibold">{currentPlayer.name}</span>
+        {t('hud.turn')} <span className="text-yellow-400 font-semibold">{currentPlayer.name}</span>
       </span>
 
       {/* Phase */}
@@ -31,14 +33,14 @@ export default function HUD() {
 
       {/* Deck */}
       {deckCount === 0
-        ? <span className="text-red-400 font-semibold">Deck empty</span>
-        : <span>Deck: {deckCount}</span>
+        ? <span className="text-red-400 font-semibold">{t('hud.deckEmpty')}</span>
+        : <span>{t('hud.deck')} {deckCount}</span>
       }
 
       {/* Discard top */}
       {state.discardPile.length > 0 && (
         <span className="text-white/50">
-          Silver → <span className="text-zinc-300 font-semibold capitalize">{state.silverDragonColor}</span>
+          {t('hud.silver')} <span className="text-zinc-300 font-semibold capitalize">{state.silverDragonColor === 'all' ? t('color.all') : t('color.' + state.silverDragonColor)}</span>
         </span>
       )}
 

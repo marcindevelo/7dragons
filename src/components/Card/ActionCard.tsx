@@ -1,18 +1,11 @@
 import type { ActionCard as ActionCardType } from '../../engine/types';
 import { PANEL_BG } from './colors';
+import { useTranslation } from '../../i18n/LanguageContext';
 
 type Props = {
   card: ActionCardType;
   selected?: boolean;
   onClick?: () => void;
-};
-
-const ACTION_LABEL: Record<string, string> = {
-  'trade-hands':  'Trade\nHands',
-  'trade-goals':  'Trade\nGoals',
-  'rotate-goals': 'Rotate\nGoals',
-  'move-card':    'Move\nCard',
-  'zap-card':     'Zap\nCard',
 };
 
 const ACTION_ICON: Record<string, string> = {
@@ -24,6 +17,7 @@ const ACTION_ICON: Record<string, string> = {
 };
 
 export default function ActionCard({ card, selected, onClick }: Props) {
+  const { t } = useTranslation();
   const silverDot = PANEL_BG[card.silverColor] ?? 'bg-zinc-600';
 
   return (
@@ -40,10 +34,10 @@ export default function ActionCard({ card, selected, onClick }: Props) {
     >
       <span className="text-2xl">{ACTION_ICON[card.action]}</span>
       <span className="text-[9px] text-center text-white/80 whitespace-pre-line leading-tight px-1">
-        {ACTION_LABEL[card.action]}
+        {t('action.' + card.action)}
       </span>
       {/* Silver color indicator dot */}
-      <div className={['w-4 h-4 rounded-full mt-1', silverDot].join(' ')} title={`Silver → ${card.silverColor}`} />
+      <div className={['w-4 h-4 rounded-full mt-1', silverDot].join(' ')} title={`Silver → ${t('color.' + card.silverColor)}`} />
     </button>
   );
 }

@@ -1,5 +1,6 @@
 import type { GoalCard as GoalCardType } from '../../engine/types';
-import { PANEL_BG, DRAGON_LABEL } from './colors';
+import { PANEL_BG } from './colors';
+import { useTranslation } from '../../i18n/LanguageContext';
 
 type Props = {
   card: GoalCardType;
@@ -8,6 +9,7 @@ type Props = {
 };
 
 export default function GoalCard({ card, hidden, size = 'md' }: Props) {
+  const { t } = useTranslation();
   const bg = PANEL_BG[card.color] ?? 'bg-zinc-700';
   const dim = size === 'sm' ? 'w-10 h-14' : 'w-14 h-20';
 
@@ -28,8 +30,8 @@ export default function GoalCard({ card, hidden, size = 'md' }: Props) {
       ].join(' ')}
       title={`Goal: ${card.color}`}
     >
-      <span className="text-white font-bold text-xs">{DRAGON_LABEL[card.color]}</span>
-      <span className="text-white/60 text-[9px]">GOAL</span>
+      <span className="text-white font-bold text-xs">{t('color.' + card.color)}</span>
+      <span className="text-white/60 text-[9px]">{t('goal.label')}</span>
     </div>
   );
 }

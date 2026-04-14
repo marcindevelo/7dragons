@@ -1,9 +1,11 @@
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from '../i18n/LanguageContext';
 
 type Props = { onClose: () => void };
 
 export default function HelpModal({ onClose }: Props) {
+  const { t } = useTranslation();
   return createPortal(
     <AnimatePresence>
       <motion.div
@@ -25,7 +27,7 @@ export default function HelpModal({ onClose }: Props) {
           onClick={e => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-white font-bold text-xl tracking-wide">5 Queens — Zasady</h2>
+            <h2 className="text-white font-bold text-xl tracking-wide">{t('help.title')}</h2>
             <button
               onClick={onClose}
               className="text-white/30 hover:text-white/70 text-lg leading-none transition-colors"
@@ -34,46 +36,43 @@ export default function HelpModal({ onClose }: Props) {
             </button>
           </div>
 
-          <Section title="Cel gry">
-            Każdy gracz ma tajną kartę <b>Celu</b> — jeden z pięciu kolorów. Wygrywasz, gdy na planszy powstanie
-            spójna grupa <b>7 lub więcej paneli Twojego koloru</b> połączonych krawędziami. Kształt dowolny.
+          <Section title={t('help.goal.title')}>
+            {t('help.goal.desc')}
           </Section>
 
-          <Section title="Tura gracza">
+          <Section title={t('help.turn.title')}>
             <ol className="list-decimal list-inside space-y-1 text-white/60 text-sm">
-              <li>Dobierz 1 kartę z talii.</li>
-              <li>Zagraj 1 kartę z ręki — Księżniczkę lub Akcję.</li>
+              <li>{t('help.turn.1')}</li>
+              <li>{t('help.turn.2')}</li>
             </ol>
           </Section>
 
-          <Section title="Karty Księżniczek">
-            <p>Każda karta to siatka 2×2 paneli. Aby ją zagrać:</p>
+          <Section title={t('help.cards.title')}>
+            <p>{t('help.cards.desc')}</p>
             <ul className="list-disc list-inside mt-1 space-y-0.5 text-white/60 text-sm">
-              <li>Musi przylegać krawędzią do karty już na stole.</li>
-              <li>Co najmniej jedna para sąsiadujących paneli musi być tego samego koloru.</li>
-              <li><b className="text-white/80">Rainbow</b> pasuje do każdego koloru.</li>
-              <li><b className="text-white/80">Silver Queen</b> działa jako swój aktualny kolor.</li>
+              <li>{t('help.cards.rule1')}</li>
+              <li>{t('help.cards.rule2')}</li>
+              <li><b className="text-white/80">Rainbow</b> {t('help.cards.rainbow')}</li>
+              <li><b className="text-white/80">Silver Queen</b> {t('help.cards.silver')}</li>
             </ul>
             <p className="mt-2">
-              <b className="text-white/80">Kliknij kartę</b> żeby wybrać,{' '}
-              <b className="text-white/80">kliknij ponownie</b> żeby obrócić o 180°, potem kliknij miejsce na planszy.
+              <b className="text-white/80">{t('help.cards.click')}</b>{' '}
+              <b className="text-white/80">{t('help.cards.clickAgain')}</b>
             </p>
             <p className="mt-2 text-white/50 text-xs">
-              Bonus za wielokrotne połączenie: 2 różne kolory → +1 karta, 3 → +2, 4 → +3.
-              Rainbow i Silver nie liczą się do bonusu.
+              {t('help.cards.bonus')}
             </p>
           </Section>
 
-          <Section title="Karty Akcji">
-            <p>Po zagraniu dzieją się <b className="text-white/80">dwie rzeczy jednocześnie</b>: efekt akcji
-            + Silver Queen zmienia kolor. Możesz pominąć jedno z nich.</p>
+          <Section title={t('help.actions.title')}>
+            <p>{t('help.actions.desc')}</p>
             <div className="mt-3 flex flex-col gap-2">
               {[
-                ['Trade Hands', 'Zamień całą rękę z dowolnym graczem.'],
-                ['Trade Goals', 'Zamień kartę Celu z innym graczem lub nieużywaną kartą.'],
-                ['Move a Card', 'Przenieś kartę z planszy w nowe, poprawne miejsce. Nie możesz ruszyć Silver Queen. Wszystkie karty muszą nadal tworzyć jedną spójną grupę.'],
-                ['Rotate Goals', 'Wszyscy gracze przekazują karty Celu sąsiadowi w wybranym kierunku.'],
-                ['Zap a Card', 'Weź dowolną kartę z planszy z powrotem do ręki. Nie możesz zabrać Silver Queen.'],
+                ['Trade Hands', t('help.actions.tradeHands')],
+                ['Trade Goals', t('help.actions.tradeGoals')],
+                ['Move a Card', t('help.actions.moveCard')],
+                ['Rotate Goals', t('help.actions.rotateGoals')],
+                ['Zap a Card', t('help.actions.zapCard')],
               ].map(([name, desc]) => (
                 <div key={name} className="bg-white/5 rounded-xl px-3 py-2">
                   <p className="text-white text-sm font-semibold">{name}</p>
@@ -83,21 +82,19 @@ export default function HelpModal({ onClose }: Props) {
             </div>
           </Section>
 
-          <Section title="Silver Queen">
-            Stoi na środku na stałe i nigdy się nie rusza. Na początku działa jak Rainbow (wszystkie kolory).
-            Po każdej zagranej Akcji zmienia kolor na kolor księżniczki z tej karty.
+          <Section title={t('help.silver.title')}>
+            {t('help.silver.desc')}
           </Section>
 
-          <Section title="Koniec talii">
-            Gdy talia się wyczerpie, gracze nie dobierają kart. Gra trwa, dopóki ktoś ma karty.
-            Jeśli nikt nie wygrał — wygrywa gracz z <b className="text-white/80">największą spójną grupą paneli</b> swojego koloru.
+          <Section title={t('help.deckEnd.title')}>
+            {t('help.deckEnd.desc')}
           </Section>
 
           <button
             onClick={onClose}
             className="mt-2 w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-sm transition-colors"
           >
-            Rozumiem!
+            {t('help.close')}
           </button>
         </motion.div>
       </motion.div>

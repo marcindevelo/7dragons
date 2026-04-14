@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
-import { PANEL_BG, DRAGON_LABEL } from './Card/colors';
-import type { DragonColor } from '../engine/types';
+import { PANEL_BG } from './Card/colors';
 import { largestGroup } from '../engine/win';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function WinBanner() {
+  const { t } = useTranslation();
   const state = useGameStore(s => s.state);
   const resetGame = useGameStore(s => s.resetGame);
   const goToLobby = useGameStore(s => s.goToLobby);
@@ -44,15 +45,15 @@ export default function WinBanner() {
         <div className="flex items-center gap-3">
           <div className={['w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white/30 flex items-center justify-center shrink-0', bg].join(' ')}>
             <span className="text-white text-base sm:text-lg font-bold">
-              {deckExhausted ? count : DRAGON_LABEL[goal.color as DragonColor][0]}
+              {deckExhausted ? count : t(`color.${goal.color}`)[0]}
             </span>
           </div>
           <div className="min-w-0">
-            <p className="text-white text-lg sm:text-xl font-bold leading-tight truncate">{winner.name} wins!</p>
+            <p className="text-white text-lg sm:text-xl font-bold leading-tight truncate">{t('win.title', { name: winner.name })}</p>
             <p className="text-white/50 text-xs sm:text-sm mt-0.5">
               {deckExhausted
-                ? <>Deck exhausted — <span className="font-semibold text-white/75">{count}</span> connected <span className="capitalize text-white/75">{goal.color}</span> dragons</>
-                : <>7 connected <span className="font-semibold capitalize text-white/75">{goal.color}</span> dragons</>
+                ? t('win.deckExhausted', { count, color: t(`color.${goal.color}`) })
+                : t('win.connected', { color: t(`color.${goal.color}`) })
               }
             </p>
             {deckExhausted && scores.length > 0 && (
@@ -71,13 +72,13 @@ export default function WinBanner() {
             onClick={resetGame}
             className="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-sm transition-colors"
           >
-            Play again
+            {t('win.playAgain')}
           </button>
           <button
             onClick={goToLobby}
             className="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-sm transition-colors"
           >
-            Lobby
+            {t('win.lobby')}
           </button>
         </div>
       </motion.div>

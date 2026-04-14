@@ -2,16 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
 import { useMultiplayerStore } from '../store/multiplayerStore';
-
-const ACTION_LABEL: Record<string, string> = {
-  'trade-hands':  'Trade Hands',
-  'trade-goals':  'Trade Goals',
-  'rotate-goals': 'Rotate Goals',
-  'move-card':    'Move a Card',
-  'zap-card':     'Zap a Card',
-};
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function ActionEventToast() {
+  const { t } = useTranslation();
   const state = useGameStore(s => s.state);
   const isMultiplayer = useGameStore(s => s.isMultiplayer);
   const myPlayerIndex = useMultiplayerStore(s => s.myPlayerIndex);
@@ -59,9 +53,9 @@ export default function ActionEventToast() {
           transition={{ type: 'spring', stiffness: 400, damping: 28 }}
         >
           <div>
-            <p className="text-white/40 text-xs font-bold tracking-widest mb-1">ACTION PLAYED</p>
+            <p className="text-white/40 text-xs font-bold tracking-widest mb-1">{t('actionEvent.title')}</p>
             <p className="text-white font-bold text-base leading-tight">
-              {ACTION_LABEL[event.action] ?? event.action}
+              {t(`action.${event.action}.full`)}
             </p>
             <p className="text-white/60 text-sm mt-2">
               <span className="text-white/90 font-semibold">{event.playerName}</span>{' '}
@@ -72,7 +66,7 @@ export default function ActionEventToast() {
             onClick={() => setVisible(false)}
             className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-colors"
           >
-            OK
+            {t('actionEvent.ok')}
           </button>
         </motion.div>
       </motion.div>

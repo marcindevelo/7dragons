@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
-import { PANEL_BG, DRAGON_LABEL } from './Card/colors';
-import type { DragonColor } from '../engine/types';
+import { PANEL_BG } from './Card/colors';
+import { useTranslation } from '../i18n/LanguageContext';
 
 const CARD_W = 40;
 const CARD_H = 56;
@@ -14,6 +14,7 @@ const DECK_Y = 24;
 type FlyBatch = { id: number; count: number };
 
 export default function BonusToast() {
+  const { t } = useTranslation();
   const bonus = useGameStore(s => s.bonusNotification);
   const [flyBatch, setFlyBatch] = useState<FlyBatch | null>(null);
   const batchId = useRef(0);
@@ -64,14 +65,14 @@ export default function BonusToast() {
               <span className="text-yellow-400 text-xl font-black">+{bonus.count}</span>
               <div className="flex flex-col">
                 <span className="text-white text-sm font-bold leading-tight">
-                  Bonus draw{bonus.count > 1 ? 's' : ''}!
+                  {t('bonus.draws', { count: bonus.count })}
                 </span>
                 <div className="flex items-center gap-1.5 mt-1">
                   {bonus.colors.map(color => (
                     <div key={color} className="flex items-center gap-1">
                       <div className={['w-2.5 h-2.5 rounded-full', PANEL_BG[color]].join(' ')} />
                       <span className="text-white/60 text-[11px]">
-                        {DRAGON_LABEL[color as DragonColor]}
+                        {t(`color.${color}`)}
                       </span>
                     </div>
                   ))}

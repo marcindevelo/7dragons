@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import type { DragonColor } from '../../engine/types';
-import { SILVER_COLOR_BG, DRAGON_LABEL } from './colors';
+import { SILVER_COLOR_BG } from './colors';
+import { useTranslation } from '../../i18n/LanguageContext';
 
 type Props = {
   silverColor: DragonColor | 'all';
@@ -15,6 +16,7 @@ const SIZE = {
 };
 
 export default function SilverDragonCard({ silverColor, size = 'md' }: Props) {
+  const { t } = useTranslation();
   const colorBg = SILVER_COLOR_BG[silverColor];
   const controls = useAnimation();
   const prevColor = useRef(silverColor);
@@ -37,7 +39,7 @@ export default function SilverDragonCard({ silverColor, size = 'md' }: Props) {
         SIZE[size].card,
         'rounded-lg border border-zinc-500 flex flex-col items-center justify-end pb-1.5 gap-0.5 bg-zinc-700 relative overflow-hidden shrink-0',
       ].join(' ')}
-      title={`Silver Queen — current color: ${silverColor}`}
+      title={t('silver.title', { color: silverColor === 'all' ? t('color.all') : t('color.' + silverColor) })}
     >
       {/* Color indicator strip at top */}
       <motion.div
@@ -70,7 +72,7 @@ export default function SilverDragonCard({ silverColor, size = 'md' }: Props) {
 
       {/* Color label */}
       <span className="text-zinc-400 text-[8px] leading-none relative z-10">
-        {silverColor === 'all' ? 'All' : DRAGON_LABEL[silverColor as DragonColor]}
+        {silverColor === 'all' ? t('color.all') : t('color.' + silverColor)}
       </span>
     </motion.div>
   );

@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { useMultiplayerStore } from '../../store/multiplayerStore';
-import { SILVER_COLOR_BG, DRAGON_LABEL, PANEL_BG } from '../Card/colors';
+import { SILVER_COLOR_BG, PANEL_BG } from '../Card/colors';
 import type { DragonColor } from '../../engine/types';
 import HelpModal from '../HelpModal';
+import LangSwitcher from '../LangSwitcher';
+import { useTranslation } from '../../i18n/LanguageContext';
 
 export function SidebarToggle({ onClick }: { onClick: () => void }) {
   return (
@@ -33,6 +35,7 @@ const GOAL_TEXT: Record<DragonColor, string> = {
 };
 
 export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean; onClose?: () => void }) {
+  const { t } = useTranslation();
   const state = useGameStore(s => s.state);
   const isMultiplayer = useGameStore(s => s.isMultiplayer);
   const goToLobby = useGameStore(s => s.goToLobby);
@@ -76,17 +79,17 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
       <div data-tutorial="draw-pile" className="px-4 pt-4">
         <div className="flex gap-2">
           <div className="flex-1 flex flex-col items-center">
-            <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-1 text-center">DRAW PILE</p>
+            <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-1 text-center">{t('sidebar.drawPile')}</p>
             <button
               disabled
               className="bg-[#0c0f15] border border-[#333c4a] cursor-default rounded-lg w-full h-[72px] flex flex-col items-center justify-center"
             >
               <span className="text-[#eff1f5] text-2xl font-bold leading-none">{state.deck.length}</span>
-              <span className="text-[#96a3b7] text-[9px] mt-0.5">cards left</span>
+              <span className="text-[#96a3b7] text-[9px] mt-0.5">{t('sidebar.cardsLeft')}</span>
             </button>
           </div>
           <div className="flex-1 flex flex-col items-center">
-            <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-1 text-center">DISCARD</p>
+            <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-1 text-center">{t('sidebar.discard')}</p>
             <div className={[
               'border rounded-lg w-full h-[72px] flex flex-col items-center justify-center overflow-hidden',
               topDiscard ? 'border-red-600 bg-[#0c0f15]' : 'border-[#333c4a] bg-[#0c0f15]',
@@ -99,7 +102,7 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
                   <span className="text-[22px] mt-1">↔</span>
                 </>
               ) : (
-                <span className="text-[#96a3b7] text-[9px]">empty</span>
+                <span className="text-[#96a3b7] text-[9px]">{t('sidebar.empty')}</span>
               )}
             </div>
           </div>
@@ -109,11 +112,11 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
       {/* Silver Dragon */}
       <div className="px-4 pt-4">
         <div className="bg-[#0c0f15] border border-[#a8a9ad] rounded-lg px-3 py-2">
-          <p className="text-[#96a3b7] text-[9px] font-bold tracking-widest mb-2">SILVER DRAGON</p>
+          <p className="text-[#96a3b7] text-[9px] font-bold tracking-widest mb-2">{t('sidebar.silverQueen')}</p>
           <div className="flex items-center gap-2">
             <div className={['w-3 h-3 rounded-full shrink-0', silverBg].join(' ')} />
             <span className="text-[#eff1f5] text-xs font-semibold">
-              Currently: {state.silverDragonColor === 'all' ? 'All' : DRAGON_LABEL[state.silverDragonColor as DragonColor]}
+              {t('sidebar.currently')}: {state.silverDragonColor === 'all' ? t('color.all') : t('color.' + state.silverDragonColor)}
             </span>
           </div>
         </div>
@@ -122,7 +125,7 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
       {/* Opponents */}
       {otherPlayers.length > 0 && (
         <div data-tutorial="opponents" className="px-4 pt-4">
-          <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-2">OPPONENTS</p>
+          <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-2">{t('sidebar.opponents')}</p>
           <div className="flex flex-col gap-1.5">
             {otherPlayers.map(p => (
               <div key={p.id} className="bg-[#191f28] rounded-lg px-3 py-2 flex items-center gap-2">
@@ -132,7 +135,7 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
                 <div className="min-w-0">
                   <p className="text-[#eff1f5] text-xs font-semibold leading-none truncate">{p.name}</p>
                   <p className="text-[#96a3b7] text-[10px] mt-0.5">
-                    {('handCount' in p ? (p as { handCount: number }).handCount : p.hand.length)} cards · Goal: ?
+                    {('handCount' in p ? (p as { handCount: number }).handCount : p.hand.length)} {t('sidebar.cardsGoal')}
                   </p>
                 </div>
               </div>
@@ -144,14 +147,14 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
       {/* Your Goal */}
       {myGoal && (
         <div data-tutorial="goal" className="px-4 pt-4">
-          <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-2">YOUR GOAL</p>
+          <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-2">{t('sidebar.yourGoal')}</p>
           <div className={['bg-[#141921] border rounded-xl p-3 flex items-center gap-3', GOAL_BORDER[myGoal.color]].join(' ')}>
             <div className={['w-8 h-8 rounded-full shrink-0', PANEL_BG[myGoal.color]].join(' ')} />
             <div>
               <p className={['font-bold text-base leading-none', GOAL_TEXT[myGoal.color]].join(' ')}>
-                {DRAGON_LABEL[myGoal.color]}
+                {t('color.' + myGoal.color)}
               </p>
-              <p className="text-[#96a3b7] text-[10px] mt-0.5">Connect 7 {myGoal.color} panels</p>
+              <p className="text-[#96a3b7] text-[10px] mt-0.5">{t('sidebar.connect7', { color: t('color.' + myGoal.color) })}</p>
             </div>
           </div>
         </div>
@@ -160,20 +163,23 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
       {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Help + Leave Game */}
+      {/* Help + Leave Game + Lang */}
       <div className="px-4 pb-4 pt-3 flex flex-col gap-2">
         <button
           onClick={() => setShowHelp(true)}
           className="w-full py-2 rounded-lg border border-white/10 bg-white/5 text-white/50 text-xs font-semibold hover:bg-white/10 hover:text-white/70 transition-colors"
         >
-          ? Help
+          {t('sidebar.help')}
         </button>
         <button
           onClick={() => setShowLeaveConfirm(true)}
           className="w-full py-2 rounded-lg border border-red-800 bg-red-950/40 text-red-400 text-xs font-semibold hover:bg-red-900/40 hover:border-red-600 transition-colors"
         >
-          ← Leave Game
+          {t('sidebar.leaveGame')}
         </button>
+        <div className="flex justify-center pt-1">
+          <LangSwitcher />
+        </div>
       </div>
 
       {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
@@ -182,11 +188,11 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm">
           <div className="bg-zinc-900 border border-white/20 rounded-2xl p-6 shadow-2xl max-w-xs w-full mx-4 flex flex-col gap-4">
             <div>
-              <p className="text-white font-bold text-base leading-tight">Leave the game?</p>
+              <p className="text-white font-bold text-base leading-tight">{t('sidebar.leaveTitle')}</p>
               <p className="text-white/50 text-sm mt-1">
                 {isMultiplayer
-                  ? 'You will be removed from the room and other players will continue without you.'
-                  : 'Your current game will be lost.'}
+                  ? t('sidebar.leaveDesc')
+                  : t('sidebar.leaveDescLocal')}
               </p>
             </div>
             <div className="flex gap-2">
@@ -194,13 +200,13 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
                 onClick={() => setShowLeaveConfirm(false)}
                 className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm transition-colors"
               >
-                Stay
+                {t('sidebar.stay')}
               </button>
               <button
                 onClick={() => { setShowLeaveConfirm(false); isMultiplayer ? sendQuit() : goToLobby(); }}
                 className="flex-1 py-2.5 rounded-xl bg-red-700 hover:bg-red-600 text-white font-bold text-sm transition-colors"
               >
-                Leave
+                {t('sidebar.leave')}
               </button>
             </div>
           </div>

@@ -2,11 +2,14 @@ import { useEffect, useRef, useState } from 'react'; // useRef kept for prevInde
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
 import { useMultiplayerStore } from '../store/multiplayerStore';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function TurnToast() {
   const state = useGameStore(s => s.state);
   const isMultiplayer = useGameStore(s => s.isMultiplayer);
   const myPlayerIndex = useMultiplayerStore(s => s.myPlayerIndex);
+
+  const { t } = useTranslation();
 
   const [visible, setVisible] = useState(false);
   const [label, setLabel] = useState('');
@@ -26,7 +29,7 @@ export default function TurnToast() {
       ? idx === 0
       : myPlayerIndex === idx;
 
-    setLabel(me ? 'Your Turn' : `${player.name}'s Turn`);
+    setLabel(me ? t('turn.yours') : t('turn.other', { name: player.name }));
     setIsMe(me);
     setVisible(true);
 
