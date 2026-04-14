@@ -55,6 +55,10 @@ export function createGame(playerNames: string[], _seed?: number): GameState {
     applyActionEffect: false,
     applySilverChange: false,
     lastActionEvent: null,
+    lastPlacedPosKey: null,
+    lastZappedPosKey: null,
+    lastMovedFromPosKey: null,
+    startedAt: Date.now(),
   };
 }
 
@@ -195,6 +199,8 @@ export function playDragonCard(state: GameState, cardId: string, pos: BoardPosit
     players,
     winner,
     phase,
+    lastPlacedPosKey: posKey(pos.x, pos.y),
+    lastZappedPosKey: null,
   };
 }
 
@@ -349,7 +355,14 @@ export function resolvePendingAction(
     targetName: eventTargetName,
   };
 
-  return { ...newState, pendingAction: null, phase: 'play', lastActionEvent };
+  const actionType = state.pendingAction.type;
+  const lastZappedPosKey = actionType === 'zap-card' ? (payload.targetPosKey ?? null) : newState.lastZappedPosKey;
+  const lastPlacedPosKey = actionType === 'move-card' && payload.toPos
+    ? posKey(payload.toPos.x, payload.toPos.y)
+    : newState.lastPlacedPosKey;
+  const lastMovedFromPosKey = actionType === 'move-card' ? (payload.targetPosKey ?? null) : null;
+
+  return { ...newState, pendingAction: null, phase: 'play', lastActionEvent, lastZappedPosKey, lastPlacedPosKey, lastMovedFromPosKey };
 }
 
 // Return the next player index following seatOrder (skipping null/unused seats).
@@ -378,5 +391,7 @@ export function endTurn(state: GameState): GameState {
     pendingAction: null,
     applyActionEffect: false,
     applySilverChange: false,
+    lastMovedFromPosKey: null,
+    lastZappedPosKey: null,
   };
 }

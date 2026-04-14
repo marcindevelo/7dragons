@@ -1,12 +1,30 @@
+import { useEffect, useState } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { useMultiplayerStore } from '../store/multiplayerStore';
 import { SILVER_COLOR_BG, DRAGON_LABEL, PANEL_BG } from './Card/colors';
 import type { DragonColor } from '../engine/types';
 
+function useElapsedTime(startedAt: number | null): string {
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (!startedAt) return;
+    const tick = () => setElapsed(Math.floor((Date.now() - startedAt) / 1000));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [startedAt]);
+
+  const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
+  const s = (elapsed % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
 export default function MobileTopBar() {
   const state = useGameStore(s => s.state);
   const isMultiplayer = useGameStore(s => s.isMultiplayer);
   const myPlayerIndex = useMultiplayerStore(s => s.myPlayerIndex);
+
+  const elapsed = useElapsedTime(state?.startedAt ?? null);
 
   if (!state) return null;
 
@@ -39,6 +57,12 @@ export default function MobileTopBar() {
       </div>
 
       <div className="flex-1" />
+
+      {/* Game timer */}
+      <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg border border-white/10 bg-white/5 font-mono tabular-nums">
+        <span className="text-white/60 text-[10px]">⏱</span>
+        <span className="text-white/80 text-[10px] font-semibold">{elapsed}</span>
+      </div>
 
       {/* Silver Dragon */}
       <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/10 bg-white/5">

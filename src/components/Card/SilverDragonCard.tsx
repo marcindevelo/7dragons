@@ -35,7 +35,7 @@ export default function SilverDragonCard({ silverColor, size = 'md' }: Props) {
       animate={controls}
       className={[
         SIZE[size].card,
-        'rounded-lg border-2 border-zinc-400 flex flex-col items-center justify-center gap-1 bg-zinc-700 relative overflow-hidden shrink-0',
+        'rounded-lg border-2 border-zinc-400 flex flex-col items-center justify-end pb-1.5 gap-0.5 bg-zinc-700 relative overflow-hidden shrink-0',
       ].join(' ')}
       title={`Silver Dragon — current color: ${silverColor}`}
     >
@@ -49,20 +49,27 @@ export default function SilverDragonCard({ silverColor, size = 'md' }: Props) {
         style={{ transformOrigin: 'left' }}
       />
 
-      {/* Dragon emblem */}
-      <img src="/card-emblem.png" alt="" className="h-3/4 w-auto opacity-50" />
+      {/* Dragon emblem — centered, 2/3 of card (matches DragonCard) */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <img
+          src="/card-emblem.svg"
+          alt=""
+          className="object-contain opacity-50"
+          style={{ width: '66.7%', height: '66.7%' }}
+        />
+      </div>
 
       {/* Color badge */}
       <motion.div
         key={`badge-${silverColor}`}
-        className={['w-4 h-4 rounded-full border border-white/30', colorBg].join(' ')}
+        className={['w-4 h-4 rounded-full border border-white/30 relative z-10', colorBg].join(' ')}
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: 'spring', stiffness: 500, damping: 20 }}
       />
 
       {/* Color label */}
-      <span className="text-zinc-400 text-[8px] leading-none">
+      <span className="text-zinc-400 text-[8px] leading-none relative z-10">
         {silverColor === 'all' ? 'All' : DRAGON_LABEL[silverColor as DragonColor]}
       </span>
     </motion.div>

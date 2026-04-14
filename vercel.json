@@ -1,0 +1,16 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "7dragons.club" }],
+      "destination": "https://5queens.club/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.7dragons.club" }],
+      "destination": "https://5queens.club/$1",
+      "permanent": true
+    }
+  ]
+}

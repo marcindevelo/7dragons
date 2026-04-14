@@ -1,8 +1,8 @@
-# Seven Dragons — Kontekst projektu dla Claude
+# 5 Queens — Kontekst projektu dla Claude
 
 ## Projekt
 
-Webowa implementacja gry karcianej **Seven Dragons** (Looney Labs, projekt Andrew Looney).
+Webowa implementacja gry karcianej **5 Queens** (bazowanej na mechanice Seven Dragons, Looney Labs).
 
 - Pełne zasady gry: @GAME_RULES.md
 - Plan techniczny i architektura: @PROJECT_PLAN.md

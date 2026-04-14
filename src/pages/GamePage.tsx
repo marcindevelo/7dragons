@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { useMultiplayerStore } from '../store/multiplayerStore';
 import BoardArea from '../components/Board/BoardArea';
@@ -15,7 +15,7 @@ import WinBanner from '../components/WinOverlay';
 import ActionTargeting from '../components/ActionTargeting';
 import GameTutorial from '../components/GameTutorial';
 import ActionEventToast from '../components/ActionEventToast';
-import { isPlacementValid, adjacentEmptyPositions } from '../engine/board';
+import { isPlacementValid, adjacentEmptyPositions, isBoardConnected } from '../engine/board';
 
 export default function GamePage() {
   const state = useGameStore(s => s.state);
@@ -32,6 +32,17 @@ export default function GamePage() {
   const myPlayerIndex = useMultiplayerStore(s => s.myPlayerIndex);
 
   // For move-card: track which board card was picked first
+  const startedAt = state?.startedAt ?? null;
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (!startedAt) return;
+    const tick = () => setElapsed(Math.floor((Date.now() - startedAt) / 1000));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [startedAt]);
+  const elapsedStr = `${Math.floor(elapsed / 60).toString().padStart(2, '0')}:${(elapsed % 60).toString().padStart(2, '0')}`;
+
   const [moveFromKey, setMoveFromKey] = useState<string | null>(null);
   const [moveRotation, setMoveRotation] = useState<0 | 180>(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -61,12 +72,20 @@ export default function GamePage() {
   }, [state, selectedCardId, isPlayPhase, isMultiplayer, myPlayerIndex, selectedRotation]);
 
   // For move-card step 2: valid destinations for the picked card at current moveRotation
+  const isMoveCardBridge = useMemo(() => {
+    if (!state || pendingAction?.type !== 'move-card' || !moveFromKey) return false;
+    const boardWithout = new Map(state.board);
+    boardWithout.delete(moveFromKey);
+    return !isBoardConnected(boardWithout);
+  }, [state, pendingAction, moveFromKey]);
+
   const moveDestinations = useMemo(() => {
     if (!state || pendingAction?.type !== 'move-card' || !moveFromKey) return [];
     const placed = state.board.get(moveFromKey);
     if (!placed) return [];
     const boardWithout = new Map(state.board);
     boardWithout.delete(moveFromKey);
+    if (!isBoardConnected(boardWithout)) return [];
     return adjacentEmptyPositions(boardWithout).filter(pos =>
       isPlacementValid(boardWithout, placed.card, pos, state.silverDragonColor, moveRotation)
     );
@@ -153,13 +172,18 @@ export default function GamePage() {
       : [];
 
   return (
-    <div className="flex h-dvh select-none overflow-hidden" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.88),rgba(0,0,0,0.88)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div className="flex h-dvh select-none overflow-hidden" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.88),rgba(0,0,0,0.88)),url(/bg2.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <Sidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <SidebarToggle onClick={() => setSidebarOpen(v => !v)} />
       <RightSidebarToggle onClick={() => setRightSidebarOpen(v => !v)} />
       <div className="flex flex-col flex-1 overflow-hidden min-w-0">
         <MobileTopBar />
         <div data-tutorial="board" className="flex-1 relative overflow-hidden">
+          {/* Desktop timer — hidden on mobile (MobileTopBar shows it there) */}
+          <div className="hidden sm:flex absolute top-3 right-4 z-30 items-center gap-1.5 px-3 py-1 rounded-full bg-black/50 border border-white/10 backdrop-blur-sm pointer-events-none">
+            <span className="text-white/40 text-xs">⏱</span>
+            <span className="text-white/80 text-xs font-mono font-semibold tabular-nums">{elapsedStr}</span>
+          </div>
           <BoardArea
             board={state.board}
             silverColor={state.silverDragonColor}
@@ -167,6 +191,10 @@ export default function GamePage() {
             targetablePosKeys={targetablePosKeys}
             selectedPosKey={moveFromKey}
             selectedRotation={moveFromKey ? moveRotation : undefined}
+            lastPlacedPosKey={state.lastPlacedPosKey}
+            lastZappedPosKey={state.lastZappedPosKey}
+            lastMovedFromPosKey={state.lastMovedFromPosKey}
+            zapTargeting={isMyTurn && isTargeting && pendingAction?.type === 'zap-card'}
             onDropZoneClick={handleDropZoneClick}
             onBoardCardClick={handleBoardCardClick}
           />
@@ -174,19 +202,28 @@ export default function GamePage() {
             <ActionTargeting pendingAction={pendingAction} />
           )}
           {isTargeting && pendingAction?.type === 'move-card' && moveFromKey && isMyTurn && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 flex gap-2">
-              <button
-                onClick={() => setMoveRotation(r => r === 0 ? 180 : 0)}
-                className="px-4 py-2 rounded-xl bg-zinc-800 border border-white/20 text-white font-semibold text-sm hover:bg-zinc-700 transition-colors flex items-center gap-1.5"
-              >
-                ↻ Obróć
-              </button>
-              <button
-                onClick={handleLeaveInPlace}
-                className="px-4 py-2 rounded-xl bg-zinc-800 border border-white/20 text-white font-semibold text-sm hover:bg-zinc-700 transition-colors"
-              >
-                Pozostaw tutaj
-              </button>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 pointer-events-none">
+              {moveDestinations.length === 0 && (
+                <p className="text-white/50 text-xs bg-black/60 px-3 py-1 rounded-lg pointer-events-auto">
+                  {isMoveCardBridge
+                    ? 'Ta karta łączy dwie grupy — nie można jej przesunąć. Możesz ją obrócić i pozostawić tutaj.'
+                    : 'Brak możliwych pozycji — karta nie pasuje kolorowo do żadnego sąsiada'}
+                </p>
+              )}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setMoveRotation(r => r === 0 ? 180 : 0)}
+                  className="px-4 py-2 rounded-xl bg-zinc-800 border border-white/20 text-white font-semibold text-sm hover:bg-zinc-700 transition-colors flex items-center gap-1.5 pointer-events-auto"
+                >
+                  ↻ Obróć
+                </button>
+                <button
+                  onClick={handleLeaveInPlace}
+                  className="px-4 py-2 rounded-xl bg-zinc-800 border border-white/20 text-white font-semibold text-sm hover:bg-zinc-700 transition-colors pointer-events-auto"
+                >
+                  Pozostaw tutaj
+                </button>
+              </div>
             </div>
           )}
           <TurnToast />
@@ -199,10 +236,10 @@ export default function GamePage() {
         ) : pendingActionCardId ? (
           <ActionConfirm cardId={pendingActionCardId} />
         ) : (
-          <div data-tutorial="hand" className="relative">
+          <div data-tutorial="hand">
             {!isMyTurn && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 rounded-t-lg">
-                <span className="text-white/60 text-sm font-medium">
+              <div className="flex items-center justify-center py-1 bg-black/40 border-t border-white/10">
+                <span className="text-white/50 text-xs font-medium">
                   {isMultiplayer ? `Waiting for ${currentPlayer.name}…` : `${currentPlayer.name} is thinking…`}
                 </span>
               </div>

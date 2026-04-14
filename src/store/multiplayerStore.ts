@@ -80,8 +80,8 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, _get) => ({
 
   createRoom(name) {
     const roomId = generateRoomCode();
-    sessionStorage.setItem('7dragons_room', roomId);
-    sessionStorage.setItem('7dragons_name', name);
+    sessionStorage.setItem('5queens_room', roomId);
+    sessionStorage.setItem('5queens_name', name);
     set({ isConnecting: true, error: null, roomId });
 
     const unsub = gameClient.onMessage(msg => {
@@ -100,7 +100,7 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, _get) => ({
         set({ lobbyPlayers: msg.players });
       } else if (msg.type === 'game-state') {
         gameWasActive = true;
-        set({ myPlayerIndex: msg.myPlayerIndex });
+        set({ myPlayerIndex: msg.myPlayerIndex, error: null });
         onServerState?.(hydrateMaskedState(msg.state));
       } else if (msg.type === 'player-left') {
         onPlayerLeft?.(msg.playerName, msg.gameEnded);
@@ -115,8 +115,8 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, _get) => ({
   },
 
   joinRoom(roomId, name) {
-    sessionStorage.setItem('7dragons_room', roomId);
-    sessionStorage.setItem('7dragons_name', name);
+    sessionStorage.setItem('5queens_room', roomId);
+    sessionStorage.setItem('5queens_name', name);
     set({ isConnecting: true, error: null, roomId });
 
     gameClient.onMessage(msg => {
@@ -134,7 +134,7 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, _get) => ({
         set({ lobbyPlayers: msg.players });
       } else if (msg.type === 'game-state') {
         gameWasActive = true;
-        set({ myPlayerIndex: msg.myPlayerIndex });
+        set({ myPlayerIndex: msg.myPlayerIndex, error: null });
         onServerState?.(hydrateMaskedState(msg.state));
       } else if (msg.type === 'error') {
         set({ error: msg.message, isConnecting: false });
@@ -157,7 +157,7 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, _get) => ({
         set({ lobbyPlayers: msg.players });
       } else if (msg.type === 'game-state') {
         gameWasActive = true;
-        set({ myPlayerIndex: msg.myPlayerIndex });
+        set({ myPlayerIndex: msg.myPlayerIndex, error: null });
         onServerState?.(hydrateMaskedState(msg.state));
       } else if (msg.type === 'error') {
         set({ error: msg.message, isConnecting: false });
@@ -173,8 +173,8 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, _get) => ({
   },
 
   disconnect() {
-    sessionStorage.removeItem('7dragons_room');
-    sessionStorage.removeItem('7dragons_name');
+    sessionStorage.removeItem('5queens_room');
+    sessionStorage.removeItem('5queens_name');
     gameWasActive = false;
     gameClient.disconnect();
     onDisconnect?.();
@@ -196,8 +196,8 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, _get) => ({
   sendRestartGame() { gameClient.send({ type: 'restart-game' }); },
   sendQuit() {
     gameClient.quit();
-    sessionStorage.removeItem('7dragons_room');
-    sessionStorage.removeItem('7dragons_name');
+    sessionStorage.removeItem('5queens_room');
+    sessionStorage.removeItem('5queens_name');
     gameWasActive = false;
     gameClient.disconnect();
     onDisconnect?.();

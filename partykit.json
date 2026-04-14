@@ -1,5 +1,5 @@
 {
-  "name": "7dragons",
+  "name": "5queens",
   "main": "party/index.ts",
   "parties": {
     "notif": "party/notif.ts"

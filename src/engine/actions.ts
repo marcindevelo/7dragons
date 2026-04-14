@@ -153,11 +153,6 @@ export function zapCard(state: GameState, cardPosKey: string): GameState {
   const newBoard = new Map(state.board);
   newBoard.delete(cardPosKey);
 
-  // Check board remains connected after removal
-  if (!isBoardConnected(newBoard)) {
-    throw new Error('Cannot zap card: would disconnect the board');
-  }
-
   // Add card to current player's hand
   const players = state.players.map((p, idx) => {
     if (idx === state.currentPlayerIndex) {

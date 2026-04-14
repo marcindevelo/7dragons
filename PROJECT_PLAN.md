@@ -1,4 +1,4 @@
-# Seven Dragons — Web Game Project Plan
+# 5 Queens — Web Game Project Plan
 
 ## Game Summary
 
@@ -322,7 +322,7 @@ Ten etap może toczyć się równolegle z pracami programistycznymi — designer
 - [ ] Skonfiguruj Playwright E2E tests (smoke test przed każdym deployem na prod)
 
 #### Domena i SSL
-- [ ] Kup domenę (np. `sevendragons.app` lub `7dragons.io`)
+- [ ] Kup domenę (np. `5queens.club`)
 - [ ] Skonfiguruj DNS → Vercel (frontend) + Railway/Fly (backend)
 - [ ] SSL certyfikat automatyczny (Vercel + Let's Encrypt)
 - [ ] Skonfiguruj CORS: backend akceptuje tylko ruch z właściwej domeny
@@ -358,7 +358,7 @@ Ten etap może toczyć się równolegle z pracami programistycznymi — designer
 
 ## First Steps
 
-1. `npm create vite@latest 7dragons-web -- --template react-ts`
+1. `npm create vite@latest 5queens-web -- --template react-ts`
 2. Write the full TypeScript types (`src/engine/types.ts`)
 3. Create the card dataset JSON (all 72 cards with panel color arrays)
 4. Write and pass unit tests for placement validation and win detection before touching UI

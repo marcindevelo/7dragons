@@ -1,6 +1,6 @@
-# Seven Dragons — Pełne Zasady Gry
+# 5 Queens — Pełne Zasady Gry
 
-> Źródło: SevenDragonRules.pdf (Looney Labs, projekt Andrew Looney, ilustracje Larry Elmore)
+> Mechanika bazowana na Seven Dragons (Looney Labs, projekt Andrew Looney)
 
 ---
 

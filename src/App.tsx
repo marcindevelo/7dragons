@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import GamePage from './pages/GamePage';
 import { useMultiplayerStore } from './store/multiplayerStore';
+import { useGameStore } from './store/gameStore';
 import { inviteClient, type InviteMessage } from './network/inviteClient';
 import InviteBanner from './components/InviteBanner';
 
@@ -10,11 +11,20 @@ export default function App() {
   const joinRoom = useMultiplayerStore(s => s.joinRoom);
   const { isSignedIn, user } = useUser();
   const [pendingInvite, setPendingInvite] = useState<InviteMessage | null>(null);
+  const inGame = useGameStore(s => s.state !== null);
+
+  // Auto-dismiss invite when already in a game
+  useEffect(() => {
+    if (inGame && pendingInvite) {
+      inviteClient.clearPendingInvite();
+      setPendingInvite(null);
+    }
+  }, [inGame, pendingInvite]);
 
   // Reconnect to in-progress game on page reload
   useEffect(() => {
-    const roomId = sessionStorage.getItem('7dragons_room');
-    const name = sessionStorage.getItem('7dragons_name');
+    const roomId = sessionStorage.getItem('5queens_room');
+    const name = sessionStorage.getItem('5queens_name');
     if (roomId && name) {
       rejoin(roomId, name);
     }
@@ -45,7 +55,7 @@ export default function App() {
       <InviteBanner
         invite={pendingInvite}
         onJoin={handleJoinInvite}
-        onDismiss={() => setPendingInvite(null)}
+        onDismiss={() => { inviteClient.clearPendingInvite(); setPendingInvite(null); }}
       />
       <GamePage />
     </>

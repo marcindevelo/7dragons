@@ -28,6 +28,9 @@ export default class GameRoom implements Party.Server {
   private disconnected = new Map<string, { name: string; playerIndex: number }>();
   // clientId → slot
 
+  // Pending invite buffered so late-joining receivers get it on reconnect
+  private pendingInvite: string | null = null;
+
   constructor(readonly room: Party.Room) {}
 
   private isInviteRoom(): boolean {
@@ -35,7 +38,11 @@ export default class GameRoom implements Party.Server {
   }
 
   onConnect(conn: Party.Connection) {
-    if (this.isInviteRoom()) return; // invite channels need no greeting
+    if (this.isInviteRoom()) {
+      // Replay buffered invite so receivers who were offline don't miss it
+      if (this.pendingInvite) conn.send(this.pendingInvite);
+      return;
+    }
     // At this point we don't know clientId yet — join message comes next.
     // Send lobby so the new connection isn't stuck on a blank screen.
     if (!this.gameState) {
@@ -44,8 +51,17 @@ export default class GameRoom implements Party.Server {
   }
 
   onMessage(raw: string, sender: Party.Connection) {
-    // Invite channel: relay to everyone in the room
+    // Invite channel: buffer and relay to everyone in the room
     if (this.isInviteRoom()) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed.type === 'clear-invite') {
+          this.pendingInvite = null;
+          return;
+        }
+      } catch { /* ignore */ }
+      this.pendingInvite = raw;
+      setTimeout(() => { this.pendingInvite = null; }, 10 * 60 * 1000);
       this.room.broadcast(raw);
       return;
     }

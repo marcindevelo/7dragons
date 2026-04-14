@@ -76,4 +76,8 @@ export type GameState = {
   applyActionEffect: boolean;        // two-step Silver + action choice
   applySilverChange: boolean;
   lastActionEvent: ActionEvent | null;
+  lastPlacedPosKey: string | null;   // posKey of most recently placed dragon card
+  lastZappedPosKey: string | null;   // posKey of most recently zapped card (now empty)
+  lastMovedFromPosKey: string | null; // posKey where move-card picked up the card from
+  startedAt: number | null;          // unix ms timestamp when game started
 };

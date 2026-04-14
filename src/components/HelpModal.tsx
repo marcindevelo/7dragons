@@ -25,7 +25,7 @@ export default function HelpModal({ onClose }: Props) {
           onClick={e => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-white font-bold text-xl tracking-wide">Seven Dragons — Zasady</h2>
+            <h2 className="text-white font-bold text-xl tracking-wide">5 Queens — Zasady</h2>
             <button
               onClick={onClose}
               className="text-white/30 hover:text-white/70 text-lg leading-none transition-colors"

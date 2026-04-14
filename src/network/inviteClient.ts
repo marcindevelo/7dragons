@@ -75,6 +75,12 @@ class InviteClient {
     });
   }
 
+  clearPendingInvite() {
+    if (this.socket?.readyState === WebSocket.OPEN) {
+      this.socket.send(JSON.stringify({ type: 'clear-invite' }));
+    }
+  }
+
   onInvite(listener: InviteListener): () => void {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);

@@ -7,7 +7,7 @@ export default function HUD() {
 
   if (!state) return (
     <div className="h-12 bg-black/60 border-b border-white/10 flex items-center px-4 text-white/30 text-xs tracking-widest uppercase shrink-0">
-      Seven Dragons
+      5 Queens
     </div>
   );
 
@@ -16,7 +16,7 @@ export default function HUD() {
 
   return (
     <div className="h-12 bg-black/60 border-b border-white/10 flex items-center px-4 gap-4 shrink-0 text-xs text-white/70">
-      <span className="font-bold text-white tracking-wide">Seven Dragons</span>
+      <span className="font-bold text-white tracking-wide">5 Queens</span>
       <span className="text-white/30">|</span>
 
       {/* Current player */}

@@ -7,7 +7,7 @@ const PARTYKIT_HOST = import.meta.env.VITE_PARTYKIT_HOST ?? 'localhost:1999';
 function getOrCreateClientId(): string {
   // sessionStorage: unique per tab, survives page reload, cleared when tab is closed.
   // This ensures different browser tabs are different players (no shared clientId).
-  const KEY = '7dragons_client_id';
+  const KEY = '5queens_client_id';
   let id = sessionStorage.getItem(KEY);
   if (!id) {
     id = Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10);

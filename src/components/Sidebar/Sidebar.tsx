@@ -75,20 +75,20 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
       {/* Draw pile + Discard */}
       <div data-tutorial="draw-pile" className="px-4 pt-4">
         <div className="flex gap-2">
-          <div>
-            <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-1">DRAW PILE</p>
+          <div className="flex-1 flex flex-col items-center">
+            <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-1 text-center">DRAW PILE</p>
             <button
               disabled
-              className="bg-[#0c0f15] border border-[#333c4a] cursor-default rounded-lg w-[70px] h-[72px] flex flex-col items-center justify-center"
+              className="bg-[#0c0f15] border border-[#333c4a] cursor-default rounded-lg w-full h-[72px] flex flex-col items-center justify-center"
             >
               <span className="text-[#eff1f5] text-2xl font-bold leading-none">{state.deck.length}</span>
               <span className="text-[#96a3b7] text-[9px] mt-0.5">cards left</span>
             </button>
           </div>
-          <div>
-            <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-1">DISCARD</p>
+          <div className="flex-1 flex flex-col items-center">
+            <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-1 text-center">DISCARD</p>
             <div className={[
-              'border-2 rounded-lg w-[70px] h-[72px] flex flex-col items-center justify-center overflow-hidden',
+              'border-2 rounded-lg w-full h-[72px] flex flex-col items-center justify-center overflow-hidden',
               topDiscard ? 'border-red-600 bg-[#0c0f15]' : 'border-[#333c4a] bg-[#0c0f15]',
             ].join(' ')}>
               {topDiscard ? (

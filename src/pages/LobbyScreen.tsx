@@ -65,6 +65,7 @@ export default function LobbyScreen() {
   }
 
   function requireAuth(next: 'create' | 'join') {
+    if (roomId) disconnect();
     if (isSignedIn) {
       setMode(next);
     } else {
@@ -127,7 +128,7 @@ export default function LobbyScreen() {
   // ── Home ────────────────────────────────────────────────────────────────────
   if (mode === 'home') {
     return (
-      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg2.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
         <TechBadge />
                 <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-3 w-64">
@@ -169,7 +170,7 @@ export default function LobbyScreen() {
   // ── Local hot-seat ──────────────────────────────────────────────────────────
   if (mode === 'local') {
     return (
-      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg2.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
         <TechBadge />
         <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-4 w-72">
@@ -210,7 +211,7 @@ export default function LobbyScreen() {
   // ── Create / Join ───────────────────────────────────────────────────────────
   if (mode === 'create' || mode === 'join') {
     return (
-      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg2.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <OnlineBadge />
         <TechBadge />
         <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-4 w-72">
@@ -225,7 +226,7 @@ export default function LobbyScreen() {
               <input
                 value={roomCodeInput}
                 onChange={e => setRoomCodeInput(e.target.value.toUpperCase())}
-                className="bg-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:bg-white/20 transition-colors font-mono tracking-widest"
+                className="bg-white/10 rounded-lg px-3 py-2 text-white text-base outline-none focus:bg-white/20 transition-colors font-mono tracking-widest"
                 placeholder="XXXXXX"
                 maxLength={6}
               />
@@ -254,7 +255,7 @@ export default function LobbyScreen() {
 
   // ── Waiting room ────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div className="flex flex-col items-center justify-center h-screen gap-8" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url(/bg2.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <OnlineBadge />
       <TechBadge />
       

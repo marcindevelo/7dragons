@@ -18,6 +18,10 @@ type Props = {
   targetablePosKeys?: Set<string>;
   selectedPosKey?: string | null;
   selectedRotation?: 0 | 180;
+  lastPlacedPosKey?: string | null;
+  lastZappedPosKey?: string | null;
+  lastMovedFromPosKey?: string | null;
+  zapTargeting?: boolean;
   onDropZoneClick?: (pos: BoardPosition) => void;
   onBoardCardClick?: (posKey: string) => void;
 };
@@ -29,10 +33,15 @@ export default function BoardArea({
   targetablePosKeys,
   selectedPosKey,
   selectedRotation,
+  lastPlacedPosKey,
+  lastZappedPosKey,
+  lastMovedFromPosKey,
+  zapTargeting,
   onDropZoneClick,
   onBoardCardClick,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [silverBlocked, setSilverBlocked] = useState(false);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [scale, setScale] = useState(1);
   const scaleRef = useRef(1);
@@ -139,10 +148,19 @@ export default function BoardArea({
           const { left, top } = gridToPx(0, 0);
           return (
             <div
-              className="absolute pointer-events-auto"
+              className="absolute pointer-events-auto relative"
               style={{ left: `calc(50% + ${left}px - ${CARD_W / 2}px)`, top: `calc(50% + ${top}px - ${CARD_H / 2}px)` }}
+              onClick={zapTargeting ? () => {
+                setSilverBlocked(true);
+                setTimeout(() => setSilverBlocked(false), 1500);
+              } : undefined}
             >
               <SilverDragonCard silverColor={silverColor} size="md" />
+              {silverBlocked && (
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 text-red-400 text-xs font-semibold px-2 py-1 rounded-lg pointer-events-none z-50">
+                  Nie można zabrać Silver Dragon
+                </div>
+              )}
             </div>
           );
         })()}
@@ -153,6 +171,7 @@ export default function BoardArea({
             const { left, top } = gridToPx(placed.pos.x, placed.pos.y);
             const isTargetable = targetablePosKeys?.has(key);
             const isSelected = key === selectedPosKey;
+            const isLastPlaced = key === lastPlacedPosKey;
             const isClickable = isTargetable || isSelected;
             return (
               <motion.div
@@ -179,10 +198,57 @@ export default function BoardArea({
                 {isTargetable && !isSelected && (
                   <div className="absolute inset-0 rounded-lg border-2 border-yellow-400 bg-yellow-400/10 hover:bg-yellow-400/20 transition-colors pointer-events-none" />
                 )}
+                {isLastPlaced && !isSelected && !isTargetable && (
+                  <div className="absolute inset-0 rounded-lg border-2 border-green-400/70 shadow-[0_0_14px_3px_rgba(74,222,128,0.4)] pointer-events-none" />
+                )}
               </motion.div>
             );
           })}
         </AnimatePresence>
+
+        {/* Zap ghost — highlight empty position where card was removed */}
+        {lastZappedPosKey && (() => {
+          const [gx, gy] = lastZappedPosKey.split(',').map(Number);
+          if (board.has(lastZappedPosKey)) return null;
+          const { left, top } = gridToPx(gx, gy);
+          return (
+            <motion.div
+              key={`zap-ghost-${lastZappedPosKey}`}
+              className="absolute pointer-events-none rounded-lg border-2 border-dashed border-red-400/60 bg-red-400/10"
+              style={{
+                left: `calc(50% + ${left}px - ${CARD_W / 2}px)`,
+                top:  `calc(50% + ${top}px - ${CARD_H / 2}px)`,
+                width: CARD_W,
+                height: CARD_H,
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+          );
+        })()}
+
+        {/* Move-from ghost — highlight empty position where move-card picked up from */}
+        {lastMovedFromPosKey && (() => {
+          const [gx, gy] = lastMovedFromPosKey.split(',').map(Number);
+          if (board.has(lastMovedFromPosKey)) return null;
+          const { left, top } = gridToPx(gx, gy);
+          return (
+            <motion.div
+              key={`move-ghost-${lastMovedFromPosKey}`}
+              className="absolute pointer-events-none rounded-lg border-2 border-dashed border-red-400/60 bg-red-400/10"
+              style={{
+                left: `calc(50% + ${left}px - ${CARD_W / 2}px)`,
+                top:  `calc(50% + ${top}px - ${CARD_H / 2}px)`,
+                width: CARD_W,
+                height: CARD_H,
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+          );
+        })()}
 
         {/* Drop zones — valid placements */}
         {validPlacements.map(pos => {
