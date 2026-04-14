@@ -97,7 +97,7 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
                           </span>
                         </div>
                         {item.isCurrentTurn && (
-                          <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-yellow-400 border-2 border-black" />
+                          <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-yellow-400 border border-black" />
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
