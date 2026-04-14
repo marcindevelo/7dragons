@@ -52,7 +52,7 @@ export default function HelpModal({ onClose }: Props) {
               <li>Musi przylegać krawędzią do karty już na stole.</li>
               <li>Co najmniej jedna para sąsiadujących paneli musi być tego samego koloru.</li>
               <li><b className="text-white/80">Rainbow</b> pasuje do każdego koloru.</li>
-              <li><b className="text-white/80">Silver Dragon</b> działa jako swój aktualny kolor.</li>
+              <li><b className="text-white/80">Silver Queen</b> działa jako swój aktualny kolor.</li>
             </ul>
             <p className="mt-2">
               <b className="text-white/80">Kliknij kartę</b> żeby wybrać,{' '}
@@ -66,14 +66,14 @@ export default function HelpModal({ onClose }: Props) {
 
           <Section title="Karty Akcji">
             <p>Po zagraniu dzieją się <b className="text-white/80">dwie rzeczy jednocześnie</b>: efekt akcji
-            + Silver Dragon zmienia kolor. Możesz pominąć jedno z nich.</p>
+            + Silver Queen zmienia kolor. Możesz pominąć jedno z nich.</p>
             <div className="mt-3 flex flex-col gap-2">
               {[
                 ['Trade Hands', 'Zamień całą rękę z dowolnym graczem.'],
                 ['Trade Goals', 'Zamień kartę Celu z innym graczem lub nieużywaną kartą.'],
-                ['Move a Card', 'Przenieś kartę z planszy w nowe, poprawne miejsce. Nie możesz ruszyć Silver Dragona. Wszystkie karty muszą nadal tworzyć jedną spójną grupę.'],
+                ['Move a Card', 'Przenieś kartę z planszy w nowe, poprawne miejsce. Nie możesz ruszyć Silver Queen. Wszystkie karty muszą nadal tworzyć jedną spójną grupę.'],
                 ['Rotate Goals', 'Wszyscy gracze przekazują karty Celu sąsiadowi w wybranym kierunku.'],
-                ['Zap a Card', 'Weź dowolną kartę z planszy z powrotem do ręki. Nie możesz zabrać Silver Dragona.'],
+                ['Zap a Card', 'Weź dowolną kartę z planszy z powrotem do ręki. Nie możesz zabrać Silver Queen.'],
               ].map(([name, desc]) => (
                 <div key={name} className="bg-white/5 rounded-xl px-3 py-2">
                   <p className="text-white text-sm font-semibold">{name}</p>
@@ -83,7 +83,7 @@ export default function HelpModal({ onClose }: Props) {
             </div>
           </Section>
 
-          <Section title="Silver Dragon">
+          <Section title="Silver Queen">
             Stoi na środku na stałe i nigdy się nie rusza. Na początku działa jak Rainbow (wszystkie kolory).
             Po każdej zagranej Akcji zmienia kolor na kolor księżniczki z tej karty.
           </Section>

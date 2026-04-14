@@ -35,7 +35,7 @@ export default function TechInfoModal({ onClose }: Props) {
           <Section title="Silnik gry (Pure TypeScript)">
             <Row label="engine/types.ts" desc="Typy danych: DragonCard, ActionCard, GoalCard, GameState, BoardPosition, Panel." />
             <Row label="engine/deck.ts" desc="Definicje wszystkich 72 kart (51 księżniczek, 15 akcji, 5 celów) + tasowanie i rozdawanie." />
-            <Row label="engine/board.ts" desc="Walidacja ułożenia kart — panel-level adjacency, color matching, Silver Dragon wildcard." />
+            <Row label="engine/board.ts" desc="Walidacja ułożenia kart — panel-level adjacency, color matching, Silver Queen wildcard." />
             <Row label="engine/win.ts" desc="BFS flood-fill — sprawdzenie czy gracz zebrał 7 połączonych paneli swojego koloru." />
             <Row label="engine/connections.ts" desc="Bonus za wielokrotne połączenie — zliczanie unikalnych kolorów w jednym zagraniu." />
             <Row label="engine/actions.ts" desc="Implementacja 5 akcji: Trade Hands, Trade Goals, Rotate Goals, Move a Card, Zap a Card." />
@@ -56,7 +56,7 @@ export default function TechInfoModal({ onClose }: Props) {
           <Section title="Architektura danych">
             <Row label="Panel grid 2×" desc="Atomową jednostką jest panel, nie karta. Karta 2×2 = 4 panele. Sąsiedztwo przez krawędź (dx+dy=1)." />
             <Row label="Board jako sparse Map" desc='Plansza to Map<string, PlacedCard> gdzie klucz to "x,y". Nieskończona siatka bez alokacji pustych komórek.' />
-            <Row label="Silver Dragon" desc="Stoi na środku (0,0) na stałe. silverDragonColor: DragonColor | 'all' zmienia się po każdej akcji." />
+            <Row label="Silver Queen" desc="Stoi na środku (0,0) na stałe. silverDragonColor: DragonColor | 'all' zmienia się po każdej akcji." />
           </Section>
 
           <button

@@ -158,7 +158,7 @@ export default function BoardArea({
               <SilverDragonCard silverColor={silverColor} size="md" />
               {silverBlocked && (
                 <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 text-red-400 text-xs font-semibold px-2 py-1 rounded-lg pointer-events-none z-50">
-                  Nie można zabrać Silver Dragon
+                  Nie można zabrać Silver Queen
                 </div>
               )}
             </div>

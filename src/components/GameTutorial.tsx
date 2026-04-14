@@ -142,7 +142,7 @@ const INTRO_SLIDES: IntroSlide[] = [
         <div className="bg-white/5 rounded-xl p-3 flex items-start gap-3">
           <span className="text-2xl leading-none mt-0.5">🌈</span>
           <div>
-            <p className="text-white font-semibold text-sm mb-0.5">Rainbow Dragon</p>
+            <p className="text-white font-semibold text-sm mb-0.5">Rainbow Queen</p>
             <p className="text-white/60 text-xs leading-relaxed">
               Tęczowy kolor — pasuje do każdego koloru. Można go położyć obok dowolnej karty i liczy się jako każdy kolor przy sprawdzaniu wygranej.
             </p>
@@ -151,7 +151,7 @@ const INTRO_SLIDES: IntroSlide[] = [
         <div className="bg-white/5 rounded-xl p-3 flex items-start gap-3">
           <span className="text-2xl leading-none mt-0.5">🥈</span>
           <div>
-            <p className="text-white font-semibold text-sm mb-0.5">Silver Dragon (środek planszy)</p>
+            <p className="text-white font-semibold text-sm mb-0.5">Silver Queen (środek planszy)</p>
             <p className="text-white/60 text-xs leading-relaxed">
               Nigdy się nie rusza. Na początku jest tęczowy (wszystkie kolory). Zmienia kolor za każdym razem gdy zagrana zostanie karta akcji.
             </p>
@@ -177,12 +177,12 @@ const INTRO_SLIDES: IntroSlide[] = [
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-3 h-3 rounded-full bg-green-500 shrink-0" />
-          <span className="text-white/40 text-xs">Silver Dragon przyjmuje kolor: Zielony</span>
+          <span className="text-white/40 text-xs">Silver Queen przyjmuje kolor: Zielony</span>
         </div>
         <div className="bg-white/5 rounded-xl p-3">
           <p className="text-white font-semibold text-sm mb-1">Co robi?</p>
           <p className="text-white/60 text-xs leading-relaxed">
-            Wybierasz kartę z planszy i przenosisz ją w nowe miejsce. Karta musi pasować kolorowo do nowych sąsiadów. Nie możesz ruszyć Silver Dragon. Po przeniesieniu plansza musi pozostać spójna (bez rozłączonych wysp).
+            Wybierasz kartę z planszy i przenosisz ją w nowe miejsce. Karta musi pasować kolorowo do nowych sąsiadów. Nie możesz ruszyć Silver Queen. Po przeniesieniu plansza musi pozostać spójna (bez rozłączonych wysp).
           </p>
         </div>
         <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-3">
@@ -206,12 +206,12 @@ const INTRO_SLIDES: IntroSlide[] = [
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-3 h-3 rounded-full bg-red-500 shrink-0" />
-          <span className="text-white/40 text-xs">Silver Dragon przyjmuje kolor: Czerwony</span>
+          <span className="text-white/40 text-xs">Silver Queen przyjmuje kolor: Czerwony</span>
         </div>
         <div className="bg-white/5 rounded-xl p-3">
           <p className="text-white font-semibold text-sm mb-1">Co robi?</p>
           <p className="text-white/60 text-xs leading-relaxed">
-            Zabierasz dowolną kartę z planszy do swojej ręki. Twoja ręka jest po tym o 1 większa niż normalnie. Nie możesz zabrać Silver Dragon.
+            Zabierasz dowolną kartę z planszy do swojej ręki. Twoja ręka jest po tym o 1 większa niż normalnie. Nie możesz zabrać Silver Queen.
           </p>
         </div>
         <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3">
@@ -235,7 +235,7 @@ const INTRO_SLIDES: IntroSlide[] = [
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-3 h-3 rounded-full bg-blue-500 shrink-0" />
-          <span className="text-white/40 text-xs">Silver Dragon przyjmuje kolor: Niebieski</span>
+          <span className="text-white/40 text-xs">Silver Queen przyjmuje kolor: Niebieski</span>
         </div>
         <div className="bg-white/5 rounded-xl p-3">
           <p className="text-white font-semibold text-sm mb-1">Co robi?</p>
@@ -264,7 +264,7 @@ const INTRO_SLIDES: IntroSlide[] = [
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-3 h-3 rounded-full bg-yellow-500 shrink-0" />
-          <span className="text-white/40 text-xs">Silver Dragon przyjmuje kolor: Złoty</span>
+          <span className="text-white/40 text-xs">Silver Queen przyjmuje kolor: Złoty</span>
         </div>
         <div className="bg-white/5 rounded-xl p-3">
           <p className="text-white font-semibold text-sm mb-1">Co robi?</p>
@@ -293,7 +293,7 @@ const INTRO_SLIDES: IntroSlide[] = [
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-3 h-3 rounded-full bg-zinc-900 border border-white/20 shrink-0" />
-          <span className="text-white/40 text-xs">Silver Dragon przyjmuje kolor: Czarny</span>
+          <span className="text-white/40 text-xs">Silver Queen przyjmuje kolor: Czarny</span>
         </div>
         <div className="bg-white/5 rounded-xl p-3">
           <p className="text-white font-semibold text-sm mb-1">Co robi?</p>
@@ -321,14 +321,14 @@ const INTRO_SLIDES: IntroSlide[] = [
     content: (
       <div className="flex flex-col gap-3">
         <p className="text-white/70 text-sm leading-relaxed">
-          Zagrywając kartę akcji dzieją się <strong className="text-white/80">dwie rzeczy jednocześnie</strong>: efekt akcji i zmiana koloru Silver Dragona. Możesz pominąć jedną z nich.
+          Zagrywając kartę akcji dzieją się <strong className="text-white/80">dwie rzeczy jednocześnie</strong>: efekt akcji i zmiana koloru Silver Queen. Możesz pominąć jedną z nich.
         </p>
         <div className="bg-white/5 rounded-xl p-3">
           <p className="text-white font-semibold text-sm mb-2">Trzy opcje do wyboru:</p>
           <div className="flex flex-col gap-2">
             <div className="flex items-start gap-2">
               <span className="text-green-400 font-bold text-xs mt-0.5 shrink-0">✓ Oba</span>
-              <p className="text-white/60 text-xs">Wykonaj akcję i zmień kolor Silver Dragon (najczęstszy wybór).</p>
+              <p className="text-white/60 text-xs">Wykonaj akcję i zmień kolor Silver Queen (najczęstszy wybór).</p>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-yellow-400 font-bold text-xs mt-0.5 shrink-0">½ Tylko akcja</span>
@@ -336,13 +336,13 @@ const INTRO_SLIDES: IntroSlide[] = [
             </div>
             <div className="flex items-start gap-2">
               <span className="text-red-400 font-bold text-xs mt-0.5 shrink-0">½ Tylko Silver</span>
-              <p className="text-white/60 text-xs">Zmień kolor Silver Dragon, ale nie wykonuj akcji. Karta wraca na dół talii.</p>
+              <p className="text-white/60 text-xs">Zmień kolor Silver Queen, ale nie wykonuj akcji. Karta wraca na dół talii.</p>
             </div>
           </div>
         </div>
         <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3">
           <p className="text-white/60 text-xs leading-relaxed">
-            <strong className="text-yellow-400">Wskazówka:</strong> Gdy Silver Dragon ma kolor Twojego celu — zastanów się zanim pozwolisz go zmienić przez akcję przeciwnika.
+            <strong className="text-yellow-400">Wskazówka:</strong> Gdy Silver Queen ma kolor Twojego celu — zastanów się zanim pozwolisz go zmienić przez akcję przeciwnika.
           </p>
         </div>
       </div>
@@ -362,7 +362,7 @@ type SpotStep = {
 const SPOT_STEPS: SpotStep[] = [
   {
     title: 'Plansza',
-    desc: 'Tu układasz karty księżniczek. Silver Dragon stoi na środku i nigdy się nie rusza.',
+    desc: 'Tu układasz karty księżniczek. Silver Queen stoi na środku i nigdy się nie rusza.',
     selector: 'board',
     tipSide: 'center',
   },

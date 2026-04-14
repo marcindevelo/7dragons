@@ -49,7 +49,7 @@ export default function ActionConfirm({ cardId }: Props) {
 
         <div className="flex-1" />
 
-        {/* Silver Dragon pill toggle — locked when Silver is still 'all' */}
+        {/* Silver Queen pill toggle — locked when Silver is still 'all' */}
         <button
           onClick={() => !silverForced && setApplySilver(v => !v)}
           className={[
@@ -60,7 +60,7 @@ export default function ActionConfirm({ cardId }: Props) {
                 ? 'bg-zinc-700 border-white/20 text-white'
                 : 'bg-zinc-800/50 border-white/10 text-white/40',
           ].join(' ')}
-          title={silverForced ? 'First action must change Silver Dragon color' : undefined}
+          title={silverForced ? 'First action must change Silver Queen color' : undefined}
         >
           <div className={['w-2 h-2 rounded-full shrink-0 transition-colors', (silverForced || applySilver) ? silverBg : 'bg-zinc-600'].join(' ')} />
           <span>Silver → {(silverForced || applySilver) ? silverLabel : 'off'}</span>
