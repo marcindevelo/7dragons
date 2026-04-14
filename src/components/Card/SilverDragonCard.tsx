@@ -35,7 +35,7 @@ export default function SilverDragonCard({ silverColor, size = 'md' }: Props) {
       animate={controls}
       className={[
         SIZE[size].card,
-        'rounded-lg border-2 border-zinc-400 flex flex-col items-center justify-end pb-1.5 gap-0.5 bg-zinc-700 relative overflow-hidden shrink-0',
+        'rounded-lg border border-zinc-500 flex flex-col items-center justify-end pb-1.5 gap-0.5 bg-zinc-700 relative overflow-hidden shrink-0',
       ].join(' ')}
       title={`Silver Queen — current color: ${silverColor}`}
     >

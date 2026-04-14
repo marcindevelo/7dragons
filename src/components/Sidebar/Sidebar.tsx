@@ -88,7 +88,7 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
           <div className="flex-1 flex flex-col items-center">
             <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-1 text-center">DISCARD</p>
             <div className={[
-              'border-2 rounded-lg w-full h-[72px] flex flex-col items-center justify-center overflow-hidden',
+              'border rounded-lg w-full h-[72px] flex flex-col items-center justify-center overflow-hidden',
               topDiscard ? 'border-red-600 bg-[#0c0f15]' : 'border-[#333c4a] bg-[#0c0f15]',
             ].join(' ')}>
               {topDiscard ? (
@@ -145,7 +145,7 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
       {myGoal && (
         <div data-tutorial="goal" className="px-4 pt-4">
           <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-2">YOUR GOAL</p>
-          <div className={['bg-[#141921] border-2 rounded-xl p-3 flex items-center gap-3', GOAL_BORDER[myGoal.color]].join(' ')}>
+          <div className={['bg-[#141921] border rounded-xl p-3 flex items-center gap-3', GOAL_BORDER[myGoal.color]].join(' ')}>
             <div className={['w-8 h-8 rounded-full shrink-0', PANEL_BG[myGoal.color]].join(' ')} />
             <div>
               <p className={['font-bold text-base leading-none', GOAL_TEXT[myGoal.color]].join(' ')}>

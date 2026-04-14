@@ -70,10 +70,10 @@ export default function DragonCard({ card, selected, rotation = 0, onClick, size
       onClick={onClick}
       className={[
         s.card,
-        'relative grid grid-cols-2 grid-rows-2 rounded-lg overflow-hidden border-2 shrink-0 transition-all duration-200',
+        'relative grid grid-cols-2 grid-rows-2 rounded-lg overflow-hidden border shrink-0 transition-all duration-200',
         selected
           ? 'border-white scale-110 shadow-lg shadow-white/30'
-          : 'border-white/20 hover:border-white/50',
+          : 'border-white/10 hover:border-white/30',
         onClick ? 'cursor-pointer' : 'cursor-default',
       ].join(' ')}
       title={card.id}

@@ -30,10 +30,10 @@ export default function ActionCard({ card, selected, onClick }: Props) {
     <button
       onClick={onClick}
       className={[
-        'w-20 h-28 rounded-lg border-2 flex flex-col items-center justify-center gap-1 shrink-0 transition-transform bg-zinc-900',
+        'w-20 h-28 rounded-lg border flex flex-col items-center justify-center gap-1 shrink-0 transition-transform bg-zinc-900',
         selected
           ? 'border-yellow-400 scale-110 shadow-lg shadow-yellow-400/30'
-          : 'border-white/20 hover:border-white/50',
+          : 'border-white/10 hover:border-white/30',
         onClick ? 'cursor-pointer' : 'cursor-default',
       ].join(' ')}
       title={card.id}

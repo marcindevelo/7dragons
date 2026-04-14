@@ -13,7 +13,7 @@ export default function GoalCard({ card, hidden, size = 'md' }: Props) {
 
   if (hidden) {
     return (
-      <div className={[dim, 'rounded-lg border-2 border-white/20 bg-zinc-900 flex items-center justify-center'].join(' ')}>
+      <div className={[dim, 'rounded-lg border border-white/10 bg-zinc-900 flex items-center justify-center'].join(' ')}>
         <span className="text-white/20 text-xs">?</span>
       </div>
     );
@@ -23,7 +23,7 @@ export default function GoalCard({ card, hidden, size = 'md' }: Props) {
     <div
       className={[
         dim,
-        'rounded-lg border-2 border-white/40 flex flex-col items-center justify-center gap-1',
+        'rounded-lg border border-white/20 flex flex-col items-center justify-center gap-1',
         bg,
       ].join(' ')}
       title={`Goal: ${card.color}`}
