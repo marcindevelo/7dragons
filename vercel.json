@@ -1,11 +1,4 @@
 {
-  "rewrites": [
-    {
-      "source": "/clerk(.*)",
-      "has": [{ "type": "host", "value": "clerk.5queens.club" }],
-      "destination": "https://frontend-api.clerk.dev$1"
-    }
-  ],
   "redirects": [
     {
       "source": "/(.*)",
