@@ -142,11 +142,11 @@ export const dragonCards: DragonCard[] = [
 // silverColor = the dragon image on that action card (sets Silver Dragon color when played)
 
 // Kolory ustalono na podstawie ilustracji na kartach (każdy typ akcji ma jeden stały kolor):
-// Move a Card  = green  (zielona kobieta-smok)
+// Move a Card  = green  (zielona księżniczka)
 // Zap a Card   = red    (czerwone płomienie)
-// Rotate Goals = blue   (niebieski smok)
-// Trade Goals  = gold   (złoty smok)
-// Trade Hands  = black  (czarny smok)
+// Rotate Goals = blue   (niebieska księżniczka)
+// Trade Goals  = gold   (złota księżniczka)
+// Trade Hands  = black  (czarna księżniczka)
 
 export const actionCards: ActionCard[] = [
   { id: 'move-card_1',    type: 'action', action: 'move-card',    silverColor: 'green' },

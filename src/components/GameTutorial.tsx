@@ -32,7 +32,7 @@ const INTRO_SLIDES: IntroSlide[] = [
     content: (
       <div className="flex flex-col gap-3">
         <p className="text-white/70 text-sm leading-relaxed">
-          Gra karciana dla 2–5 graczy. Każdy gracz ma tajną kartę celu — jeden z 5 kolorów smoka.
+          Gra karciana dla 2–5 graczy. Każdy gracz ma tajną kartę celu — jeden z 5 kolorów księżniczki.
         </p>
         <div className="bg-white/5 rounded-xl p-3 flex items-start gap-3">
           <span className="text-2xl leading-none mt-0.5">🎯</span>
@@ -58,7 +58,7 @@ const INTRO_SLIDES: IntroSlide[] = [
           <div>
             <p className="text-white font-semibold text-sm mb-0.5">Dwa typy kart</p>
             <p className="text-white/60 text-xs leading-relaxed">
-              <strong className="text-white/80">Karty smoków</strong> — kładziesz na planszy obok pasujących kolorów.<br />
+              <strong className="text-white/80">Karty księżniczek</strong> — kładziesz na planszy obok pasujących kolorów.<br />
               <strong className="text-white/80">Karty akcji</strong> — specjalne efekty (opisane dalej).
             </p>
           </div>
@@ -67,11 +67,11 @@ const INTRO_SLIDES: IntroSlide[] = [
     ),
   },
   {
-    title: '🃏 Rodzaje kart smoków',
+    title: '🃏 Rodzaje kart księżniczek',
     content: (
       <div className="flex flex-col gap-4">
         <p className="text-white/70 text-sm leading-relaxed">
-          Każda karta smoka to siatka <strong className="text-white/80">2×2 paneli</strong>. Panele mogą mieć różne kolory — oto cztery typy kart:
+          Każda karta księżniczki to siatka <strong className="text-white/80">2×2 paneli</strong>. Panele mogą mieć różne kolory — oto cztery typy kart:
         </p>
 
         {/* Ace */}
@@ -133,11 +133,11 @@ const INTRO_SLIDES: IntroSlide[] = [
     ),
   },
   {
-    title: '🐲 Karty smoków',
+    title: '👑 Karty księżniczek',
     content: (
       <div className="flex flex-col gap-3">
         <p className="text-white/70 text-sm leading-relaxed">
-          Każda karta smoka to siatka 2×2 kolorowych paneli. Przy kładzeniu na planszę co najmniej jeden panel musi sąsiadować krawędzią z panelem <strong className="text-white/80">tego samego koloru</strong> na sąsiedniej karcie.
+          Każda karta księżniczki to siatka 2×2 kolorowych paneli. Przy kładzeniu na planszę co najmniej jeden panel musi sąsiadować krawędzią z panelem <strong className="text-white/80">tego samego koloru</strong> na sąsiedniej karcie.
         </p>
         <div className="bg-white/5 rounded-xl p-3 flex items-start gap-3">
           <span className="text-2xl leading-none mt-0.5">🌈</span>
@@ -362,7 +362,7 @@ type SpotStep = {
 const SPOT_STEPS: SpotStep[] = [
   {
     title: 'Plansza',
-    desc: 'Tu układasz karty smoków. Silver Dragon stoi na środku i nigdy się nie rusza.',
+    desc: 'Tu układasz karty księżniczek. Silver Dragon stoi na środku i nigdy się nie rusza.',
     selector: 'board',
     tipSide: 'center',
   },

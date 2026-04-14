@@ -42,11 +42,11 @@ export default function HelpModal({ onClose }: Props) {
           <Section title="Tura gracza">
             <ol className="list-decimal list-inside space-y-1 text-white/60 text-sm">
               <li>Dobierz 1 kartę z talii.</li>
-              <li>Zagraj 1 kartę z ręki — Smoka lub Akcję.</li>
+              <li>Zagraj 1 kartę z ręki — Księżniczkę lub Akcję.</li>
             </ol>
           </Section>
 
-          <Section title="Karty Smoka">
+          <Section title="Karty Księżniczek">
             <p>Każda karta to siatka 2×2 paneli. Aby ją zagrać:</p>
             <ul className="list-disc list-inside mt-1 space-y-0.5 text-white/60 text-sm">
               <li>Musi przylegać krawędzią do karty już na stole.</li>
@@ -85,7 +85,7 @@ export default function HelpModal({ onClose }: Props) {
 
           <Section title="Silver Dragon">
             Stoi na środku na stałe i nigdy się nie rusza. Na początku działa jak Rainbow (wszystkie kolory).
-            Po każdej zagranej Akcji zmienia kolor na kolor smoka z tej karty.
+            Po każdej zagranej Akcji zmienia kolor na kolor księżniczki z tej karty.
           </Section>
 
           <Section title="Koniec talii">

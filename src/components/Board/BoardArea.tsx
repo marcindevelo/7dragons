@@ -274,7 +274,7 @@ export default function BoardArea({
       {/* Hint when idle */}
       {validPlacements.length === 0 && !targetablePosKeys?.size && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none">
-          <p className="text-white/20 text-xs tracking-widest">Select a dragon card to see placements</p>
+          <p className="text-white/20 text-xs tracking-widest">Select a card to see placements</p>
         </div>
       )}
     </div>

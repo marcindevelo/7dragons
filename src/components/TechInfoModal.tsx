@@ -34,7 +34,7 @@ export default function TechInfoModal({ onClose }: Props) {
           </Section>
           <Section title="Silnik gry (Pure TypeScript)">
             <Row label="engine/types.ts" desc="Typy danych: DragonCard, ActionCard, GoalCard, GameState, BoardPosition, Panel." />
-            <Row label="engine/deck.ts" desc="Definicje wszystkich 72 kart (51 smoków, 15 akcji, 5 celów) + tasowanie i rozdawanie." />
+            <Row label="engine/deck.ts" desc="Definicje wszystkich 72 kart (51 księżniczek, 15 akcji, 5 celów) + tasowanie i rozdawanie." />
             <Row label="engine/board.ts" desc="Walidacja ułożenia kart — panel-level adjacency, color matching, Silver Dragon wildcard." />
             <Row label="engine/win.ts" desc="BFS flood-fill — sprawdzenie czy gracz zebrał 7 połączonych paneli swojego koloru." />
             <Row label="engine/connections.ts" desc="Bonus za wielokrotne połączenie — zliczanie unikalnych kolorów w jednym zagraniu." />
