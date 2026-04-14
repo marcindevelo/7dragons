@@ -84,7 +84,8 @@ export default function LobbyScreen() {
 
   function handleLocalStart() {
     const aiNames = Array.from({ length: playerCount - 1 }, (_, i) => `AI ${i + 1}`);
-    startGame(['You', ...aiNames]);
+    const humanName = user?.username || t('right.you');
+    startGame([humanName, ...aiNames]);
   }
 
   function requireAuth(next: 'create' | 'join') {
