@@ -2,7 +2,8 @@
   "name": "5queens",
   "main": "party/index.ts",
   "parties": {
-    "notif": "party/notif.ts"
+    "notif": "party/notif.ts",
+    "history": "party/history.ts"
   },
   "compatibilityDate": "2024-01-01"
 }

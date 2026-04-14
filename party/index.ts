@@ -23,6 +23,7 @@ export default class GameRoom implements Party.Server {
   private gameState: GameState | null = null;
   private connections = new Map<string, ConnectionMeta>(); // conn.id → meta
   private hostClientId: string | null = null;
+  private resultSaved = false;
 
   // Tracks players who disconnected mid-game so they can rejoin with their slot
   private disconnected = new Map<string, { name: string; playerIndex: number }>();
@@ -90,6 +91,7 @@ export default class GameRoom implements Party.Server {
 
     if (msg.type === 'restart-game') {
       this.gameState = null;
+      this.resultSaved = false;
       this.disconnected.clear();
       // Reset all player indices so lobby is fresh
       for (const [id, m] of this.connections) {
@@ -329,10 +331,56 @@ export default class GameRoom implements Party.Server {
     }
   }
 
+  // ── Game history ────────────────────────────────────────────────────────────
+
+  private async saveGameResult() {
+    if (this.resultSaved || !this.gameState || this.gameState.phase !== 'ended') return;
+    this.resultSaved = true;
+
+    const state = this.gameState;
+    const winnerPlayer = state.winner ? state.players.find(p => p.id === state.winner) : null;
+
+    // Determine win reason
+    let winReason: 'seven-connected' | 'closest-count' | 'last-standing' = 'seven-connected';
+    const remaining = Array.from(this.connections.values()).filter(c => c.playerIndex !== null);
+    if (remaining.length <= 1) {
+      winReason = 'last-standing';
+    } else if (state.deck.length === 0 && state.players.every(p => p.hand.length === 0)) {
+      winReason = 'closest-count';
+    }
+
+    const record = {
+      id: `${this.room.id}_${Date.now()}`,
+      roomId: this.room.id,
+      players: state.players.map(p => {
+        const goal = state.goals.find(g => g.id === p.goalId);
+        return {
+          name: p.name,
+          goalColor: goal?.color ?? 'unknown',
+          isWinner: p.id === state.winner,
+        };
+      }),
+      winnerName: winnerPlayer?.name ?? null,
+      winReason,
+      startedAt: state.startedAt ?? Date.now(),
+      endedAt: Date.now(),
+      playerCount: state.players.length,
+      isAI: false,
+    };
+
+    try {
+      const historyRoom = this.room.context.parties.history.get('global');
+      await historyRoom.fetch('/', { method: 'POST', body: JSON.stringify(record) });
+    } catch (e) {
+      console.error('Failed to save game result:', e);
+    }
+  }
+
   // ── State broadcasting ─────────────────────────────────────────────────────
 
   private broadcastGameState() {
     if (!this.gameState) return;
+    if (this.gameState.phase === 'ended') this.saveGameResult();
     for (const [connId, meta] of this.connections) {
       if (meta.playerIndex === null) continue;
       const conn = this.room.getConnection(connId);

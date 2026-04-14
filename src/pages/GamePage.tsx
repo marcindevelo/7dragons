@@ -17,6 +17,7 @@ import ActionTargeting from '../components/ActionTargeting';
 import GameTutorial from '../components/GameTutorial';
 import ActionEventToast from '../components/ActionEventToast';
 import { isPlacementValid, adjacentEmptyPositions, isBoardConnected } from '../engine/board';
+import { saveGameRecord } from '../network/historyClient';
 
 export default function GamePage() {
   const { t } = useTranslation();
@@ -44,6 +45,33 @@ export default function GamePage() {
     return () => clearInterval(id);
   }, [startedAt]);
   const elapsedStr = `${Math.floor(elapsed / 60).toString().padStart(2, '0')}:${(elapsed % 60).toString().padStart(2, '0')}`;
+
+  // Save AI game result to history when game ends (non-multiplayer only)
+  const [aiResultSaved, setAiResultSaved] = useState(false);
+  useEffect(() => {
+    if (!state || state.phase !== 'ended' || isMultiplayer || aiResultSaved) return;
+    setAiResultSaved(true);
+    const winnerPlayer = state.winner ? state.players.find(p => p.id === state.winner) : null;
+    const deckEmpty = state.deck.length === 0 && state.players.every(p => p.hand.length === 0);
+    saveGameRecord({
+      id: `ai_${Date.now()}`,
+      roomId: 'local',
+      players: state.players.map(p => {
+        const goal = state.goals.find(g => g.id === p.goalId);
+        return {
+          name: p.name,
+          goalColor: goal?.color ?? 'unknown',
+          isWinner: p.id === state.winner,
+        };
+      }),
+      winnerName: winnerPlayer?.name ?? null,
+      winReason: deckEmpty ? 'closest-count' : 'seven-connected',
+      startedAt: state.startedAt ?? Date.now(),
+      endedAt: Date.now(),
+      playerCount: state.players.length,
+      isAI: true,
+    }).catch(() => {});
+  }, [state?.phase, isMultiplayer, aiResultSaved]);
 
   const [moveFromKey, setMoveFromKey] = useState<string | null>(null);
   const [moveRotation, setMoveRotation] = useState<0 | 180>(0);
