@@ -1,5 +1,5 @@
 import type { ActionCard as ActionCardType } from '../../engine/types';
-import { PANEL_BG } from './colors';
+import { PANEL_BG, PANEL_BG_FALLBACK } from './colors';
 import { useTranslation } from '../../i18n/LanguageContext';
 
 type Props = {
@@ -18,7 +18,7 @@ const ACTION_ICON: Record<string, string> = {
 
 export default function ActionCard({ card, selected, onClick }: Props) {
   const { t } = useTranslation();
-  const silverDot = PANEL_BG[card.silverColor] ?? 'bg-zinc-600';
+  const silverDot = PANEL_BG[card.silverColor] ?? PANEL_BG_FALLBACK;
 
   return (
     <button
@@ -37,7 +37,7 @@ export default function ActionCard({ card, selected, onClick }: Props) {
         {t('action.' + card.action)}
       </span>
       {/* Silver color indicator dot */}
-      <div className={['w-4 h-4 rounded-full mt-1', silverDot].join(' ')} title={`Silver → ${t('color.' + card.silverColor)}`} />
+      <div className="w-4 h-4 rounded-full mt-1" style={silverDot} title={`Silver → ${t('color.' + card.silverColor)}`} />
     </button>
   );
 }

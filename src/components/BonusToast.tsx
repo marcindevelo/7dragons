@@ -70,7 +70,7 @@ export default function BonusToast() {
                 <div className="flex items-center gap-1.5 mt-1">
                   {bonus.colors.map(color => (
                     <div key={color} className="flex items-center gap-1">
-                      <div className={['w-2.5 h-2.5 rounded-full', PANEL_BG[color]].join(' ')} />
+                      <div className="w-2.5 h-2.5 rounded-full" style={PANEL_BG[color]} />
                       <span className="text-white/60 text-[11px]">
                         {t(`color.${color}`)}
                       </span>

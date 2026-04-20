@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchGameHistory, type GameRecord } from '../network/historyClient';
 import { useTranslation } from '../i18n/LanguageContext';
 
 type Props = { onClose: () => void };
 
-const COLOR_DOT: Record<string, string> = {
-  red: 'bg-red-700',
-  gold: 'bg-yellow-500',
-  blue: 'bg-blue-700',
-  green: 'bg-green-700',
-  black: 'bg-zinc-950',
+const COLOR_DOT: Record<string, CSSProperties> = {
+  red:   { backgroundColor: '#c0392b' },
+  gold:  { backgroundColor: '#d4ac0d' },
+  blue:  { backgroundColor: '#1a6fa8' },
+  green: { backgroundColor: '#1e8449' },
+  black: { backgroundColor: '#2c2c2c' },
 };
 
 const REASON_LABEL: Record<string, Record<string, string>> = {
@@ -105,7 +106,7 @@ export default function GameHistoryModal({ onClose }: Props) {
                         'flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-xs',
                         p.isWinner ? 'bg-yellow-500/15 text-yellow-300 font-semibold' : 'text-white/50',
                       ].join(' ')}>
-                        <div className={['w-2 h-2 rounded-full shrink-0', COLOR_DOT[p.goalColor] ?? 'bg-zinc-600'].join(' ')} />
+                        <div className="w-2 h-2 rounded-full shrink-0" style={COLOR_DOT[p.goalColor] ?? { backgroundColor: '#52525b' }} />
                         {p.name}
                         {p.isWinner && <span className="text-yellow-400">★</span>}
                       </div>

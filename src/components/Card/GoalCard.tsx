@@ -1,5 +1,5 @@
 import type { GoalCard as GoalCardType } from '../../engine/types';
-import { PANEL_BG } from './colors';
+import { PANEL_BG, PANEL_BG_FALLBACK } from './colors';
 import { useTranslation } from '../../i18n/LanguageContext';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 
 export default function GoalCard({ card, hidden, size = 'md' }: Props) {
   const { t } = useTranslation();
-  const bg = PANEL_BG[card.color] ?? 'bg-zinc-700';
+  const bg = PANEL_BG[card.color] ?? PANEL_BG_FALLBACK;
   const dim = size === 'sm' ? 'w-10 h-14' : 'w-14 h-20';
 
   if (hidden) {
@@ -26,8 +26,8 @@ export default function GoalCard({ card, hidden, size = 'md' }: Props) {
       className={[
         dim,
         'rounded-lg border border-white/20 flex flex-col items-center justify-center gap-1',
-        bg,
       ].join(' ')}
+      style={bg}
       title={`Goal: ${card.color}`}
     >
       <span className="text-white font-bold text-xs">{t('color.' + card.color)}</span>

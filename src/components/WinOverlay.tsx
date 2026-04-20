@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
-import { PANEL_BG } from './Card/colors';
+import { PANEL_BG, PANEL_BG_FALLBACK } from './Card/colors';
 import { largestGroup } from '../engine/win';
 import { useTranslation } from '../i18n/LanguageContext';
 
@@ -17,7 +17,7 @@ export default function WinBanner() {
     const goal = state.goals.find(g => g.id === winner.goalId);
     if (!goal || (goal.id as string) === 'hidden') return null;
 
-    const bg = PANEL_BG[goal.color] ?? 'bg-zinc-700';
+    const bg = PANEL_BG[goal.color] ?? PANEL_BG_FALLBACK;
     const count = largestGroup(state.board, goal.color, state.silverDragonColor);
     const deckExhausted = count < 7;
 
@@ -43,7 +43,7 @@ export default function WinBanner() {
       >
         {/* Winner info */}
         <div className="flex items-center gap-3">
-          <div className={['w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white/30 flex items-center justify-center shrink-0', bg].join(' ')}>
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white/30 flex items-center justify-center shrink-0" style={bg}>
             <span className="text-white text-base sm:text-lg font-bold">
               {deckExhausted ? count : t(`color.${goal.color}`)[0]}
             </span>

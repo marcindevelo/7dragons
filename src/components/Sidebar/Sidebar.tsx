@@ -114,7 +114,7 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
         <div className="bg-[#0c0f15] border border-[#a8a9ad] rounded-lg px-3 py-2">
           <p className="text-[#96a3b7] text-[9px] font-bold tracking-widest mb-2">{t('sidebar.silverQueen')}</p>
           <div className="flex items-center gap-2">
-            <div className={['w-3 h-3 rounded-full shrink-0', silverBg].join(' ')} />
+            <div className="w-3 h-3 rounded-full shrink-0" style={silverBg} />
             <span className="text-[#eff1f5] text-xs font-semibold">
               {t('sidebar.currently')}: {state.silverDragonColor === 'all' ? t('color.all') : t('color.' + state.silverDragonColor)}
             </span>
@@ -149,7 +149,7 @@ export default function Sidebar({ mobileOpen, onClose }: { mobileOpen?: boolean;
         <div data-tutorial="goal" className="px-4 pt-4">
           <p className="text-[#96a3b7] text-[10px] font-bold tracking-widest mb-2">{t('sidebar.yourGoal')}</p>
           <div className={['bg-[#141921] border rounded-xl p-3 flex items-center gap-3', GOAL_BORDER[myGoal.color]].join(' ')}>
-            <div className={['w-8 h-8 rounded-full shrink-0', PANEL_BG[myGoal.color]].join(' ')} />
+            <div className="w-8 h-8 rounded-full shrink-0" style={PANEL_BG[myGoal.color]} />
             <div>
               <p className={['font-bold text-base leading-none', GOAL_TEXT[myGoal.color]].join(' ')}>
                 {t('color.' + myGoal.color)}

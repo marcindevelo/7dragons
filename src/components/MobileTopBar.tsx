@@ -67,7 +67,7 @@ export default function MobileTopBar() {
 
       {/* Silver Dragon */}
       <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/10 bg-white/5">
-        <div className={['w-2.5 h-2.5 rounded-full shrink-0', silverBg].join(' ')} />
+        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={silverBg} />
         <span className="text-white/60 text-[10px]">
           {state.silverDragonColor === 'all' ? t('color.all') : t('color.' + state.silverDragonColor)}
         </span>
@@ -76,7 +76,7 @@ export default function MobileTopBar() {
       {/* Goal */}
       {myGoal && (
         <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/10 bg-white/5">
-          <div className={['w-2.5 h-2.5 rounded-full shrink-0', PANEL_BG[myGoal.color]].join(' ')} />
+          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={PANEL_BG[myGoal.color]} />
           <span className="text-white/60 text-[10px]">{t('color.' + myGoal.color)}</span>
         </div>
       )}

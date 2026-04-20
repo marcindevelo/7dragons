@@ -1,6 +1,6 @@
 import { useGameStore } from '../../store/gameStore';
 import { useMultiplayerStore } from '../../store/multiplayerStore';
-import { PANEL_BG } from '../Card/colors';
+import { PANEL_BG, PANEL_BG_FALLBACK } from '../Card/colors';
 import type { DragonColor } from '../../engine/types';
 import { useTranslation } from '../../i18n/LanguageContext';
 
@@ -38,7 +38,7 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
       const handCount = ('handCount' in p)
         ? (p as unknown as { handCount: number }).handCount
         : p.hand.length;
-      const goalBg = goalVisible ? (PANEL_BG[goal!.color as DragonColor] ?? 'bg-zinc-700') : null;
+      const goalBg = goalVisible ? (PANEL_BG[goal!.color as DragonColor] ?? PANEL_BG_FALLBACK) : null;
       const goalLabel = goalVisible ? t(`color.${goal!.color}`) : '?';
       return { type: 'player' as const, isMe, isCurrentTurn, goalBg, goalLabel, name: p.name, handCount, id: p.id, seatNumber: seatIdx + 1 };
     } else {
@@ -88,10 +88,10 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
                         : 'bg-[#191f28] border-white/5',
                     ].join(' ')}>
                       <div className="relative shrink-0">
-                        <div className={[
-                          'w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm',
-                          item.goalBg ?? 'bg-[#2a3342]',
-                        ].join(' ')}>
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
+                          style={item.goalBg ?? { backgroundColor: '#2a3342' }}
+                        >
                           <span className={item.goalBg ? 'text-white/90' : 'text-[#96a3b7]'}>
                             {item.goalBg ? item.goalLabel[0] : item.name[0].toUpperCase()}
                           </span>
@@ -109,7 +109,7 @@ export default function RightSidebar({ mobileOpen, onClose }: { mobileOpen?: boo
                         </p>
                       </div>
                       <div className="shrink-0 flex flex-col items-center gap-0.5">
-                        <div className={['w-4 h-4 rounded-full border border-white/20', item.goalBg ?? 'bg-zinc-700'].join(' ')} />
+                        <div className="w-4 h-4 rounded-full border border-white/20" style={item.goalBg ?? { backgroundColor: '#3f3f46' }} />
                         <span className="text-[8px] text-white/30 leading-none">{item.goalLabel}</span>
                       </div>
                     </div>

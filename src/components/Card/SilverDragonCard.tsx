@@ -44,11 +44,11 @@ export default function SilverDragonCard({ silverColor, size = 'md' }: Props) {
       {/* Color indicator strip at top */}
       <motion.div
         key={silverColor}
-        className={['absolute top-0 left-0 right-0 h-2', colorBg].join(' ')}
+        className="absolute top-0 left-0 right-0 h-2"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
-        style={{ transformOrigin: 'left' }}
+        style={{ ...colorBg, transformOrigin: 'left' }}
       />
 
       {/* Dragon emblem — centered, 2/3 of card (matches DragonCard) */}
@@ -64,7 +64,8 @@ export default function SilverDragonCard({ silverColor, size = 'md' }: Props) {
       {/* Color badge */}
       <motion.div
         key={`badge-${silverColor}`}
-        className={['w-4 h-4 rounded-full border border-white/30 relative z-10', colorBg].join(' ')}
+        className="w-4 h-4 rounded-full border border-white/30 relative z-10"
+        style={colorBg}
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: 'spring', stiffness: 500, damping: 20 }}

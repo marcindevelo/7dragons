@@ -80,7 +80,7 @@ export default function DragonCard({ card, selected, rotation = 0, onClick, size
     >
       {/* Colored panels */}
       {panels.map((color, i) => (
-        <div key={i} className={[panelBg(color), 'flex items-center justify-center'].join(' ')} />
+        <div key={i} className="flex items-center justify-center" style={panelBg(color)} />
       ))}
 
       {/* One crown per same-color region */}

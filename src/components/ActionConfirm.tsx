@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useGameStore } from '../store/gameStore';
-import { PANEL_BG } from './Card/colors';
+import { PANEL_BG, PANEL_BG_FALLBACK } from './Card/colors';
 import type { ActionCard } from '../engine/types';
 import { useTranslation } from '../i18n/LanguageContext';
 
@@ -24,7 +24,7 @@ export default function ActionConfirm({ cardId }: Props) {
 
   const actionLabel = t(`action.${card.action}.full`);
   const silverColor = card.silverColor;
-  const silverBg = PANEL_BG[silverColor] ?? 'bg-zinc-700';
+  const silverBg = PANEL_BG[silverColor] ?? PANEL_BG_FALLBACK;
   const silverLabel = t(`color.${silverColor}`);
 
   // First action card ever played must change Silver Dragon color (can't stay 'all')
@@ -37,7 +37,7 @@ export default function ActionConfirm({ cardId }: Props) {
       <div className="flex items-center gap-3">
         {/* Card badge */}
         <div className="bg-zinc-800 border border-white/20 rounded-xl px-3 py-1.5 flex items-center gap-2 shrink-0">
-          <div className={['w-2.5 h-2.5 rounded-full shrink-0', silverBg].join(' ')} />
+          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={silverBg} />
           <p className="text-white font-bold text-sm leading-none">{actionLabel}</p>
         </div>
 
@@ -56,7 +56,7 @@ export default function ActionConfirm({ cardId }: Props) {
           ].join(' ')}
           title={silverForced ? t('actionConfirm.silverForced') : undefined}
         >
-          <div className={['w-2 h-2 rounded-full shrink-0 transition-colors', (silverForced || applySilver) ? silverBg : 'bg-zinc-600'].join(' ')} />
+          <div className="w-2 h-2 rounded-full shrink-0 transition-colors" style={(silverForced || applySilver) ? silverBg : { backgroundColor: '#52525b' }} />
           <span>{t('hud.silver')} {(silverForced || applySilver) ? silverLabel : t('actionConfirm.silverOff')}</span>
         </button>
       </div>
