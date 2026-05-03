@@ -15,7 +15,7 @@ function TechBadge() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 right-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-500/15 border border-zinc-500/30 hover:bg-zinc-500/25 transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-500/15 border border-zinc-500/30 hover:bg-zinc-500/25 transition-colors"
       >
         <span className="text-zinc-400 text-xs font-semibold">{t('lobby.techStack')}</span>
       </button>
@@ -32,12 +32,21 @@ function HistoryBadge() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 right-32 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-500/15 border border-zinc-500/30 hover:bg-zinc-500/25 transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-500/15 border border-zinc-500/30 hover:bg-zinc-500/25 transition-colors"
       >
         <span className="text-zinc-400 text-xs font-semibold">All Games</span>
       </button>
       {open && <GameHistoryModal onClose={() => setOpen(false)} />}
     </>
+  );
+}
+
+function BottomBadges() {
+  return (
+    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2">
+      <HistoryBadge />
+      <TechBadge />
+    </div>
   );
 }
 
@@ -157,7 +166,7 @@ export default function LobbyScreen() {
           <LangSwitcher />
           <OnlineBadge />
         </div>
-        <TechBadge /><HistoryBadge />
+        <BottomBadges />
                 <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-3 w-64">
           {isSignedIn && (
             <>
@@ -202,7 +211,7 @@ export default function LobbyScreen() {
           <LangSwitcher />
           <OnlineBadge />
         </div>
-        <TechBadge /><HistoryBadge />
+        <BottomBadges />
         <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-4 w-72">
           <label className="text-white/60 text-sm">{t('lobby.aiOpponents')}</label>
           <div className="flex gap-2">
@@ -246,7 +255,7 @@ export default function LobbyScreen() {
           <LangSwitcher />
           <OnlineBadge />
         </div>
-        <TechBadge /><HistoryBadge />
+        <BottomBadges />
         <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-4 w-72">
           <div className="bg-white/5 rounded-lg px-3 py-2 flex items-center justify-between border border-white/10">
             <span className="text-white/40 text-xs">{t('lobby.playingAs')}</span>
@@ -293,7 +302,7 @@ export default function LobbyScreen() {
         <LangSwitcher />
         <OnlineBadge />
       </div>
-      <TechBadge /><HistoryBadge />
+      <BottomBadges />
 
       <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-white/10 flex flex-col gap-4 w-80">
         {/* Room code */}
