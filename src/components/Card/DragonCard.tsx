@@ -70,7 +70,9 @@ export default function DragonCard({ card, selected, rotation = 0, onClick, size
       onClick={onClick}
       className={[
         s.card,
-        'relative grid grid-cols-2 grid-rows-2 rounded-lg overflow-hidden border shrink-0 transition-all duration-200',
+        // Inner <div> handles grid layout — Safari/WebKit on older iPadOS does not
+        // honor `display: grid` on <button> (children collapse to 0×0).
+        'relative rounded-lg overflow-hidden border shrink-0 transition-all duration-200 p-0',
         selected
           ? 'border-white scale-110 shadow-lg shadow-white/30'
           : 'border-white/10 hover:border-white/30',
@@ -78,38 +80,40 @@ export default function DragonCard({ card, selected, rotation = 0, onClick, size
       ].join(' ')}
       title={card.id}
     >
-      {/* Colored panels */}
-      {panels.map((color, i) => (
-        <div key={i} className="flex items-center justify-center" style={panelBg(color)} />
-      ))}
+      <div className="relative w-full h-full grid grid-cols-2 grid-rows-2">
+        {/* Colored panels */}
+        {panels.map((color, i) => (
+          <div key={i} className="flex items-center justify-center" style={panelBg(color)} />
+        ))}
 
-      {/* One crown per same-color region */}
-      {colorGroups.map((group, gi) => {
-        const x1 = Math.min(...group.map(i => PANEL_BOUNDS[i].x1));
-        const y1 = Math.min(...group.map(i => PANEL_BOUNDS[i].y1));
-        const x2 = Math.max(...group.map(i => PANEL_BOUNDS[i].x2));
-        const y2 = Math.max(...group.map(i => PANEL_BOUNDS[i].y2));
-        const cx = (x1 + x2) / 2;
-        const cy = (y1 + y2) / 2;
-        const crownW = (x2 - x1) * (2 / 3);
-        const crownH = (y2 - y1) * (2 / 3);
+        {/* One crown per same-color region */}
+        {colorGroups.map((group, gi) => {
+          const x1 = Math.min(...group.map(i => PANEL_BOUNDS[i].x1));
+          const y1 = Math.min(...group.map(i => PANEL_BOUNDS[i].y1));
+          const x2 = Math.max(...group.map(i => PANEL_BOUNDS[i].x2));
+          const y2 = Math.max(...group.map(i => PANEL_BOUNDS[i].y2));
+          const cx = (x1 + x2) / 2;
+          const cy = (y1 + y2) / 2;
+          const crownW = (x2 - x1) * (2 / 3);
+          const crownH = (y2 - y1) * (2 / 3);
 
-        return (
-          <div
-            key={gi}
-            className="absolute pointer-events-none"
-            style={{
-              left: `${cx}%`,
-              top: `${cy}%`,
-              transform: 'translate(-50%, -50%)',
-              width: `${crownW}%`,
-              height: `${crownH}%`,
-            }}
-          >
-            <img src="/card-emblem.svg" alt="" className="w-full h-full object-contain opacity-25" />
-          </div>
-        );
-      })}
+          return (
+            <div
+              key={gi}
+              className="absolute pointer-events-none"
+              style={{
+                left: `${cx}%`,
+                top: `${cy}%`,
+                transform: 'translate(-50%, -50%)',
+                width: `${crownW}%`,
+                height: `${crownH}%`,
+              }}
+            >
+              <img src="/card-emblem.svg" alt="" className="w-full h-full object-contain opacity-25" />
+            </div>
+          );
+        })}
+      </div>
     </button>
   );
 }
