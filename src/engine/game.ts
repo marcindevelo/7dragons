@@ -62,6 +62,20 @@ export function createGame(playerNames: string[], _seed?: number): GameState {
   };
 }
 
+// Check win for ALL players against the current board/silverColor.
+// Win can be triggered on any player's turn (e.g. by an action that rearranges the board
+// or shifts the Silver Dragon color).
+function checkWinForAllPlayers(state: GameState): GameState {
+  if (state.phase === 'ended') return state;
+  for (const player of state.players) {
+    const goal = state.goals.find((g) => g.id === player.goalId);
+    if (goal && checkWin(state.board, goal.color, state.silverDragonColor)) {
+      return { ...state, winner: player.id, phase: 'ended' };
+    }
+  }
+  return state;
+}
+
 // When deck is empty and all hands are empty → closest-to-7 wins
 function computeClosestWinner(state: GameState): GameState {
   let bestPlayerId: string | null = null;
@@ -179,29 +193,16 @@ export function playDragonCard(state: GameState, cardId: string, pos: BoardPosit
     return p;
   });
 
-  // Check win condition for ALL players (win can be triggered on any player's turn)
-  let winner = state.winner;
-  let phase: import('./types').GamePhase = state.phase;
-
-  for (const player of state.players) {
-    const goal = state.goals.find((g) => g.id === player.goalId);
-    if (goal && checkWin(newBoard, goal.color, state.silverDragonColor)) {
-      winner = player.id;
-      phase = 'ended';
-      break;
-    }
-  }
-
-  return {
+  const intermediate: GameState = {
     ...state,
     board: newBoard,
     deck: newDeck,
     players,
-    winner,
-    phase,
     lastPlacedPosKey: posKey(pos.x, pos.y),
     lastZappedPosKey: null,
   };
+
+  return checkWinForAllPlayers(intermediate);
 }
 
 // Play an action card
@@ -253,8 +254,8 @@ export function playActionCard(
   };
 
   if (!applyAction) {
-    // Player skips action effect — just end with silver change applied
-    return newState;
+    // Player skips action effect — silver color may have changed and could complete a goal
+    return checkWinForAllPlayers(newState);
   }
 
   // Set up pending action based on action type
@@ -362,7 +363,8 @@ export function resolvePendingAction(
     : newState.lastPlacedPosKey;
   const lastMovedFromPosKey = actionType === 'move-card' ? (payload.targetPosKey ?? null) : null;
 
-  return { ...newState, pendingAction: null, phase: 'play', lastActionEvent, lastZappedPosKey, lastPlacedPosKey, lastMovedFromPosKey };
+  const resolved: GameState = { ...newState, pendingAction: null, phase: 'play', lastActionEvent, lastZappedPosKey, lastPlacedPosKey, lastMovedFromPosKey };
+  return checkWinForAllPlayers(resolved);
 }
 
 // Return the next player index following seatOrder (skipping null/unused seats).
